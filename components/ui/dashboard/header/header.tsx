@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 const Header = () => {
     const pathname = usePathname();
     const routeTitles: { [key: string]: string } = {
+        '/': 'CarService Pro',
         '/dashboard': 'Dashboard',
         '/appointments': 'Appointments',
         '/customers': 'Customers',
