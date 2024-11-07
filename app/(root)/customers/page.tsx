@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
-import NewCustomer from '@/components/ui/dashboard/customer/newcustomer';
-import AppointmentsTable from '@/components/ui/dashboard/table/appointments';
+import NewCustomer from '@/components/ui/dashboard/customer/new-customer';
 import CustomersTable from '@/components/ui/dashboard/table/customers';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';

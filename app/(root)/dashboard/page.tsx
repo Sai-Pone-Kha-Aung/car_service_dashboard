@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import LowStock from '@/components/ui/dashboard/table/lowstock';
-import RecentAppointments from '@/components/ui/dashboard/table/recentappointments';
+import RecentAppointments from '@/components/ui/dashboard/table/recent-appointments';
 import { Calendar, ClipboardList, Package, Truck } from 'lucide-react'
 import React from 'react'
 
