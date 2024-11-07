@@ -1,4 +1,4 @@
-import NewAppointmentDialog from '@/components/ui/dashboard/appointment/newappointment';
+import NewAppointmentDialog from '@/components/ui/dashboard/appointment/new-appointment';
 import { Button } from '@/components/ui/button'
 import AppointmentsTable from '@/components/ui/dashboard/table/appointments';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';

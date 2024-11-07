@@ -1,13 +1,10 @@
-'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../dialog'
 import { Label } from '../../label'
 import { Input } from '../../input'
 import { Button } from '../../button'
 
-
 const NewCustomer = () => {
-    const [date, setDate] = useState<Date>()
     return (
         <div>
             <DialogContent>

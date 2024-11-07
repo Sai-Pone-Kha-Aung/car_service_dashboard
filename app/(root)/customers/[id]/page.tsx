@@ -4,15 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomerDetailTable from '@/components/ui/dashboard/table/customer-detail-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Car, Edit, Mail, MapPin, Phone } from 'lucide-react'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import EditCustomerDetail from '@/components/ui/dashboard/customer/edit-customer-info'
 
 const page = () => {
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className=' flex justify-end mb-6'>
-                <Button variant='outline'>
-                    <Edit className='h-4 w-4 mr-2' />
-                    Edit
-                </Button>
+                <EditCustomerDetail />
             </div>
 
             <div className='grid gap-6 md:grid-cols-1'>
@@ -25,7 +24,7 @@ const page = () => {
                     <CardContent>
                         <div className='space-y-4'>
                             <div>
-                                <h2 className='text-xl font-semibold'>Alic Johnson</h2>
+                                <h2 className='text-xl font-semibold'>Alice Johnson</h2>
                                 <p className='text-sm text-muted-foreground'>Customer since: Jan 15, 2022</p>
                             </div>
                             <div className='flex items-center'>

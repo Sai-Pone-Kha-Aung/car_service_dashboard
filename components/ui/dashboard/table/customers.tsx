@@ -48,49 +48,51 @@ const customers = [
 const CustomersTable = () => {
     const router = useRouter();
     return (
-        <div><Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Address</TableHead>
-                    <TableHead>Actions</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {customers.map((customer) => (
-                    <TableRow key={customer.id}>
-                        <TableCell>{customer.name}</TableCell>
-                        <TableCell>{customer.email}</TableCell>
-                        <TableCell>{customer.phone}</TableCell>
-                        <TableCell>{customer.address}</TableCell>
-                        <TableCell>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className='h-8 w-8 p-0'>
-                                        <span className='sr-only'>Open menu</span>
-                                        <MoreHorizontal className='h-4 w-4' />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem >
-                                        <Edit className='mr-2 h-4 w-4' /> <span
-                                            onClick={() => router.push(`customers/${customer.id}`)}>
-                                            Edit
-                                        </span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Trash className='mr-2 h-4 w-4' /> Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </TableCell>
+        <div>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Phone</TableHead>
+                        <TableHead>Address</TableHead>
+                        <TableHead>Actions</TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table></div>
+                </TableHeader>
+                <TableBody>
+                    {customers.map((customer) => (
+                        <TableRow key={customer.id}>
+                            <TableCell>{customer.name}</TableCell>
+                            <TableCell>{customer.email}</TableCell>
+                            <TableCell>{customer.phone}</TableCell>
+                            <TableCell>{customer.address}</TableCell>
+                            <TableCell>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className='h-8 w-8 p-0'>
+                                            <span className='sr-only'>Open menu</span>
+                                            <MoreHorizontal className='h-4 w-4' />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align='end'>
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuItem >
+                                            <Edit className='mr-2 h-4 w-4' /> <span
+                                                onClick={() => router.push(`customers/${customer.id}`)}>
+                                                Edit
+                                            </span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Trash className='mr-2 h-4 w-4' /> Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     )
 }
 
