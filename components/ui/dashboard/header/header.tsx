@@ -15,7 +15,10 @@ const Header = () => {
         '/inventory': 'Inventory',
     }
 
-    const currentRoute = routeTitles[pathname] || 'Dashboard';
+    let currentRoute = routeTitles[pathname] || 'Dashboard';
+    if (/^\/customers\/\d+$/.test(pathname)) {
+        currentRoute = 'Customer Details';
+    }
     return (
         <div className='flex flex-1 flex-col overflow-hidden'>
             <header className='flex items-center justify-between border-b px-6 py-4'>

@@ -7,25 +7,25 @@ const RecentAppointmentsData = [
         customer: 'Alice Johnson',
         vehicle: 'Toyota Corolla',
         date: '2021-10-12',
-        status: <span className='bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded'>Completed</span>
+        status: 'Completed',
     },
     {
         customer: 'John Miller',
         vehicle: 'Honda Civic',
         date: '2021-10-10',
-        status: <span className='bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded'>In Progress</span>
+        status: 'In Progress',
     },
     {
         customer: 'Jane Doe',
         vehicle: 'Toyota Camry',
         date: '2021-10-08',
-        status: <span className='bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded'>Cancelled</span>
+        status: 'Cancelled'
     },
     {
         customer: 'McKenzie Scott',
         vehicle: 'Ford Wildtrak',
         date: '2021-10-08',
-        status: <span className='bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded'>Scheduled</span>
+        status: 'Scheduled'
     }
 ]
 
@@ -52,7 +52,18 @@ const RecentAppointments = () => {
                                     <TableCell>{appointment.customer}</TableCell>
                                     <TableCell>{appointment.vehicle}</TableCell>
                                     <TableCell>{appointment.date}</TableCell>
-                                    <TableCell>{appointment.status}</TableCell>
+                                    <TableCell>
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs font-medium ${appointment.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                                    appointment.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                                                        appointment.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
+                                                            'bg-red-100 text-red-800'
+                                                }`}
+                                        >
+                                            {appointment.status}
+                                        </span>
+
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
