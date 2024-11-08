@@ -1,13 +1,21 @@
+import React from 'react'
 import { Button } from '@/components/ui/button'
 import NewCustomer from '@/components/ui/dashboard/customer/new-customer';
-import CustomersTable from '@/components/ui/dashboard/table/customers';
+import ContentTable from '@/components/ui/dashboard/table/custom-table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { customerData } from '@/constants/Data';
 import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
-import React from 'react'
 
 const page = () => {
+    const columns = Object.keys(customerData[0])
+        .filter(key => key !== 'id' && key !== 'vehicles')
+        .map((key) => ({
+            header: key.charAt(0).toUpperCase() + key.slice(1),
+            accessor: key
+        }))
+    const data = customerData
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
@@ -43,7 +51,7 @@ const page = () => {
                     <Input placeholder='Search customer' className='pl-8 w-[300px] bg-white' />
                 </div>
             </div>
-            <CustomersTable />
+            <ContentTable columns={columns} data={data} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>

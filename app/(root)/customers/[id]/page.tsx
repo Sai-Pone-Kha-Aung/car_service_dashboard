@@ -1,10 +1,8 @@
 import React from 'react'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomerDetailTable from '@/components/ui/dashboard/table/customer-detail-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Car, Edit, Mail, MapPin, Phone } from 'lucide-react'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import EditCustomerDetail from '@/components/ui/dashboard/customer/edit-customer-info'
 
 const page = () => {

@@ -7,7 +7,7 @@ import { Button } from '../../button'
 import { customerData } from '@/constants/Data'
 import { Edit } from 'lucide-react'
 const EditCustomerDetail = () => {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     const data = customerData[0]
 
     const handleCancel = () => {

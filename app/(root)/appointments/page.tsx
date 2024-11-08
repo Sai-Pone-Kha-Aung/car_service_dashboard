@@ -1,13 +1,22 @@
 import NewAppointmentDialog from '@/components/ui/dashboard/appointment/new-appointment';
 import { Button } from '@/components/ui/button'
-import AppointmentsTable from '@/components/ui/dashboard/table/appointments';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
 import React from 'react'
+import ContentTable from '@/components/ui/dashboard/table/custom-table';
+import { appointments } from '@/constants/Data';
 
 const page = () => {
+    const columns = Object.keys(appointments[0])
+        .filter(key => key !== 'id')
+        .map((key) => ({
+            header: key.charAt(0).toUpperCase() + key.slice(1),
+            accessor: key
+        }))
+    const data = appointments
+
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
@@ -70,7 +79,7 @@ const page = () => {
                     <Input placeholder='Search appointments' className='pl-8 w-[300px] bg-white' />
                 </div>
             </div>
-            <AppointmentsTable />
+            <ContentTable columns={columns} data={data} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>
