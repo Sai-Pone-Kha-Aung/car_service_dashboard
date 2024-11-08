@@ -1,29 +1,3 @@
-type CustomerData = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  vehicles: VehicleData[];
-};
-
-type VehicleData = {
-  id: number;
-  name: string;
-  make: string;
-  model: string;
-  year: number;
-};
-
-type AppointmentData = {
-  id: number;
-  name: string;
-  vehicle: string;
-  service: string;
-  date: string;
-  status: string;
-};
-
 export const customerData: CustomerData[] = [
   {
     id: 1,
@@ -79,6 +53,7 @@ export const vehicleData: VehicleData[] = [
     name: "Toyota Camry",
     make: "Toyota",
     model: "Camry",
+    problems: "Check Engine Light",
     year: 2019,
   },
   {
@@ -86,6 +61,7 @@ export const vehicleData: VehicleData[] = [
     name: "Honda Civic",
     make: "Honda",
     model: "Civic",
+    problems: "Brake Pads",
     year: 2020,
   },
   {
@@ -93,6 +69,7 @@ export const vehicleData: VehicleData[] = [
     name: "Ford Focus",
     make: "Ford",
     model: "Focus",
+    problems: "Transmission",
     year: 2018,
   },
 ];
@@ -145,5 +122,36 @@ export const appointments: AppointmentData[] = [
     service: "Tire Rotation",
     date: "2023-11-05",
     status: "Cancelled",
+  },
+];
+
+export const stockData: Stock[] = [
+  {
+    id: 1,
+    name: "Engine Oil",
+    quantity: 2,
+    reorder: 10,
+    price: 10,
+  },
+  {
+    id: 2,
+    name: "Brake Pads",
+    quantity: 3,
+    reorder: 12,
+    price: 15,
+  },
+  {
+    id: 3,
+    name: "Spark Plugs",
+    quantity: 5,
+    reorder: 20,
+    price: 8,
+  },
+  {
+    id: 4,
+    name: "Air Filter",
+    quantity: 4,
+    reorder: 15,
+    price: 12,
   },
 ];

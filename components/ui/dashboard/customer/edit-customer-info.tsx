@@ -12,7 +12,6 @@ const EditCustomerDetail = () => {
 
     const handleCancel = () => {
         setOpen(false)
-        console.log('Cancel')
     }
 
     return (

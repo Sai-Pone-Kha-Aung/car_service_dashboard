@@ -13,6 +13,7 @@ type VehicleData = {
   make: string;
   model: string;
   year: number;
+  problems?: string;
 };
 
 type AppointmentData = {
@@ -22,4 +23,12 @@ type AppointmentData = {
   service: string;
   date: string;
   status: string;
+};
+
+type Stock = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  reorder: number;
 };

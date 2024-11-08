@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ContentTable from '@/components/ui/dashboard/table/custom-table';
 import LowStock from '@/components/ui/dashboard/table/lowstock';
 import RecentAppointments from '@/components/ui/dashboard/table/recent-appointments';
 import { Calendar, ClipboardList, Package, Truck } from 'lucide-react'

@@ -60,6 +60,8 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
                                                 }`}>
                                                 {(row as AppointmentData)[column.accessor]}
                                             </span>
+                                        ) : column.accessor === 'price' ? (
+                                            `$${(row as Stock)[column.accessor]}`
                                         ) : (
                                             (row as CustomerData)[column.accessor]
                                         )}

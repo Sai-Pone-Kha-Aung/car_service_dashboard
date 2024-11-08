@@ -2,7 +2,6 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import NewCustomer from '@/components/ui/dashboard/customer/new-customer';
 import ContentTable from '@/components/ui/dashboard/table/custom-table';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { customerData } from '@/constants/Data';
@@ -19,15 +18,7 @@ const page = () => {
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button className='font-semibold'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            New Customer
-                        </Button>
-                    </DialogTrigger>
-                    <NewCustomer />
-                </Dialog>
+                <NewCustomer />
             </div>
 
             <div className='flex justify-between items-center mb-4'>
