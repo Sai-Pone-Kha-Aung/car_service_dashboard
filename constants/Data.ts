@@ -112,7 +112,7 @@ export const appointments: AppointmentData[] = [
     name: "Ethan Hunt",
     vehicle: "2017 Chevrolet Malibu",
     service: "Transmission Repair",
-    date: "2023-10-01",
+    date: "2024-11-01",
     status: "In Progress",
   },
   {
@@ -120,8 +120,16 @@ export const appointments: AppointmentData[] = [
     name: "Fred Jones",
     vehicle: "2016 Toyota Camry",
     service: "Tire Rotation",
-    date: "2023-11-05",
+    date: "2024-10-05",
     status: "Cancelled",
+  },
+  {
+    id: 7,
+    name: "Grace Lee",
+    vehicle: "2015 Honda Civic",
+    service: "Brake Inspection",
+    date: "2024-11-10",
+    status: "Scheduled",
   },
 ];
 
@@ -129,9 +137,10 @@ export const stockData: Stock[] = [
   {
     id: 1,
     name: "Engine Oil",
-    quantity: 2,
+    quantity: 6,
     reorder: 10,
     price: 10,
+    serviceId: 1,
   },
   {
     id: 2,
@@ -139,13 +148,15 @@ export const stockData: Stock[] = [
     quantity: 3,
     reorder: 12,
     price: 15,
+    serviceId: 3,
   },
   {
     id: 3,
     name: "Spark Plugs",
-    quantity: 5,
+    quantity: 6,
     reorder: 20,
     price: 8,
+    serviceId: 6,
   },
   {
     id: 4,
@@ -153,5 +164,70 @@ export const stockData: Stock[] = [
     quantity: 4,
     reorder: 15,
     price: 12,
+    serviceId: 7,
+  },
+  {
+    id: 5,
+    name: "Windshield Wiper Blades",
+    quantity: 6,
+    reorder: 25,
+    price: 18,
+    serviceId: 8,
+  },
+  {
+    id: 6,
+    name: "Battery",
+    quantity: 2,
+    reorder: 10,
+    price: 25,
+    serviceId: 9,
+  },
+];
+
+export const servicesData: ServiceData[] = [
+  {
+    id: 1,
+    name: "Oil Change",
+    price: 50,
+  },
+  {
+    id: 2,
+    name: "Tire Rotation",
+    price: 30,
+  },
+  {
+    id: 3,
+    name: "Brake Inspection",
+    price: 40,
+  },
+  {
+    id: 4,
+    name: "Battery Check",
+    price: 20,
+  },
+  {
+    id: 5,
+    name: "Transmission Repair",
+    price: 100,
+  },
+  {
+    id: 6,
+    name: "Tune-Up",
+    price: 60,
+  },
+  {
+    id: 7,
+    name: "Air Filter Change",
+    price: 25,
+  },
+  {
+    id: 8,
+    name: "Windshield Wiper Replacement",
+    price: 30,
+  },
+  {
+    id: 9,
+    name: "Battery Replacement",
+    price: 70,
   },
 ];

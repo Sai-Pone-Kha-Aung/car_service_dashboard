@@ -51,7 +51,7 @@ const AddForm = ({ data, title, btn_label, des }: FormData) => {
                                     {item.status ? (
                                         <>
                                             <Label htmlFor={item.label} className='text-left'>
-                                                {item.label}
+                                                {item.name}
                                             </Label>
                                             <Select>
                                                 <SelectTrigger>
@@ -78,10 +78,10 @@ const AddForm = ({ data, title, btn_label, des }: FormData) => {
                                         </>
                                     ) : (
                                         <>
-                                            <Label htmlFor={item.label} className='text-left'>
+                                            <Label htmlFor={`input-${index}`} className='text-left'>
                                                 {item.label}
                                             </Label>
-                                            <Input id={item.label} className='col-span-3' placeholder={item.placeholder} />
+                                            <Input id={`input-${index}`} className='col-span-3' placeholder={item.placeholder} />
                                         </>
                                     )}
                                 </div>
@@ -93,7 +93,7 @@ const AddForm = ({ data, title, btn_label, des }: FormData) => {
                             Cancel
                         </Button>
                         <Button type='submit' >
-                            Add Customer
+                            Submit
                         </Button>
                     </DialogFooter>
                 </DialogContent >}

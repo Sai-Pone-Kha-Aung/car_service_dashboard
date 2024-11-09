@@ -18,8 +18,11 @@ const EditAppointment = ({ appointmentData }: { appointmentData: AppointmentData
     return (
         <div>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger className='flex justify-between items-center'>
-                    <Edit className='w-4 h-4 mr-2' /> Edit
+                <DialogTrigger asChild>
+                    <Button variant='ghost' className='flex items-center p-0 h-auto'>
+                        <Edit className='h-4 w-4 mr-2' />
+                        Edit
+                    </Button>
                 </DialogTrigger>
                 {open && <DialogContent>
                     <DialogHeader>

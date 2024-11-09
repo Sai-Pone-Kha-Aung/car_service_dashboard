@@ -1,30 +1,13 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../table'
+import { stockData } from '@/constants/Data'
 
-const LowStockData = [
-    {
-        product: 'Engine Oil',
-        stock: 2,
-        reorder: 10
-    },
-    {
-        product: 'Brake Pads',
-        stock: 3,
-        reorder: 12
-    },
-    {
-        product: 'Spark Plugs',
-        stock: 5,
-        reorder: 20
-    },
-    {
-        product: 'Air Filter',
-        stock: 4,
-        reorder: 15
-    }
-]
 const LowStock = () => {
+    const lowStockItems = stockData
+        .filter(item => item.quantity <= item.reorder)
+        .slice(0, 4);
+
     return (
         <div>
             <Card>
@@ -38,14 +21,20 @@ const LowStock = () => {
                                 <TableHead>Product</TableHead>
                                 <TableHead>Stock</TableHead>
                                 <TableHead>Reorder Level</TableHead>
+                                <TableHead>Status</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {LowStockData.map((item, index) => (
+                            {lowStockItems.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{item.product}</TableCell>
-                                    <TableCell>{item.stock}</TableCell>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.quantity}</TableCell>
                                     <TableCell>{item.reorder}</TableCell>
+                                    <TableCell>{item.quantity < 5 ? (
+                                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Low Stock</span>
+                                    ) : (
+                                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">In Stock</span>
+                                    )}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

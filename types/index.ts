@@ -31,4 +31,11 @@ type Stock = {
   price: number;
   quantity: number;
   reorder: number;
+  serviceId: number;
+};
+
+type ServiceData = {
+  id: number;
+  name: string;
+  price: number;
 };

@@ -6,8 +6,7 @@ import { usePathname } from 'next/navigation'
 const Header = () => {
     const pathname = usePathname();
     const routeTitles: { [key: string]: string } = {
-        '/': 'CarService Pro',
-        '/dashboard': 'Dashboard',
+        '/': 'CarService Pro Dashboard',
         '/appointments': 'Appointments',
         '/customers': 'Customers',
         '/vehicles': 'Vehicles',
@@ -25,13 +24,13 @@ const Header = () => {
                 <div className='flex items-center'>
                     <h1 className='text-2xl font-semibold'>{currentRoute}</h1>
                 </div>
-                <div className='flex items-center'>
+                {/* <div className='flex items-center'>
                     <Input
                         placeholder='Search'
                         type='search'
                         className='w-64'
                     />
-                </div>
+                </div> */}
             </header>
         </div>
     )

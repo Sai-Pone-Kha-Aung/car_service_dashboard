@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../table'
+import { appointments } from '@/constants/Data'
 
 const RecentAppointmentsData = [
     {
@@ -30,6 +31,9 @@ const RecentAppointmentsData = [
 ]
 
 const RecentAppointments = () => {
+    const sortedAppointments = appointments
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 4);
     return (
         <div>
             <Card>
@@ -47,17 +51,17 @@ const RecentAppointments = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {RecentAppointmentsData.map((appointment, index) => (
+                            {sortedAppointments.map((appointment, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{appointment.customer}</TableCell>
+                                    <TableCell>{appointment.name}</TableCell>
                                     <TableCell>{appointment.vehicle}</TableCell>
                                     <TableCell>{appointment.date}</TableCell>
                                     <TableCell>
                                         <span
                                             className={`px-2 py-1 rounded-full text-xs font-medium ${appointment.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                                                    appointment.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
-                                                        appointment.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
-                                                            'bg-red-100 text-red-800'
+                                                appointment.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                                                    appointment.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
+                                                        'bg-red-100 text-red-800'
                                                 }`}
                                         >
                                             {appointment.status}

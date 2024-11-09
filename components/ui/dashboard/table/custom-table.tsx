@@ -7,6 +7,8 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Card } from '../../card';
 import { usePathname, useRouter } from 'next/navigation';
 import EditAppointment from '../appointment/edit-appointment';
+import EditServiceForm from '../services/edit-form';
+import EditInventoryForm from '../inventory/edit-form';
 
 interface IColumn {
     header: string,
@@ -27,10 +29,26 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
     const router = useRouter();
     const pathname = usePathname();
     const isAppointmentsPath = pathname === '/appointments';
+    const isServicesPath = pathname === '/services';
+    const isInventoryPath = pathname === '/inventory';
 
     const handleEdit = (id: number) => {
         if (pathname === '/customers') {
             router.push(`/customers/${id}`)
+        }
+    }
+
+    const switchEditForm = (row: T) => {
+        if (isAppointmentsPath) {
+            return <EditAppointment appointmentData={row as AppointmentData} />
+        }
+
+        if (isServicesPath) {
+            return <EditServiceForm serviceData={row as ServiceData} />
+        }
+
+        if (isInventoryPath) {
+            return <EditInventoryForm stockData={row as Stock} />
         }
     }
 
@@ -68,8 +86,24 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
                                     </TableCell>
                                 ))}
                                 <TableCell>
-                                    {isAppointmentsPath ? (
-                                        <EditAppointment appointmentData={row as AppointmentData} />
+                                    {isAppointmentsPath || isServicesPath || isInventoryPath ? (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className='h-8 w-8 p-0'>
+                                                    <span className='sr-only'>Open menu</span>
+                                                    <MoreHorizontal className='h-4 w-4' />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align='end'>
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                                    {switchEditForm(row)}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Trash className='mr-2 h-4 w-4' /> Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     ) : (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -95,7 +129,6 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
                     </TableBody>
                 </Table>
             </Card>
-
         </>
     )
 }
