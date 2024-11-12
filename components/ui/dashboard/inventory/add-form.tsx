@@ -1,9 +1,9 @@
 'use client'
 import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../dialog'
-import { Label } from '../../label'
-import { Input } from '../../input'
-import { Button } from '../../button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
 const AddInventoryForm = () => {
@@ -22,7 +22,7 @@ const AddInventoryForm = () => {
                     <DialogHeader>
                         <DialogTitle>Add A New Product</DialogTitle>
                         <DialogDescription>
-                            Create a new product. Click save when you're done.
+                            Create a new product. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
                     <form>
@@ -38,6 +38,12 @@ const AddInventoryForm = () => {
                                     Quantity
                                 </Label>
                                 <Input id='quantity' placeholder='Enter quantity' className='col-span-3' />
+                            </div>
+                            <div className='grid gap-4'>
+                                <Label htmlFor='reorder' className='text-left'>
+                                    Reorder
+                                </Label>
+                                <Input id='reorder' placeholder='Enter reorder level' className='col-span-3' />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='price' className='text-left'>

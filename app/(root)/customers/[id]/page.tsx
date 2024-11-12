@@ -1,11 +1,19 @@
+'use client'
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomerDetailTable from '@/components/ui/dashboard/table/customer-detail-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Car, Edit, Mail, MapPin, Phone } from 'lucide-react'
+import { Car, Mail, MapPin, Phone } from 'lucide-react'
 import EditCustomerDetail from '@/components/ui/dashboard/customer/edit-customer-info'
+import { customerData } from '@/constants/Data'
+import { useParams } from 'next/navigation'
 
-const page = () => {
+const Page = () => {
+    // const customerID = customerData ? customerData.find(customer => customer.id === params.id) : null;
+
+    const { id } = useParams();
+    const filteredCustomerData = customerData.filter((customer) => customer.id === parseInt(id as string));
+
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className=' flex justify-end mb-6'>
@@ -20,24 +28,26 @@ const page = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className='space-y-4'>
-                            <div>
-                                <h2 className='text-xl font-semibold'>Alice Johnson</h2>
-                                <p className='text-sm text-muted-foreground'>Customer since: Jan 15, 2022</p>
+                        {filteredCustomerData.map((customer) => (
+                            <div className='space-y-4' key={customer.id}>
+                                <div>
+                                    <h2 className='text-xl font-semibold'>{customer.name}</h2>
+                                    <p className='text-sm text-muted-foreground'>Customer since: Jan 15, 2022</p>
+                                </div>
+                                <div className='flex items-center'>
+                                    <Mail className='h-4 w-4 mr-2 text-muted-foreground' />
+                                    <span>{customer.email}</span>
+                                </div>
+                                <div className='flex items-center'>
+                                    <Phone className='h-4 w-4 mr-2 text-muted-foreground' />
+                                    <span>{customer.phone}</span>
+                                </div>
+                                <div className='flex items-center'>
+                                    <MapPin className='h-4 w-4 mr-2 text-muted-foreground' />
+                                    <span>{customer.address}</span>
+                                </div>
                             </div>
-                            <div className='flex items-center'>
-                                <Mail className='h-4 w-4 mr-2 text-muted-foreground' />
-                                <span>alice@example.com</span>
-                            </div>
-                            <div className='flex items-center'>
-                                <Phone className='h-4 w-4 mr-2 text-muted-foreground' />
-                                <span>(555) 123-4567</span>
-                            </div>
-                            <div className='flex items-center'>
-                                <MapPin className='h-4 w-4 mr-2 text-muted-foreground' />
-                                <span>123 Main St, Anytown, USA 12345</span>
-                            </div>
-                        </div>
+                        ))}
                     </CardContent>
                 </Card>
 
@@ -47,18 +57,18 @@ const page = () => {
                             Vehicles
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className='space-y-4'>
-                            <div className='flex items-center'>
-                                <Car className='h-4 w-4 mr-2 text-muted-foreground' />
-                                <span>Toyota Camry (2020)</span>
+                    {filteredCustomerData.map((customer) => (
+                        <CardContent key={customer.id}>
+                            <div className='space-y-4'>
+                                <span className='text-lg font-semibold'>{customer.vehicles.map((vehicle) => (
+                                    <div className='flex items-center p-2' key={vehicle.id}>
+                                        <Car className='h-4 w-4 mr-2 text-muted-foreground' />
+                                        {vehicle.name}
+                                    </div>
+                                ))}</span>
                             </div>
-                            <div className='flex items-center'>
-                                <Car className='h-4 w-4 mr-2 text-muted-foreground' />
-                                <span>Honda Civic (2018)</span>
-                            </div>
-                        </div>
-                    </CardContent>
+                        </CardContent>
+                    ))}
                 </Card>
             </div>
 
@@ -72,11 +82,11 @@ const page = () => {
                             Upcoming Appointments
                         </TabsTrigger>
                     </TabsList>
-                    <CustomerDetailTable />
+                    <CustomerDetailTable data={filteredCustomerData[0]} />
                 </Tabs>
             </div>
         </div>
     )
 }
 
-export default page
+export default Page

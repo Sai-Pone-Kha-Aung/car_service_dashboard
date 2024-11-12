@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { Input } from '../../input'
 import { usePathname } from 'next/navigation'
 
 const Header = () => {

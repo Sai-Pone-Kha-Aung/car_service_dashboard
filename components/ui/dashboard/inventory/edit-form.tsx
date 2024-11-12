@@ -1,9 +1,9 @@
 'use client'
 import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../dialog'
-import { Label } from '../../label'
-import { Input } from '../../input'
-import { Button } from '../../button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Edit } from 'lucide-react'
 const EditInventoryForm = ({ stockData }: { stockData: Stock }) => {
     const [open, setOpen] = useState(false)
@@ -26,7 +26,7 @@ const EditInventoryForm = ({ stockData }: { stockData: Stock }) => {
                     <DialogHeader>
                         <DialogTitle>Edit Inventory Info</DialogTitle>
                         <DialogDescription>
-                            Edit a inventory. Click save when you're done.
+                            Edit a inventory. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
                     <form>
@@ -42,6 +42,12 @@ const EditInventoryForm = ({ stockData }: { stockData: Stock }) => {
                                     Quantity
                                 </Label>
                                 <Input id='quantity' placeholder='Enter quantity' className='col-span-3' defaultValue={stockData.quantity} />
+                            </div>
+                            <div className='grid gap-4'>
+                                <Label htmlFor='reorder' className='text-left'>
+                                    Reorder
+                                </Label>
+                                <Input id='reorder' placeholder='Enter reorder level' className='col-span-3' defaultValue={stockData.reorder} />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='price' className='text-left'>

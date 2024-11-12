@@ -31,9 +31,9 @@ export const customerData: CustomerData[] = [
     vehicles: [
       {
         id: 1,
-        name: "Toyota Camry",
+        name: "Toyota Land Cruiser",
         make: "Toyota",
-        model: "Camry",
+        model: "Land Cruiser",
         year: 2020,
       },
       {

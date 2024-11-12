@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const columns = Object.keys(stockData[0])
-    .filter(key => key !== 'id')
+    .filter(key => key !== 'id' && key !== 'serviceId')
     .map((key) => ({
         header: key.charAt(0).toUpperCase() + key.slice(1),
         accessor: key

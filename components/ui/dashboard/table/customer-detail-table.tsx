@@ -2,8 +2,11 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../card'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '../../table'
 import { TabsContent } from '../../tabs'
+import { appointments } from '@/constants/Data'
 
-const CustomerDetailTable = () => {
+const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
+    const appointmentData = appointments.filter((appointment) => appointment.name === data.name);
+
     return (
         <div>
             <TabsContent value='service-history'>
@@ -18,29 +21,17 @@ const CustomerDetailTable = () => {
                                     <TableHead>Date</TableHead>
                                     <TableHead>Service</TableHead>
                                     <TableHead>Vehicle</TableHead>
-                                    <TableHead>Cost</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableHead>2021-10-12</TableHead>
-                                    <TableHead>Oil Change</TableHead>
-                                    <TableHead>Toyota Corolla</TableHead>
-                                    <TableHead>$50.00</TableHead>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>2021-10-10</TableHead>
-                                    <TableHead>Brake Service</TableHead>
-                                    <TableHead>Honda Civic</TableHead>
-                                    <TableHead>$100.00</TableHead>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>2021-10-08</TableHead>
-                                    <TableHead>General Inspection</TableHead>
-                                    <TableHead>Toyota Camry</TableHead>
-                                    <TableHead>$25.00</TableHead>
-                                </TableRow>
-                            </TableBody>
+                            {appointmentData.map((appointment) => (
+                                <TableBody key={appointment.id}>
+                                    <TableRow>
+                                        <TableHead>{appointment.date}</TableHead>
+                                        <TableHead>{appointment.service}</TableHead>
+                                        <TableHead>{appointment.vehicle}</TableHead>
+                                    </TableRow>
+                                </TableBody>
+                            ))}
                         </Table>
                     </CardContent>
                 </Card>
@@ -55,25 +46,28 @@ const CustomerDetailTable = () => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Date</TableHead>
-                                    <TableHead>Time</TableHead>
                                     <TableHead>Service</TableHead>
                                     <TableHead>Vehicle</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableHead>2023-07-05</TableHead>
-                                    <TableHead>10:00 AM</TableHead>
-                                    <TableHead>Annual Inspection</TableHead>
-                                    <TableHead>Toyota Camry</TableHead>
-                                </TableRow>
-                                <TableRow>
-                                    <TableHead>2021-10-10</TableHead>
-                                    <TableHead>2:00 PM</TableHead>
-                                    <TableHead>Oil Change</TableHead>
-                                    <TableHead>Honda Civic</TableHead>
-                                </TableRow>
-                            </TableBody>
+                            {appointmentData.map((appointment) => (
+                                appointment.status === 'Scheduled' ? (
+                                    <TableBody key={appointment.id}>
+                                        <TableRow>
+                                            <TableHead>{appointment.date}</TableHead>
+                                            <TableHead>{appointment.service}</TableHead>
+                                            <TableHead>{appointment.vehicle}</TableHead>
+                                        </TableRow>
+                                    </TableBody>
+                                ) : (
+                                    <TableBody key={appointment.id}>
+                                        <TableRow>
+                                            <TableHead>No upcoming appointment</TableHead>
+                                        </TableRow>
+                                    </TableBody>
+
+                                )
+                            ))}
                         </Table>
                     </CardContent>
                 </Card>

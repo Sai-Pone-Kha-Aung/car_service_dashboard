@@ -4,31 +4,25 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { customerData } from '@/constants/Data'
-import { Edit } from 'lucide-react'
-const EditCustomerDetail = () => {
+import { Plus } from 'lucide-react'
+
+const AddVehicalForm = () => {
     const [open, setOpen] = useState(false)
-    const data = customerData[0]
-
-    const handleCancel = () => {
-        setOpen(false)
-    }
-
+    const handleCancel = () => setOpen(false)
     return (
         <div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant='outline'>
-                        <Edit className='h-4 w-4 mr-2' />
-                        Edit
+                    <Button className='font-semibold'>
+                        <Plus className='mr-2 h-4 w-4' />
+                        New Vehicle
                     </Button>
                 </DialogTrigger>
-
                 {open && <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Edit Custome Info</DialogTitle>
+                        <DialogTitle>Add New Vehicel</DialogTitle>
                         <DialogDescription>
-                            Edit a customer data. Click save when you&apos;re done.
+                            Create a new vehicle. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
                     <form>
@@ -37,46 +31,47 @@ const EditCustomerDetail = () => {
                                 <Label htmlFor='name' className='text-left'>
                                     Name
                                 </Label>
-                                <Input id='name' placeholder='Enter name' defaultValue={data.name} className='col-span-3' />
+                                <Input id='name' placeholder='Enter name' className='col-span-3' />
                             </div>
                             <div className='grid gap-4'>
-                                <Label htmlFor='email' className='text-left'>
-                                    Email
+                                <Label htmlFor='make' className='text-left'>
+                                    Make
                                 </Label>
-                                <Input id='email' className='col-span-3' placeholder='Enter email' defaultValue={data.email} />
+                                <Input id='make' placeholder='Enter make' className='col-span-3' />
                             </div>
                             <div className='grid gap-4'>
-                                <Label htmlFor='phone' className='text-left'>
-                                    Phone
+                                <Label htmlFor='model' className='text-left'>
+                                    Model
                                 </Label>
-                                <Input id='email' className='col-span-3' placeholder='Enter phone number' defaultValue={data.phone} />
+                                <Input id='model' placeholder='Enter model' className='col-span-3' />
                             </div>
                             <div className='grid gap-4'>
-                                <Label htmlFor='address' className='text-left'>
-                                    Address
+                                <Label htmlFor='problems' className='text-left'>
+                                    Problems
                                 </Label>
-                                <Input id='address' className='col-span-3' placeholder='Enter address' defaultValue={data.address} />
+                                <Input id='problems' className='col-span-3' placeholder='Enter problems' />
                             </div>
-
+                            <div className='grid gap-4'>
+                                <Label htmlFor='year' className='text-left'>
+                                    Year
+                                </Label>
+                                <Input id='year' className='col-span-3' placeholder='Enter year' />
+                            </div>
                         </div>
                     </form>
                     <DialogFooter>
-                        <Button
-                            type='submit'
-                            variant="outline"
-                            onClick={handleCancel}
-                        >
+                        <Button variant='outline' onClick={handleCancel}>
                             Cancel
                         </Button>
                         <Button type='submit' >
-                            Save
+                            Add Vehicel
                         </Button>
-
                     </DialogFooter>
                 </DialogContent >}
             </Dialog>
         </div >
+
     )
 }
 
-export default EditCustomerDetail
+export default AddVehicalForm

@@ -4,6 +4,7 @@ import RecentAppointments from '@/components/ui/dashboard/table/recent-appointme
 import { appointments, servicesData, stockData } from '@/constants/Data';
 import { Calendar, DollarSign, Package, Truck } from 'lucide-react'
 import React from 'react'
+import { Button } from 'react-day-picker';
 
 const calculateAppointmentsData = () => {
   const currentMonth = new Date().getMonth() + 1;
@@ -42,7 +43,7 @@ const calculateLowStockData = () => {
 }
 
 const calculateInProgressAppointments = () => {
-  const inProgressAppointments = appointments.filter(appointment => appointment.status === 'In Progress').length;
+  const inProgressAppointments = appointments.filter(appointment => appointment.status === 'In Progress' && new Date(appointment.date).toDateString() === new Date().toDateString()).length;
   return {
     value: inProgressAppointments,
     description: `${inProgressAppointments} vehicles in service`,

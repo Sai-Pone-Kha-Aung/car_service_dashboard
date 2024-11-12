@@ -1,34 +1,7 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '../../card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../table'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { appointments } from '@/constants/Data'
-
-const RecentAppointmentsData = [
-    {
-        customer: 'Alice Johnson',
-        vehicle: 'Toyota Corolla',
-        date: '2021-10-12',
-        status: 'Completed',
-    },
-    {
-        customer: 'John Miller',
-        vehicle: 'Honda Civic',
-        date: '2021-10-10',
-        status: 'In Progress',
-    },
-    {
-        customer: 'Jane Doe',
-        vehicle: 'Toyota Camry',
-        date: '2021-10-08',
-        status: 'Cancelled'
-    },
-    {
-        customer: 'McKenzie Scott',
-        vehicle: 'Ford Wildtrak',
-        date: '2021-10-08',
-        status: 'Scheduled'
-    }
-]
 
 const RecentAppointments = () => {
     const sortedAppointments = appointments

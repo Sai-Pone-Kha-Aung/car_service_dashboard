@@ -5,7 +5,7 @@ import ContentTable from '@/components/ui/dashboard/table/custom-table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { customerData } from '@/constants/Data';
-import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 const page = () => {
     const columns = Object.keys(customerData[0])

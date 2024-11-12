@@ -1,105 +1,87 @@
 'use client'
 import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../dialog'
-import { Label } from '../../label'
-import { Input } from '../../input'
-import { Button } from '../../button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../../select'
 
-interface Props {
-    placeholder?: string;
-    label?: string;
-    name?: string;
-    email?: string;
-    phone?: string;
-    address?: string;
-    status?: string;
+interface FormField {
+    id: string;
+    label: string;
+    placeholder: string;
+    type?: string;
 }
 
-interface FormData {
-    data: Props[];
-    title: string;
-    btn_label: string;
-    des: string;
+interface AddInventoryFormProps {
+    fields: FormField[];
+    onSubmit: (formData: { [key: string]: any }) => void;
 }
 
-const AddForm = ({ data, title, btn_label, des }: FormData) => {
+const AddForm: React.FC<AddInventoryFormProps> = ({ fields, onSubmit }) => {
     const [open, setOpen] = useState(false)
+    const [formData, setFormData] = useState<{ [key: string]: any }>({})
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        })
+    }
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        onSubmit(formData)
+        setOpen(false)
+    }
+
     const handleCancel = () => setOpen(false)
+
     return (
         <div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button className='font-semibold'>
                         <Plus className='mr-2 h-4 w-4' />
-                        {btn_label}
+                        New Product
                     </Button>
                 </DialogTrigger>
                 {open && <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
+                        <DialogTitle>Add A New Product</DialogTitle>
                         <DialogDescription>
-                            {des}
+                            Create a new product. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className='grid gap-4 py-4'>
-                            {data.map((item, index) => (
-                                <div key={index} className='grid gap-4'>
-
-                                    {item.status ? (
-                                        <>
-                                            <Label htmlFor={item.label} className='text-left'>
-                                                {item.name}
-                                            </Label>
-                                            <Select>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder={`${item.status}`} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        <SelectLabel>Select a status</SelectLabel>
-                                                        <SelectItem value='scheduled'>
-                                                            Scheduled
-                                                        </SelectItem>
-                                                        <SelectItem value='in-progress'>
-                                                            In Progress
-                                                        </SelectItem>
-                                                        <SelectItem value='completed'>
-                                                            Completed
-                                                        </SelectItem>
-                                                        <SelectItem value='cancelled'>
-                                                            Cancelled
-                                                        </SelectItem>
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Label htmlFor={`input-${index}`} className='text-left'>
-                                                {item.label}
-                                            </Label>
-                                            <Input id={`input-${index}`} className='col-span-3' placeholder={item.placeholder} />
-                                        </>
-                                    )}
+                            {fields.map(field => (
+                                <div key={field.id} className='grid gap-4'>
+                                    <Label htmlFor={field.id} className='text-left'>
+                                        {field.label}
+                                    </Label>
+                                    <Input
+                                        id={field.id}
+                                        placeholder={field.placeholder}
+                                        type={field.type || 'text'}
+                                        className='col-span-3'
+                                        onChange={handleChange}
+                                    />
                                 </div>
                             ))}
                         </div>
+                        <DialogFooter>
+                            <Button variant='outline' onClick={handleCancel}>
+                                Cancel
+                            </Button>
+                            <Button type='submit'>
+                                Add Product
+                            </Button>
+                        </DialogFooter>
                     </form>
-                    <DialogFooter>
-                        <Button variant='outline' onClick={handleCancel}>
-                            Cancel
-                        </Button>
-                        <Button type='submit' >
-                            Submit
-                        </Button>
-                    </DialogFooter>
-                </DialogContent >}
+                </DialogContent>}
             </Dialog>
-        </div >
-
+        </div>
     )
 }
 

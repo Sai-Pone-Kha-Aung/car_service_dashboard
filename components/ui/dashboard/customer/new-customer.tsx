@@ -1,9 +1,9 @@
 'use client'
 import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../dialog'
-import { Label } from '../../label'
-import { Input } from '../../input'
-import { Button } from '../../button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
 const NewCustomer = () => {
@@ -22,7 +22,7 @@ const NewCustomer = () => {
                     <DialogHeader>
                         <DialogTitle>Add New Customer</DialogTitle>
                         <DialogDescription>
-                            Create a new customer. Click save when you're done.
+                            Create a new customer. Click save when you&apos;re done.
                         </DialogDescription>
                     </DialogHeader>
                     <form>

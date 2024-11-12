@@ -14,7 +14,7 @@ const Sidebar = () => {
             </div>
             <nav className='mt-8 px-4'>
                 <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-600 rounded-lg font-semibold gap-1"
-                    onClick={() => router.push('/dashboard')}>
+                    onClick={() => router.push('/')}>
                     <Home className="mr-3 h-5 w-5"
                     />
                     Home

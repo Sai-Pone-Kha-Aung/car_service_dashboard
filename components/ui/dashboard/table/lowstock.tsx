@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '../../card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../table'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { stockData } from '@/constants/Data'
 
 const LowStock = () => {

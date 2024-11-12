@@ -4,6 +4,7 @@ import { vehicleData } from '@/constants/Data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import AddVehicalForm from '@/components/ui/dashboard/vehicles/add-form';
 
 const columns = Object.keys(vehicleData[0])
     .filter(key => key !== 'id')
@@ -15,6 +16,9 @@ const columns = Object.keys(vehicleData[0])
 const page = () => {
     return (
         <div className='flex-1 overflow-y-auto p-6 bg-gray-100 h-full'>
+            <div className='flex justify-between items-center mb-8'>
+                <AddVehicalForm />
+            </div>
             <div className='flex justify-between items-center mb-4'>
                 <div className='flex items-center space-x-2'>
                     <Select defaultValue='A-Z' >
