@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-async function getCustomerById(customerID: string) {
+interface Customer {
+  customerID: number;
+  customerName: string;
+  customerPhone: string;
+}
+
+async function getCustomerById(customer: Customer) {
+  const { customerID } = customer;
   const [rows] = await pool.query(
     "SELECT * FROM customer WHERE customerID = ?",
     [customerID]
@@ -39,10 +46,17 @@ async function getAllCustomers() {
 
 export async function GET(request: NextRequest) {
   try {
-    const customerID = request.nextUrl.searchParams.get("id");
+    const getID = request.nextUrl.searchParams.get("id");
+    const customerID = getID ? parseInt(getID) : null;
     console.log("Customer ID:", customerID);
-    if (customerID !== null && customerID.trim() !== "") {
-      return await getCustomerById(customerID);
+
+    if (customerID !== null) {
+      const customer: Customer = {
+        customerID,
+        customerName: "",
+        customerPhone: "",
+      };
+      return await getCustomerById(customer);
     }
 
     if (customerID === "") {
@@ -61,61 +75,23 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// export async function GET(request: NextRequest) {
-//   try {
-//     const customerID = request.nextUrl.searchParams.get("id");
-//     console.log("Customer ID:", customerID);
-
-//     if (customerID) {
-//       if (!customerID) {
-//         return NextResponse.json(
-//           { error: "Please provide customerID" },
-//           { status: 400 }
-//         );
-//       }
-//       const [rows] = await pool.query(
-//         "SELECT * FROM customer WHERE customerID = ?",
-//         [customerID]
-//       );
-
-//       if (rows === undefined) {
-//         return NextResponse.json(
-//           { message: "No customers found" },
-//           { status: 404 }
-//         );
-//       }
-//       return NextResponse.json(rows, { status: 200 });
-//     }
-
-//     if (!customerID) {
-//       const [rows] = await pool.query("SELECT * FROM customer");
-
-//       if (rows === undefined) {
-//         return NextResponse.json(
-//           { message: "No customers found" },
-//           { status: 404 }
-//         );
-//       }
-
-//       return NextResponse.json(rows, { status: 200 });
-//     }
-//   } catch (error) {
-//     return NextResponse.json(
-//       { error: "Internal Server Error" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log("Request body:", body);
 
-    const { customerName, customerPhone } = body[0];
-    console.log("Parsed values:", customerName, customerPhone);
+    const customer: Customer = {
+      customerID: body[0].customerID,
+      customerName: body[0].customerName,
+      customerPhone: body[0].customerPhone,
+    };
+    console.log(
+      "Parsed values:",
+      customer.customerName,
+      customer.customerPhone
+    );
 
-    if (!customerName || !customerPhone) {
+    if (!customer.customerName || !customer.customerPhone) {
       console.log("Missing customerName or customerPhone");
       return NextResponse.json(
         { error: "Please provide customerName and customerPhone" },
@@ -124,10 +100,14 @@ export async function POST(request: NextRequest) {
     }
     await pool.query(
       "INSERT INTO customer (customerName, customerPhone) VALUES (?, ?)",
-      [customerName, customerPhone]
+      [customer.customerName, customer.customerPhone]
     );
 
-    console.log("Inserted values:", customerName, customerPhone);
+    console.log(
+      "Inserted values:",
+      customer.customerName,
+      customer.customerPhone
+    );
 
     return NextResponse.json({ message: "Customer added" }, { status: 201 });
   } catch (error) {
@@ -143,10 +123,15 @@ export async function DELETE(request: NextRequest) {
     const body = await request.json();
     console.log("Request body:", body);
 
-    const { customerID } = body[0];
-    console.log("Parsed values:", customerID);
+    const customer: Customer = {
+      customerID: body[0].customerID,
+      customerName: "",
+      customerPhone: "",
+    };
 
-    if (!customerID) {
+    console.log("Parsed values:", customer.customerID);
+
+    if (!customer.customerID) {
       console.log("Missing customerId");
       return NextResponse.json(
         { error: "Please provide customerId" },
@@ -154,8 +139,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await pool.query("DELETE FROM customer WHERE customerID = ?", [customerID]);
-    console.log("Deleted values:", customerID);
+    await pool.query("DELETE FROM customer WHERE customerID = ?", [
+      customer.customerID,
+    ]);
+    console.log("Deleted values:", customer.customerID);
 
     return NextResponse.json({ message: "Customer deleted" }, { status: 200 });
   } catch (error) {

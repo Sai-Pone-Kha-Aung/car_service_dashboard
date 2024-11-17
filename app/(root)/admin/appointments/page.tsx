@@ -1,33 +1,42 @@
+'use client'
+import React, { useState } from 'react'
 import NewAppointmentDialog from '@/components/ui/dashboard/appointment/new-appointment';
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
-import React from 'react'
-import ContentTable from '@/components/ui/dashboard/table/custom-table';
+import CustomTable from '@/components/ui/dashboard/table/custom-table';
 import { appointments } from '@/constants/Data';
 
 const page = () => {
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const data = appointments
     const columns = Object.keys(appointments[0])
         .filter(key => key !== 'id')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
-        }))
-    const data = appointments
+        }));
+    const handleDialogOpen = () => {
+        setIsDialogOpen(true)
+    }
+
+    const handleDialogClose = () => {
+        setIsDialogOpen(false)
+    }
 
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className='font-semibold'>
                             <Plus className='mr-2 h-4 w-4' />
                             New Appointment
                         </Button>
                     </DialogTrigger>
-                    <NewAppointmentDialog />
+                    <NewAppointmentDialog onClose={handleDialogClose} />
                 </Dialog>
             </div>
 
@@ -79,7 +88,7 @@ const page = () => {
                     <Input placeholder='Search appointments' className='pl-8 w-[300px] bg-white' />
                 </div>
             </div>
-            <ContentTable columns={columns} data={data} />
+            <CustomTable columns={columns} data={data} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>

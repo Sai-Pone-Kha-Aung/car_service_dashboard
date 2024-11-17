@@ -28,6 +28,11 @@ const statusOptions = [
         id: 4,
         value: 'scheduled',
         label: 'Scheduled',
+    },
+    {
+        id: 5,
+        value: 'walk-in',
+        label: 'Walk-In',
     }
 ]
 
@@ -64,10 +69,10 @@ const EditAppointment = ({ appointmentData }: { appointmentData: AppointmentData
                                 <Input id='name' placeholder='Enter name' defaultValue={appointmentData.name} className='col-span-3' />
                             </div>
                             <div className='grid gap-4'>
-                                <Label htmlFor='vehicle' className='text-left'>
-                                    Vehicle
+                                <Label htmlFor='car' className='text-left'>
+                                    Car
                                 </Label>
-                                <Input id='vehicle' className='col-span-3' placeholder='Enter email' defaultValue={appointmentData.vehicle} />
+                                <Input id='car' className='col-span-3' placeholder='Enter email' defaultValue={appointmentData.car} />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='service' className='text-left'>

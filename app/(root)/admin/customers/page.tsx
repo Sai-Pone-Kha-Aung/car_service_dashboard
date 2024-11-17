@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import NewCustomer from '@/components/ui/dashboard/customer/new-customer';
-import ContentTable from '@/components/ui/dashboard/table/custom-table';
+import CustomTable from '@/components/ui/dashboard/table/custom-table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { customerData } from '@/constants/Data';
@@ -9,14 +9,14 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 const page = () => {
     const columns = Object.keys(customerData[0])
-        .filter(key => key !== 'id' && key !== 'vehicles')
+        .filter(key => key !== 'id' && key !== 'cars')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
         }))
     const data = customerData
     return (
-        <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
+        <div className='flex-1 bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
                 <NewCustomer />
             </div>
@@ -42,7 +42,7 @@ const page = () => {
                     <Input placeholder='Search customer' className='pl-8 w-[300px] bg-white' />
                 </div>
             </div>
-            <ContentTable columns={columns} data={data} />
+            <CustomTable columns={columns} data={data} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>

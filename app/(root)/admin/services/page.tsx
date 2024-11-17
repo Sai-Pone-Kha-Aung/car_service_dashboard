@@ -1,5 +1,5 @@
 import React from 'react'
-import ContentTable from '@/components/ui/dashboard/table/custom-table'
+import CustomTable from '@/components/ui/dashboard/table/custom-table'
 import { servicesData } from '@/constants/Data';
 import AddServiceForm from '@/components/ui/dashboard/services/add-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -40,7 +40,7 @@ const page = () => {
                     <Input placeholder='Search service' className='pl-8 w-[300px] bg-white' />
                 </div>
             </div>
-            <ContentTable columns={columns} data={servicesData} />
+            <CustomTable columns={columns} data={servicesData} />
         </div>
     )
 }

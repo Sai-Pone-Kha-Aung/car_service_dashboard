@@ -30,10 +30,10 @@ const NewAppointmentDialog = () => {
                             <Input id='customer' className='col-span-3' placeholder='Enter customer name' />
                         </div>
                         <div className='grid gap-4'>
-                            <Label htmlFor='Vehicle' className='text-left'>
-                                Vehicle
+                            <Label htmlFor='car' className='text-left'>
+                                Car
                             </Label>
-                            <Input id='vehicle' className='col-span-3' placeholder='Enter vehicle' />
+                            <Input id='car' className='col-span-3' placeholder='Enter car' />
                         </div>
                         <div className='grid gap-4'>
                             <Label htmlFor='service' className='text-left'>

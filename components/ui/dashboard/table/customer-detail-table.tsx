@@ -8,7 +8,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
     const appointmentData = appointments.filter((appointment) => appointment.name === data.name);
 
     return (
-        <div>
+        <div className='my-4'>
             <TabsContent value='service-history'>
                 <Card>
                     <CardHeader>
@@ -20,7 +20,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                 <TableRow>
                                     <TableHead>Date</TableHead>
                                     <TableHead>Service</TableHead>
-                                    <TableHead>Vehicle</TableHead>
+                                    <TableHead>Car</TableHead>
                                 </TableRow>
                             </TableHeader>
                             {appointmentData.map((appointment) => (
@@ -28,7 +28,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                     <TableRow>
                                         <TableHead>{appointment.date}</TableHead>
                                         <TableHead>{appointment.service}</TableHead>
-                                        <TableHead>{appointment.vehicle}</TableHead>
+                                        <TableHead>{appointment.car}</TableHead>
                                     </TableRow>
                                 </TableBody>
                             ))}
@@ -47,7 +47,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                 <TableRow>
                                     <TableHead>Date</TableHead>
                                     <TableHead>Service</TableHead>
-                                    <TableHead>Vehicle</TableHead>
+                                    <TableHead>Car</TableHead>
                                 </TableRow>
                             </TableHeader>
                             {appointmentData.map((appointment) => (
@@ -56,7 +56,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                         <TableRow>
                                             <TableHead>{appointment.date}</TableHead>
                                             <TableHead>{appointment.service}</TableHead>
-                                            <TableHead>{appointment.vehicle}</TableHead>
+                                            <TableHead>{appointment.car}</TableHead>
                                         </TableRow>
                                     </TableBody>
                                 ) : (

@@ -9,9 +9,31 @@ import { Button } from '@/components/ui/button'
 import { CalendarPlus } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { servicesData } from '@/constants/Data'
+import SearchModal from '../search/searchModal'
+import { useRouter } from 'next/navigation'
 
-const NewAppointmentDialog = () => {
-    const [date, setDate] = useState<Date>()
+const NewAppointmentDialog = ({ onClose }: { onClose: () => void }) => {
+    const [date, setDate] = useState<Date>();
+    const [customerFound, setCustomerFound] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState('');
+    const router = useRouter();
+
+    const handleSelectCustomer = (customer: CustomerData) => {
+        setCustomerFound(true)
+        setSelectedCustomer(customer.name)
+    }
+
+    const handleDialogClose = () => {
+        setCustomerFound(false)
+        setSelectedCustomer('')
+        onClose()
+    }
+
+    const handleNewCustomer = () => {
+        router.push('/admin/customers')
+        onClose()
+    }
+
     return (
         <div>
             <DialogContent>
@@ -21,19 +43,27 @@ const NewAppointmentDialog = () => {
                         Create a new service appointment. Click save when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
-                <form>
+                {/* Before appointment search the customer first */}
+
+                {!customerFound && <div className='grid gap-4 pt-4'>
+                    <div className='relative'>
+                        <SearchModal onSelectCustomer={handleSelectCustomer} />
+                    </div>
+                </div>}
+                {/* if customer is found, allow to add appointment */}
+                {customerFound && selectedCustomer ? (<form>
                     <div className='grid gap-4 py-4'>
                         <div className='grid gap-4'>
                             <Label htmlFor='customer' className='text-left'>
                                 Customer
                             </Label>
-                            <Input id='customer' className='col-span-3' placeholder='Enter customer name' />
+                            <Input id='customer' className='col-span-3' placeholder='Enter customer name' defaultValue={selectedCustomer} />
                         </div>
                         <div className='grid gap-4'>
-                            <Label htmlFor='Vehicle' className='text-left'>
-                                Vehicle
+                            <Label htmlFor='car' className='text-left'>
+                                Car
                             </Label>
-                            <Input id='vehicle' className='col-span-3' placeholder='Enter vehicle' />
+                            <Input id='car' className='col-span-3' placeholder='Enter car' />
                         </div>
                         <div className='grid gap-4'>
                             <Label htmlFor='service' className='text-left'>
@@ -77,11 +107,16 @@ const NewAppointmentDialog = () => {
                             </Popover>
                         </div>
                     </div>
-                </form>
+                </form>) : (
+                    <div>
+                        <p>Search the customer first</p>
+                    </div>
+                )}
                 <DialogFooter>
-                    <Button type='submit' >
-                        Save appointment
-                    </Button>
+                    {!customerFound ? (<Button onClick={handleNewCustomer}>Add new customer</Button>) : (
+                        <Button onClick={handleDialogClose}>Add new appointment</Button>
+                    )}
+                    <Button onClick={handleDialogClose}>Cancel</Button>
                 </DialogFooter>
             </DialogContent >
         </div >

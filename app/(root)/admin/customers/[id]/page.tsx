@@ -7,6 +7,7 @@ import { Car, Mail, MapPin, Phone } from 'lucide-react'
 import EditCustomerDetail from '@/components/ui/dashboard/customer/edit-customer-info'
 import { customerData } from '@/constants/Data'
 import { useParams } from 'next/navigation'
+import AddCustomerCar from '@/components/ui/dashboard/customer/add-car'
 
 const Page = () => {
     // const customerID = customerData ? customerData.find(customer => customer.id === params.id) : null;
@@ -15,8 +16,8 @@ const Page = () => {
     const filteredCustomerData = customerData.filter((customer) => customer.id === parseInt(id as string));
 
     return (
-        <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
-            <div className=' flex justify-end mb-6'>
+        <div className='flex-1 bg-gray-100 h-full p-6'>
+            <div className='flex justify-end mb-6'>
                 <EditCustomerDetail />
             </div>
 
@@ -51,19 +52,23 @@ const Page = () => {
                     </CardContent>
                 </Card>
 
+                <div className='flex justify-end m-y-6'>
+                    <AddCustomerCar />
+                </div>
+
                 <Card>
                     <CardHeader>
                         <CardTitle className='text-2xl'>
-                            Vehicles
+                            Cars
                         </CardTitle>
                     </CardHeader>
                     {filteredCustomerData.map((customer) => (
                         <CardContent key={customer.id}>
                             <div className='space-y-4'>
-                                <span className='text-lg font-semibold'>{customer.vehicles.map((vehicle) => (
-                                    <div className='flex items-center p-2' key={vehicle.id}>
+                                <span className='text-lg font-semibold'>{customer.cars.map((car) => (
+                                    <div className='flex items-center p-2' key={car.id}>
                                         <Car className='h-4 w-4 mr-2 text-muted-foreground' />
-                                        {vehicle.name}
+                                        {car.name}
                                     </div>
                                 ))}</span>
                             </div>
@@ -75,10 +80,10 @@ const Page = () => {
             <div className='mt-6'>
                 <Tabs defaultValue='service-history'>
                     <TabsList className='bg-slate-200'>
-                        <TabsTrigger value='service-history' className=' text-md'>
+                        <TabsTrigger value='service-history' className='text-md'>
                             Service History
                         </TabsTrigger>
-                        <TabsTrigger value='upcoming-appointments' className=' text-md'>
+                        <TabsTrigger value='upcoming-appointments' className='text-md'>
                             Upcoming Appointments
                         </TabsTrigger>
                     </TabsList>

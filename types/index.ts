@@ -4,10 +4,10 @@ type CustomerData = {
   email: string;
   phone: string;
   address: string;
-  vehicles: VehicleData[];
+  cars: CarData[];
 };
 
-type VehicleData = {
+type CarData = {
   id: number;
   name: string;
   make: string;
@@ -19,7 +19,7 @@ type VehicleData = {
 type AppointmentData = {
   id: number;
   name: string;
-  vehicle: string;
+  car: string;
   service: string;
   date: string;
   status: string;

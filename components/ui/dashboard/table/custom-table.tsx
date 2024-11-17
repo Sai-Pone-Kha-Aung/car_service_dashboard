@@ -3,13 +3,14 @@ import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '../../button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../../dropdown-menu';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { Card } from '../../card';
+import { Edit, MoreHorizontal, Plus, Trash } from 'lucide-react';
+import { Card, CardHeader, CardTitle } from '../../card';
 import { usePathname, useRouter } from 'next/navigation';
 import EditAppointment from '../appointment/edit-appointment';
 import EditServiceForm from '../services/edit-form';
 import EditInventoryForm from '../inventory/edit-form';
-import EditVehicleForm from '../vehicles/edit-form';
+import EditCarForm from '../car/edit-form';
+import NewCustomer from '../customer/new-customer';
 
 interface IColumn {
     header: string,
@@ -21,35 +22,36 @@ interface CustomerData {
     [key: string]: string | number;
 }
 
-interface IContentTable<T> {
+interface ICustomTable<T> {
     columns: IColumn[];
     data: T[];
 }
 
-const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
+const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
     const router = useRouter();
     const pathname = usePathname();
-    const isAppointmentsPath = pathname === '/appointments';
-    const isServicesPath = pathname === '/services';
-    const isInventoryPath = pathname === '/inventory';
-    const isVehiclePath = pathname === '/vehicles';
+    const isAppointmentsPath = pathname === '/admin/appointments';
+    const isServicesPath = pathname === '/admin/services';
+    const isInventoryPath = pathname === '/admin/inventory';
+    const isCarPath = pathname === '/admin/cars';
+    const isHomePath = pathname === '/admin';
 
     const editCustomerById = (id: number) => {
-        if (pathname === '/customers') {
-            router.push(`/customers/${id}`)
+        if (pathname === '/admin/customers') {
+            router.push(`/admin/customers/${id}`)
         }
     }
 
     const switchEditForm = (row: T) => {
         switch (true) {
-            case isAppointmentsPath:
+            case isAppointmentsPath || isHomePath:
                 return <EditAppointment appointmentData={row as AppointmentData} />
             case isServicesPath:
                 return <EditServiceForm serviceData={row as ServiceData} />
             case isInventoryPath:
                 return <EditInventoryForm stockData={row as Stock} />
-            case isVehiclePath:
-                return <EditVehicleForm vehicleData={row as VehicleData} />
+            case isCarPath:
+                return <EditCarForm carData={row as CarData} />
             default:
                 return null;
         }
@@ -69,6 +71,8 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
                             return 'bg-blue-100 text-blue-800';
                         case 'Cancelled':
                             return 'bg-red-100 text-red-800';
+                        case 'Walk-In':
+                            return 'bg-purple-100 text-purple-800';
                         default:
                             return '';
                     }
@@ -88,6 +92,15 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
     return (
         <>
             <Card className='p-2'>
+                {isHomePath && <CardHeader
+                >
+                    <div className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                        <CardTitle>
+                            <h1 className='text-2xl font-bold'>Daily Customer</h1>
+                        </CardTitle>
+                        <NewCustomer />
+                    </div>
+                </CardHeader>}
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -106,7 +119,7 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
                                     </TableCell>
                                 ))}
                                 <TableCell>
-                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isVehiclePath ? (
+                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isHomePath || isCarPath ? (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" className='h-8 w-8 p-0'>
@@ -153,4 +166,4 @@ const ContentTable = <T,>({ columns, data }: IContentTable<T>) => {
     )
 }
 
-export default ContentTable
+export default CustomTable

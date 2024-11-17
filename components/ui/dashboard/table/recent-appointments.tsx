@@ -4,7 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { appointments } from '@/constants/Data'
 
 const RecentAppointments = () => {
-    const sortedAppointments = appointments
+    const filteredAppointments = appointments.filter(appointment => appointment.status !== 'Walk-In');
+
+    const sortedAppointments = filteredAppointments
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 4);
     return (
@@ -18,7 +20,7 @@ const RecentAppointments = () => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Customer</TableHead>
-                                <TableHead>Vehicle</TableHead>
+                                <TableHead>Car</TableHead>
                                 <TableHead>Date</TableHead>
                                 <TableHead>Status</TableHead>
                             </TableRow>
@@ -27,7 +29,7 @@ const RecentAppointments = () => {
                             {sortedAppointments.map((appointment, index) => (
                                 <TableRow key={index}>
                                     <TableCell>{appointment.name}</TableCell>
-                                    <TableCell>{appointment.vehicle}</TableCell>
+                                    <TableCell>{appointment.car}</TableCell>
                                     <TableCell>{appointment.date}</TableCell>
                                     <TableCell>
                                         <span

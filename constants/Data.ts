@@ -5,7 +5,7 @@ export const customerData: CustomerData[] = [
     email: "alice@example.com",
     phone: "(555) 123-4567",
     address: "123 Main St, Anytown, USA 12345",
-    vehicles: [
+    cars: [
       {
         id: 1,
         name: "Toyota Camry",
@@ -28,7 +28,7 @@ export const customerData: CustomerData[] = [
     email: "bob@example.com",
     phone: "(555) 123-4567",
     address: "123 Main St, Anytown, USA 12345",
-    vehicles: [
+    cars: [
       {
         id: 1,
         name: "Toyota Land Cruiser",
@@ -47,7 +47,7 @@ export const customerData: CustomerData[] = [
   },
 ];
 
-export const vehicleData: VehicleData[] = [
+export const carData: CarData[] = [
   {
     id: 1,
     name: "Toyota Camry",
@@ -78,7 +78,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 1,
     name: "Alice Johnson",
-    vehicle: "2019 Toyota Camry",
+    car: "2019 Toyota Camry",
     service: "Oil Change",
     date: "2023-06-15",
     status: "Completed",
@@ -86,7 +86,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 2,
     name: "Bob Smith",
-    vehicle: "2020 Honda Accord",
+    car: "2020 Honda Accord",
     service: "Tire Rotation",
     date: "2023-07-20",
     status: "In Progress",
@@ -94,7 +94,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 3,
     name: "Charlie Brown",
-    vehicle: "2018 Ford Focus",
+    car: "2018 Ford Focus",
     service: "Brake Inspection",
     date: "2023-08-10",
     status: "Scheduled",
@@ -102,7 +102,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 4,
     name: "Diana Prince",
-    vehicle: "2021 Tesla Model 3",
+    car: "2021 Tesla Model 3",
     service: "Battery Check",
     date: "2023-09-05",
     status: "Completed",
@@ -110,7 +110,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 5,
     name: "Ethan Hunt",
-    vehicle: "2017 Chevrolet Malibu",
+    car: "2017 Chevrolet Malibu",
     service: "Transmission Repair",
     date: "2024-11-01",
     status: "In Progress",
@@ -118,7 +118,7 @@ export const appointments: AppointmentData[] = [
   {
     id: 6,
     name: "Fred Jones",
-    vehicle: "2016 Toyota Camry",
+    car: "2016 Toyota Camry",
     service: "Tire Rotation",
     date: "2024-10-05",
     status: "Cancelled",
@@ -126,10 +126,34 @@ export const appointments: AppointmentData[] = [
   {
     id: 7,
     name: "Grace Lee",
-    vehicle: "2015 Honda Civic",
+    car: "2015 Honda Civic",
     service: "Brake Inspection",
     date: "2024-11-10",
     status: "Scheduled",
+  },
+  {
+    id: 8,
+    name: "Henry Walker",
+    car: "2020 Ford Mustang",
+    service: "Oil Change",
+    date: new Date().toISOString().split("T")[0], // Today's date
+    status: "Walk-In",
+  },
+  {
+    id: 9,
+    name: "Isabella Green",
+    car: "2019 Chevrolet Impala",
+    service: "General Inspection",
+    date: new Date().toISOString().split("T")[0], // Today's date
+    status: "Walk-In",
+  },
+  {
+    id: 10,
+    name: "Jack White",
+    car: "2018 Nissan Altima",
+    service: "Battery Replacement",
+    date: new Date().toISOString().split("T")[0], // Today's date
+    status: "Walk-In",
   },
 ];
 
