@@ -1,23 +1,34 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import NewAppointmentDialog from '@/components/ui/dashboard/appointment/new-appointment';
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table';
-import { appointments } from '@/constants/Data';
+import { appointments, statusOptions } from '@/constants/Data';
+import { AddAppointment } from '@/utils/add-form';
+import { isToday, isThisWeek, isThisMonth } from 'date-fns';
+import useSearch from '@/hooks/useSearch';
 
-const page = () => {
+const Page = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [filterStatus, setFilterStatus] = useState('All-statuses')
+    const [filterDate, setFilterDate] = useState('all-dates')
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const itemsPerPage = 10;
     const data = appointments
+    const { searchQuery, setSearchQuery, searchResults } = useSearch(data, 'name');
+
     const columns = Object.keys(appointments[0])
         .filter(key => key !== 'id')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
         }));
+
     const handleDialogOpen = () => {
         setIsDialogOpen(true)
     }
@@ -26,15 +37,65 @@ const page = () => {
         setIsDialogOpen(false)
     }
 
+    const handleStatusChange = (value: string) => {
+        setFilterStatus(value);
+    }
+
+    const handleDateChange = (value: string) => {
+        setFilterDate(value);
+    }
+
+    useEffect(() => {
+        let filteredData = data;
+
+        if (filterStatus !== 'All-statuses') {
+            filteredData = filteredData.filter(item => item.status.toLowerCase() === filterStatus.toLowerCase());
+        }
+
+        if (filterDate) {
+            filteredData = filteredData.filter(item => {
+                const appointmentDate = new Date(item.date);
+                switch (filterDate) {
+                    case 'all-dates':
+                        return true;
+                    case 'today':
+                        return isToday(appointmentDate);
+                    case 'this-week':
+                        return isThisWeek(appointmentDate);
+                    case 'this-month':
+                        return isThisMonth(appointmentDate);
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        setCurrentPage(1);
+    }, [searchQuery, filterStatus, filterDate, data]);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(searchResults.length / itemsPerPage)) {
+            setCurrentPage(currentPage + 1);
+            console.log(currentPage)
+        }
+    }
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
     return (
         <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
             <div className='flex justify-between items-center mb-8'>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className='font-semibold'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            New Appointment
-                        </Button>
+                        <AddAppointment />
                     </DialogTrigger>
                     <NewAppointmentDialog onClose={handleDialogClose} />
                 </Dialog>
@@ -42,34 +103,28 @@ const page = () => {
 
             <div className='flex justify-between items-center mb-4'>
                 <div className='flex items-center space-x-2'>
-                    <Select defaultValue='all' >
+                    <Select defaultValue='All-statuses' onValueChange={handleStatusChange}>
                         <SelectTrigger className='w-[180px] bg-white'>
                             <SelectValue placeholder="Filter by status" />
                             <SelectContent>
-                                <SelectItem value='all'>
+                                <SelectItem value='All-statuses'>
                                     All Statuses
                                 </SelectItem>
-                                <SelectItem value='scheduled'>
-                                    Scheduled
-                                </SelectItem>
-                                <SelectItem value='in-progress'>
-
-                                    In Progress
-                                </SelectItem>
-                                <SelectItem value='completed'>
-
-                                    Completed
-                                </SelectItem>
-                                <SelectItem value='cancelled'>
-                                    Cancelled
-                                </SelectItem>
+                                {statusOptions.map((status) => (
+                                    <SelectItem key={status.id} value={status.value}>
+                                        {status.label}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </SelectTrigger>
                     </Select>
-                    <Select defaultValue='today'>
+                    <Select defaultValue='all-dates' onValueChange={handleDateChange}>
                         <SelectTrigger className='w-[180px] bg-white'>
                             <SelectValue placeholder="Filter by date" />
                             <SelectContent>
+                                <SelectItem value='all-dates'>
+                                    All Dates
+                                </SelectItem>
                                 <SelectItem value='today'>
                                     Today
                                 </SelectItem>
@@ -85,21 +140,21 @@ const page = () => {
                 </div>
                 <div className='relative'>
                     <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-                    <Input placeholder='Search appointments' className='pl-8 w-[300px] bg-white' />
+                    <Input placeholder='Search appointments' className='pl-8 w-[300px] bg-white' onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
             </div>
-            <CustomTable columns={columns} data={data} />
+            <CustomTable columns={columns} data={currentItems} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>
-                    Showing 10 of 50 appointments
+                    Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, searchResults.length)} of {searchResults.length} appointments
                 </div>
                 <div className='flex items-center space-x-2'>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handlePreviousPage}>
                         <ChevronLeft className='h-4 w-4' />
                         Previous
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleNextPage}>
                         Next
                         <ChevronRight className='h-4 w-4' />
                     </Button>
@@ -109,4 +164,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -89,7 +89,7 @@ export const appointments: AppointmentData[] = [
     car: "2020 Honda Accord",
     service: "Tire Rotation",
     date: "2023-07-20",
-    status: "In Progress",
+    status: "In Service",
   },
   {
     id: 3,
@@ -113,7 +113,7 @@ export const appointments: AppointmentData[] = [
     car: "2017 Chevrolet Malibu",
     service: "Transmission Repair",
     date: "2024-11-01",
-    status: "In Progress",
+    status: "In Service",
   },
   {
     id: 6,
@@ -152,6 +152,14 @@ export const appointments: AppointmentData[] = [
     name: "Jack White",
     car: "2018 Nissan Altima",
     service: "Battery Replacement",
+    date: new Date().toISOString().split("T")[0], // Today's date
+    status: "Walk-In",
+  },
+  {
+    id: 11,
+    name: "Karen Davis",
+    car: "2017 Hyundai Sonata",
+    service: "Tire Rotation",
     date: new Date().toISOString().split("T")[0], // Today's date
     status: "Walk-In",
   },
@@ -253,5 +261,66 @@ export const servicesData: ServiceData[] = [
     id: 9,
     name: "Battery Replacement",
     price: 70,
+  },
+];
+
+export const statusOptions: StatusOption[] = [
+  {
+    id: 1,
+    value: "Completed",
+    label: "Completed",
+  },
+  {
+    id: 2,
+    value: "In Service",
+    label: "In Service",
+  },
+  {
+    id: 3,
+    value: "Cancelled",
+    label: "Cancelled",
+  },
+  {
+    id: 4,
+    value: "Scheduled",
+    label: "Scheduled",
+  },
+  {
+    id: 5,
+    value: "Walk-In",
+    label: "Walk-In",
+  },
+];
+
+export const staffData: StaffData[] = [
+  {
+    id: 1,
+    name: "John Doe",
+    role: "Manager",
+    email: "john.doe@example.com",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    role: "Technician",
+    email: "jane.smith@example.com",
+  },
+  {
+    id: 3,
+    name: "Emily Johnson",
+    role: "Receptionist",
+    email: "emily.johnson@example.com",
+  },
+  {
+    id: 4,
+    name: "Michael Brown",
+    role: "Technician",
+    email: "michael.brown@example.com",
+  },
+  {
+    id: 5,
+    name: "Sarah Davis",
+    role: "Accountant",
+    email: "sarah.davis@example.com",
   },
 ];

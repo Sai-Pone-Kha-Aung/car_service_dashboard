@@ -4,51 +4,59 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Select, SelectItem, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select'
 import { Edit } from 'lucide-react'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../../select'
 
-interface IFieldConfig {
-    id: string;
-    label: string;
-    placeholder: string;
-    type: 'text' | 'select';
-    options?: { value: string; label: string }[];
+interface FormField {
+    id: string
+    label: string
+    placeholder?: string
+    defaultValue: string | number
+    type: 'input' | 'select'
+    options?: { id: string | number, name: string }[]
 }
 
-interface EditFormProps<T> {
-    data: T;
-    fields: IFieldConfig[];
-    triggerText?: string;
-    dialogTitle?: string;
-    dialogDescription?: string;
+interface EditFormProps {
+    title: string
+    description: string
+    fields: FormField[]
+    onSave: (data: { [key: string]: string | number }) => void
+    variant?: 'ghost' | 'outline'
+    className?: string
 }
 
-const EditForm = <T,>({
-    data,
-    fields,
-    triggerText = 'Edit',
-    dialogTitle = 'Edit Info',
-    dialogDescription = 'Edit the information. Click save when you\'re done.'
-
-}: EditFormProps<T>) => {
+const EditForm = ({ title, description, fields, onSave, variant, className }: EditFormProps) => {
     const [open, setOpen] = useState(false)
-    const [formData, setFormData] = useState(data)
-    const handleCancel = () => setOpen(false)
+    const [formData, setFormData] = useState<{ [key: string]: string | number }>({})
+
+    const handleChange = (id: string, value: string | number) => {
+        setFormData(prev => ({ ...prev, [id]: value }))
+    }
+
+    const handleSave = () => {
+        onSave(formData)
+        setOpen(false)
+    }
+
+    const handleCancel = () => {
+        setOpen(false)
+    }
+
+    const btnClassName = className || 'flex items-center p-0 h-auto'
     return (
         <div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button className='font-semibold'>
-                        <Edit className='mr-2 h-4 w-4' />
-                        {triggerText}
+                    <Button variant={variant} className={btnClassName}>
+                        <Edit className='h-4 w-4 mr-2' />
+                        Edit
                     </Button>
                 </DialogTrigger>
-                {open && <DialogContent>
+
+                <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{dialogTitle}</DialogTitle>
-                        <DialogDescription>
-                            {dialogDescription}
-                        </DialogDescription>
+                        <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                     <form>
                         <div className='grid gap-4 py-4'>
@@ -57,28 +65,29 @@ const EditForm = <T,>({
                                     <Label htmlFor={field.id} className='text-left'>
                                         {field.label}
                                     </Label>
-                                    {field.type === 'text' ? (
+                                    {field.type === 'input' ? (
+
                                         <Input
                                             id={field.id}
                                             placeholder={field.placeholder}
-                                            // value={(formData as any)[field.id]}
-                                            // onChange={handleChange}
                                             className='col-span-3'
+                                            defaultValue={String(field.defaultValue)}
+                                            onChange={e => handleChange(field.id, e.target.value)}
                                         />
                                     ) : (
-                                        <Select value={(formData as any)[field.id]} >
-                                            <SelectTrigger>
+                                        <Select
+                                            defaultValue={String(field.defaultValue)}
+                                            onValueChange={value => handleChange(field.id, value)}
+                                        >
+                                            <SelectTrigger className='col-span-3'>
                                                 <SelectValue placeholder={field.placeholder} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>{field.label}</SelectLabel>
-                                                    {field.options?.map(option => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
+                                                {field.options?.map(option => (
+                                                    <SelectItem key={option.id} value={option.name}>
+                                                        {option.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     )}
@@ -87,17 +96,20 @@ const EditForm = <T,>({
                         </div>
                     </form>
                     <DialogFooter>
-                        <Button variant='outline' onClick={handleCancel}>
+                        <Button
+                            type='button'
+                            variant="outline"
+                            onClick={handleCancel}
+                        >
                             Cancel
                         </Button>
-                        <Button type='submit' >
-                            Add Customer
+                        <Button type='button' onClick={handleSave}>
+                            Save
                         </Button>
                     </DialogFooter>
-                </DialogContent >}
+                </DialogContent>
             </Dialog>
-        </div >
-
+        </div>
     )
 }
 

@@ -17,7 +17,7 @@ const statusOptions = [
     {
         id: 2,
         value: 'in-progress',
-        label: 'In Progress',
+        label: 'In Service',
     },
     {
         id: 3,

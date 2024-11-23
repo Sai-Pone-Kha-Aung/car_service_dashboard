@@ -11,6 +11,7 @@ const Header = () => {
         '/admin/cars': 'Cars',
         '/admin/services': 'Services',
         '/admin/inventory': 'Inventory',
+        '/admin/staffs': 'Staffs',
     }
 
     let currentRoute = routeTitles[pathname] || 'Dashboard';

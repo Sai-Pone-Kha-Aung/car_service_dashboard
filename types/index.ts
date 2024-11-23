@@ -39,3 +39,35 @@ type ServiceData = {
   name: string;
   price: number;
 };
+
+type StatusOption = {
+  id: number;
+  value: string;
+  label: string;
+};
+
+interface Car {
+  id: number;
+  customer_id: number;
+  name: string;
+  make: string;
+  model: string;
+  year: string;
+  problem: string;
+}
+
+interface Appointment {
+  id: number;
+  customer_id: number;
+  car: string;
+  service: string;
+  date: string;
+  status: string;
+}
+
+interface StaffData {
+  id: number;
+  name: string;
+  role: string;
+  email: string;
+}

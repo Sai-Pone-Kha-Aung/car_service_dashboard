@@ -1,6 +1,5 @@
 'use client'
-import * as React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +8,7 @@ import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from 'lucide-react'
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 
-const page = () => {
+const Page = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -99,4 +98,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -43,7 +43,7 @@ const calculateLowStockData = () => {
 }
 
 const calculateInProgressAppointments = () => {
-  const inProgressAppointments = appointments.filter(appointment => appointment.status === 'In Progress' && new Date(appointment.date).toDateString() === new Date().toDateString()).length;
+  const inProgressAppointments = appointments.filter(appointment => appointment.status === 'In Service' && new Date(appointment.date).toDateString() === new Date().toDateString()).length;
   return {
     value: inProgressAppointments,
     description: `${inProgressAppointments} cars in service`,

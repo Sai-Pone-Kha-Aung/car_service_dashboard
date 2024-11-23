@@ -1,16 +1,13 @@
 'use client'
 import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '../../button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../../dropdown-menu';
-import { Edit, MoreHorizontal, Plus, Trash } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '../../card';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePathname, useRouter } from 'next/navigation';
-import EditAppointment from '../appointment/edit-appointment';
-import EditServiceForm from '../services/edit-form';
-import EditInventoryForm from '../inventory/edit-form';
-import EditCarForm from '../car/edit-form';
-import NewCustomer from '../customer/new-customer';
+import { EditCar, EditInventory, EditService, EditAppointment, EditStaff } from '@/utils/edit-form';
+import { AddCustomer } from '@/utils/add-form';
 
 interface IColumn {
     header: string,
@@ -35,6 +32,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
     const isInventoryPath = pathname === '/admin/inventory';
     const isCarPath = pathname === '/admin/cars';
     const isHomePath = pathname === '/admin';
+    const isStaffPath = pathname === '/admin/staffs';
 
     const editCustomerById = (id: number) => {
         if (pathname === '/admin/customers') {
@@ -47,11 +45,13 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
             case isAppointmentsPath || isHomePath:
                 return <EditAppointment appointmentData={row as AppointmentData} />
             case isServicesPath:
-                return <EditServiceForm serviceData={row as ServiceData} />
+                return <EditService serviceData={row as ServiceData} />
             case isInventoryPath:
-                return <EditInventoryForm stockData={row as Stock} />
+                return <EditInventory stockData={row as Stock} />
             case isCarPath:
-                return <EditCarForm carData={row as CarData} />
+                return <EditCar carData={row as CarData} />
+            case isStaffPath:
+                return <EditStaff staffData={row as StaffData} />
             default:
                 return null;
         }
@@ -65,7 +65,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                     switch (status) {
                         case 'Completed':
                             return 'bg-green-100 text-green-800';
-                        case 'In Progress':
+                        case 'In Service':
                             return 'bg-yellow-100 text-yellow-800';
                         case 'Scheduled':
                             return 'bg-blue-100 text-blue-800';
@@ -98,7 +98,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                         <CardTitle>
                             <h1 className='text-2xl font-bold'>Daily Customer</h1>
                         </CardTitle>
-                        <NewCustomer />
+                        <AddCustomer />
                     </div>
                 </CardHeader>}
                 <Table>
@@ -119,7 +119,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                                     </TableCell>
                                 ))}
                                 <TableCell>
-                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isHomePath || isCarPath ? (
+                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isHomePath || isCarPath || isStaffPath ? (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" className='h-8 w-8 p-0'>

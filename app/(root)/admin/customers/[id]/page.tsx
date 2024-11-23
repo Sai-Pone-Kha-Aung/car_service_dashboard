@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomerDetailTable from '@/components/ui/dashboard/table/customer-detail-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Car, Mail, MapPin, Phone } from 'lucide-react'
-import EditCustomerDetail from '@/components/ui/dashboard/customer/edit-customer-info'
 import { customerData } from '@/constants/Data'
 import { useParams } from 'next/navigation'
-import AddCustomerCar from '@/components/ui/dashboard/customer/add-car'
+import { AddCustomerCar } from '@/utils/add-form'
+import { EditCustomer } from '@/utils/edit-form'
 
 const Page = () => {
     // const customerID = customerData ? customerData.find(customer => customer.id === params.id) : null;
@@ -18,7 +18,7 @@ const Page = () => {
     return (
         <div className='flex-1 bg-gray-100 h-full p-6'>
             <div className='flex justify-end mb-6'>
-                <EditCustomerDetail />
+                <EditCustomer customerData={filteredCustomerData[0]} />
             </div>
 
             <div className='grid gap-6 md:grid-cols-1'>
