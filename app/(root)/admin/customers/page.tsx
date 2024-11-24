@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import CustomTable from '@/components/ui/dashboard/table/custom-table';
 import { Input } from '@/components/ui/input';
@@ -11,13 +11,31 @@ import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
 const Page = () => {
-    const columns = Object.keys(customerData[0])
+    const [data, setData] = useState<CustomerData[]>([]);
+    const [error, setError] = useState<string>('');
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch('/api/customer');
+                if (!res.ok) {
+                    throw new Error(`Error: ${res.status} ${res.statusText}`);
+                }
+                const data = await res.json();
+                console.log("fetchData", data);
+                setData(data);
+            } catch (error) {
+                setError("Failed to fetch");
+            }
+        };
+        fetchData();
+    }, []);
+
+    const columns = data.length > 0 ? Object.keys(customerData[0])
         .filter(key => key !== 'id' && key !== 'cars')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
-        }))
-    const data = customerData
+        })) : []
 
     const { setSearchQuery, searchResults } = useSearch(customerData, 'name')
     const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'name')
