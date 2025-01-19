@@ -6,9 +6,10 @@ export const AddCustomerCar = () => {
         { id: 'name', label: 'Name', placeholder: 'Enter name' },
         { id: 'make', label: 'Make', placeholder: 'Enter make' },
         { id: 'model', label: 'Model', placeholder: 'Enter model' },
+        { id: 'problem', label: 'Problem', placeholder: 'Enter problem' },
         { id: 'year', label: 'Year', placeholder: 'Enter year', type: 'number' }
     ]
-    const handleAddCar = (data: { [key: string]: string }) => {
+    const handleAddCar = (data: { [key: string]: string | File }) => {
         console.log('Car data:', data)
         // Handle the car data submission
     }
@@ -30,9 +31,10 @@ export const AddInventory = () => {
         { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', type: 'number' },
         { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', type: 'number' },
         { id: 'price', label: 'Price', placeholder: 'Enter price', type: 'number' },
+        { id: 'image', label: 'Image', type: 'file' }
     ]
 
-    const handleAddInventory = (data: { [key: string]: string }) => {
+    const handleAddInventory = (data: { [key: string]: string | File }) => {
         console.log('Inventory data:', data)
         // Handle the inventory data submission
     }
@@ -53,7 +55,7 @@ export const AddService = () => {
         { id: 'price', label: 'Price', placeholder: 'Enter price', type: 'number' },
     ]
 
-    const handleAddService = (data: { [key: string]: string }) => {
+    const handleAddService = (data: { [key: string]: string | File }) => {
         console.log('Service data:', data)
         // Handle the service data submission
     }
@@ -77,7 +79,7 @@ export const AddAppointment = () => {
         { id: 'date', label: 'Date', placeholder: 'Enter date', type: 'date' }
     ]
 
-    const handleAddAppointment = (data: { [key: string]: string }) => {
+    const handleAddAppointment = (data: { [key: string]: string | File }) => {
         console.log('Appointment data:', data)
         // Handle the appointment data submission
     }
@@ -101,7 +103,7 @@ export const AddCustomer = () => {
         { id: 'address', label: 'Address', placeholder: 'Enter address' },
     ]
 
-    const handleAddCustomer = (data: { [key: string]: string }) => {
+    const handleAddCustomer = (data: { [key: string]: string | File }) => {
         console.log('Customer data:', data)
         // Handle the customer data submission
     }
@@ -124,7 +126,7 @@ export const AddStaff = () => {
         { id: 'email', label: 'Email', placeholder: 'Enter email' },
     ]
 
-    const handleAddEmployee = (data: { [key: string]: string }) => {
+    const handleAddEmployee = (data: { [key: string]: string | File }) => {
         console.log('Employee data:', data)
         // Handle the employee data submission
     }
@@ -136,6 +138,33 @@ export const AddStaff = () => {
             fields={field}
             onSubmit={handleAddEmployee}
             triggerLabel='New Staff'
+        />
+    )
+}
+
+export const AddOrder = () => {
+    const field = [
+        { id: 'customer', label: 'Customer', placeholder: 'Enter customer name' },
+        { id: 'product', label: 'Product', placeholder: 'Enter product' },
+        { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', type: 'number' },
+        { id: 'price', label: 'Price', placeholder: 'Enter price', type: 'number' },
+        { id: 'total', label: 'Total', placeholder: 'Enter total', type: 'number' },
+        { id: 'date', label: 'Date', placeholder: 'Enter date', type: 'date' },
+        { id: 'status', label: 'Status', placeholder: 'Enter status' },
+    ]
+
+    const handleAddOrder = (data: { [key: string]: string | File }) => {
+        console.log('Order data:', data)
+        // Handle the order data submission
+    }
+
+    return (
+        <AddForm
+            title="Add New Order"
+            description="Create a new order. Click save when you're done."
+            fields={field}
+            onSubmit={handleAddOrder}
+            triggerLabel='New Order'
         />
     )
 }

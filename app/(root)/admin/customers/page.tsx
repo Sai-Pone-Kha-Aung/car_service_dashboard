@@ -30,8 +30,8 @@ const Page = () => {
         fetchData();
     }, []);
 
-    const columns = data.length > 0 ? Object.keys(customerData[0])
-        .filter(key => key !== 'id' && key !== 'cars')
+    const columns = data.length > 0 ? ['avatar', ...Object.keys(customerData[0])
+        .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar')]
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key

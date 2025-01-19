@@ -5,14 +5,15 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectItem, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select'
-import { Edit } from 'lucide-react'
+import { Edit, Upload } from 'lucide-react'
+import Image from 'next/image'
 
 interface FormField {
     id: string
     label: string
     placeholder?: string
     defaultValue: string | number
-    type: 'input' | 'select'
+    type: 'input' | 'select' | 'textarea' | 'file'
     options?: { id: string | number, name: string }[]
 }
 
@@ -20,16 +21,16 @@ interface EditFormProps {
     title: string
     description: string
     fields: FormField[]
-    onSave: (data: { [key: string]: string | number }) => void
+    onSave: (data: { [key: string]: string | number | File }) => void
     variant?: 'ghost' | 'outline'
     className?: string
 }
 
 const EditForm = ({ title, description, fields, onSave, variant, className }: EditFormProps) => {
     const [open, setOpen] = useState(false)
-    const [formData, setFormData] = useState<{ [key: string]: string | number }>({})
+    const [formData, setFormData] = useState<{ [key: string]: string | number | File }>({})
 
-    const handleChange = (id: string, value: string | number) => {
+    const handleChange = (id: string, value: string | number | File) => {
         setFormData(prev => ({ ...prev, [id]: value }))
     }
 
@@ -66,7 +67,6 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                                         {field.label}
                                     </Label>
                                     {field.type === 'input' ? (
-
                                         <Input
                                             id={field.id}
                                             placeholder={field.placeholder}
@@ -74,7 +74,7 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                                             defaultValue={String(field.defaultValue)}
                                             onChange={e => handleChange(field.id, e.target.value)}
                                         />
-                                    ) : (
+                                    ) : field.type === 'select' ? (
                                         <Select
                                             defaultValue={String(field.defaultValue)}
                                             onValueChange={value => handleChange(field.id, value)}
@@ -90,7 +90,24 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                    )}
+                                    ) : field.type === 'file' ? (
+                                        <div className="mb-4">
+                                            <div className="flex flex-col justify-start items-start gap-4">
+                                                <Image
+                                                    src={String(field.defaultValue)}
+                                                    alt="Featured"
+                                                    width={160}
+                                                    height={160}
+                                                    className="object-cover rounded"
+                                                    onClick={() => window.open(String(field.defaultValue), '_blank')}
+                                                />
+                                                <Button type="button" variant="outline">
+                                                    <Upload className="mr-2 h-4 w-4" /> Upload New Image
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                    ) : null}
                                 </div>
                             ))}
                         </div>

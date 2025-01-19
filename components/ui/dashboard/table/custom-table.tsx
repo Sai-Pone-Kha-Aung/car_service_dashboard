@@ -6,8 +6,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePathname, useRouter } from 'next/navigation';
-import { EditCar, EditInventory, EditService, EditAppointment, EditStaff } from '@/utils/edit-form';
+import { EditCar, EditInventory, EditService, EditAppointment, EditStaff, EditOrder } from '@/utils/edit-form';
 import { AddCustomer } from '@/utils/add-form';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface IColumn {
     header: string,
@@ -33,10 +34,16 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
     const isCarPath = pathname === '/admin/cars';
     const isHomePath = pathname === '/admin';
     const isStaffPath = pathname === '/admin/staffs';
+    const isOrderPath = pathname === '/admin/orders';
+    const isBlogPath = pathname === '/admin/blog';
 
-    const editCustomerById = (id: number) => {
+    const editById = (id: number) => {
         if (pathname === '/admin/customers') {
             router.push(`/admin/customers/${id}`)
+        }
+
+        if (pathname === '/admin/blog') {
+            router.push(`/admin/blog/${id}`)
         }
     }
 
@@ -52,6 +59,8 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                 return <EditCar carData={row as CarData} />
             case isStaffPath:
                 return <EditStaff staffData={row as StaffData} />
+            case isOrderPath:
+                return <EditOrder orderData={row as OrderData} />
             default:
                 return null;
         }
@@ -73,6 +82,10 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                             return 'bg-red-100 text-red-800';
                         case 'Walk-In':
                             return 'bg-purple-100 text-purple-800';
+                        case 'Pending':
+                            return 'bg-orange-100 text-yellow-800';
+                        case 'On The Way':
+                            return 'bg-violet-100 text-blue-800';
                         default:
                             return '';
                     }
@@ -84,6 +97,14 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                 );
             case 'price':
                 return `$${(row as Stock)[column.accessor]}`;
+            case 'avatar':
+                const avatarUrl = (row as CustomerData)[column.accessor] as string;
+                return (
+                    <Avatar className='mx-2'>
+                        <AvatarImage src={avatarUrl} alt="Customer Avatar" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                )
             default:
                 return (row as CustomerData)[column.accessor];
         }
@@ -105,7 +126,11 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                     <TableHeader>
                         <TableRow>
                             {columns.map((column, index) => (
-                                <TableHead key={index}>{column.header}</TableHead>
+                                column.accessor === 'avatar' ? (
+                                    <TableHead key={index}></TableHead>
+                                ) : (
+                                    <TableHead key={index}>{column.header}</TableHead>
+                                )
                             ))}
                             <TableHead>Actions</TableHead>
                         </TableRow>
@@ -119,7 +144,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                                     </TableCell>
                                 ))}
                                 <TableCell>
-                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isHomePath || isCarPath || isStaffPath ? (
+                                    {isAppointmentsPath || isServicesPath || isInventoryPath || isHomePath || isCarPath || isStaffPath || isOrderPath ? (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" className='h-8 w-8 p-0'>
@@ -147,7 +172,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align='end'>
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => editCustomerById((row as CustomerData).id)}>
+                                                <DropdownMenuItem onClick={() => editById((row as CustomerData).id)}>
                                                     <Edit className='mr-2 h-4 w-4' /> Edit
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem>

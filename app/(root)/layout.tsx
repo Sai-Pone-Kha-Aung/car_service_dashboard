@@ -7,12 +7,15 @@ import Navbar from '@/components/ui/client/navbar'
 const layout = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname()
     const isAdminPath = pathname.startsWith('/admin')
+    const isSignInPath = pathname.startsWith('/sign-in')
+    const isSignUpPath = pathname.startsWith('/sign-up')
+
     return (
-        <div>
-            {!isAdminPath && <Navbar />}
+        <>
+            {!isAdminPath && !isSignInPath && !isSignUpPath && <Navbar />}
             {children}
-            {!isAdminPath && <Footer />}
-        </div>
+            {!isAdminPath && !isSignInPath && !isSignUpPath && <Footer />}
+        </>
     )
 }
 

@@ -5,7 +5,7 @@ import ProtectedRoute from '@/lib/ProtectedRoute'
 
 const layout = ({ children }: { children: ReactNode }) => {
     return (
-        <ProtectedRoute>
+        <ProtectedRoute adminEmail="admin@carservicepro.com">
             <div className="flex flex-row w-screen h-screen overflow-hidden">
                 <div className='flex-1'>
                     <Sidebar />

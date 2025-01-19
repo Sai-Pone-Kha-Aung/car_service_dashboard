@@ -7,15 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { CalendarPlus, Plus } from 'lucide-react'
+import { CalendarPlus, Plus, Upload } from 'lucide-react'
 import SearchModal from '@/components/ui/dashboard/search/searchModal'
 import { servicesData } from '@/constants/Data'
 import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface FormField {
     id: string;
     label: string;
-    placeholder: string;
+    placeholder?: string;
     type?: string;
 }
 
@@ -36,6 +37,7 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
     const [date, setDate] = useState<Date>();
     const [customerFound, setCustomerFound] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState('');
+    const [uploadImage, setUploadImage] = useState<File | ''>('');
 
     const pathname = usePathname();
     const router = useRouter();
@@ -157,13 +159,30 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                                         <Label htmlFor={field.id} className='text-left'>
                                             {field.label}
                                         </Label>
-                                        <Input
-                                            id={field.id}
-                                            placeholder={field.placeholder}
-                                            className='col-span-3'
-                                            type={field.type || 'text'}
-                                            onChange={handleChange}
-                                        />
+                                        {field.type === 'file' ? (
+                                            <div className="mb-4">
+                                                <div className="flex flex-col justify-start items-start gap-4">
+                                                    <Image
+                                                        src={uploadImage ? URL.createObjectURL(uploadImage) : '/placeholder.jpg'}
+                                                        alt="placeholder"
+                                                        width={160}
+                                                        height={160}
+                                                        className="object-cover rounded"
+                                                    />
+                                                    <Button type="button" variant="outline">
+                                                        <Upload className="mr-2 h-4 w-4" /> Upload New Image
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Input
+                                                id={field.id}
+                                                placeholder={field.placeholder}
+                                                className='col-span-3'
+                                                type={field.type || 'text'}
+                                                onChange={handleChange}
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>

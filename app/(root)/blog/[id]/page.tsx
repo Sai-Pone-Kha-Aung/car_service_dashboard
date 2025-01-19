@@ -1,15 +1,22 @@
 import React from 'react'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
+import Link from 'next/link'
+import { ChevronLeft } from 'lucide-react'
 
 const Page = () => {
     return (
         <article className='container mx-auto px-4 py-16 max-w-4xl'>
+            <div className="mb-8">
+                <Link href="/blog" className="text-blue-600 hover:underline flex items-center">
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Back to Blog
+                </Link>
+            </div>
             <Badge className='mb-4'>Maintenace</Badge>
             <h1 className='text-4xl font-bold mb-6'>The Complete Guid to Electric Vehicle Maintenace</h1>
 
             <Image
-                src="/pic.png"
+                src="/placeholder.jpg"
                 width={1200}
                 height={600}
                 alt="Featured post"

@@ -1,9 +1,11 @@
+'use client'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const posts = [
@@ -51,6 +53,7 @@ const posts = [
     }
 ]
 const Page = () => {
+    const router = useRouter();
     return (
         <div className='min-h-screen bg-white mx-auto'>
             <div className='bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20'>
@@ -86,7 +89,7 @@ const Page = () => {
                         <div className='md:flex'>
                             <div className='md:w-1/2'>
                                 <Image
-                                    src="/pic.png"
+                                    src="/placeholder.jpg"
                                     width={600}
                                     height={400}
                                     alt="Featured post"
@@ -100,7 +103,7 @@ const Page = () => {
                                     Learn everything you need to know about maintaining your electric vehicle, from battery care to optimal charging practices.
                                 </p>
                                 <div className='flex items-center justify-between'>
-                                    <Button>Read More</Button>
+                                    <Button onClick={() => router.push("/blog/1")}>Read More</Button>
                                 </div>
                             </div>
                         </div>
@@ -111,7 +114,7 @@ const Page = () => {
                     {posts.map((post, index) => (
                         <Card key={index} className='flex flex-col'>
                             <Image
-                                src="/pic.png"
+                                src="/placeholder.jpg"
                                 width={400}
                                 height={200}
                                 alt={post.title}
@@ -124,7 +127,7 @@ const Page = () => {
                                     {post.excerpt}
                                 </p>
                                 <div className="flex items-center justify-between mt-auto">
-                                    <Button size="sm">Read More</Button>
+                                    <Button onClick={() => router.push("/blog/1")} size="sm">Read More</Button>
                                 </div>
                             </CardContent>
                         </Card>

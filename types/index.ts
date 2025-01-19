@@ -5,6 +5,9 @@ type CustomerData = {
   phone: string;
   address: string;
   cars: CarData[];
+  orders: OrderData[];
+  avatar: string;
+  password: string;
 };
 
 type CarData = {
@@ -32,6 +35,7 @@ type Stock = {
   quantity: number;
   reorder: number;
   serviceId: number;
+  image: string;
 };
 
 type ServiceData = {
@@ -70,4 +74,24 @@ interface StaffData {
   name: string;
   role: string;
   email: string;
+  avatar: string;
+}
+
+interface OrderData {
+  id: number;
+  product: string;
+  quantity: number;
+  price: number;
+  total: number;
+  date: string;
+  status: string;
+}
+
+interface BlogData {
+  id: number;
+  title: string;
+  category: string;
+  tags: string;
+  content: string;
+  createdAt: string;
 }

@@ -12,12 +12,20 @@ const Header = () => {
         '/admin/services': 'Services',
         '/admin/inventory': 'Inventory',
         '/admin/staffs': 'Staffs',
+        '/admin/orders': 'Orders',
+        '/admin/blog': 'Blog',
+        '/admin/blog/add-blog': 'Add New Blog',
     }
 
     let currentRoute = routeTitles[pathname] || 'Dashboard';
     if (/^\/admin\/customers\/\d+$/.test(pathname)) {
         currentRoute = 'Customer Details';
     }
+
+    if (/^\/admin\/blog\/\d+$/.test(pathname)) {
+        currentRoute = 'Edit New Blog';
+    }
+
 
     return (
         <div className='flex flex-1 flex-col overflow-hidden sticky top-0 z-50 bg-background/80'>

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
@@ -5,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 const Page = () => {
     return (
@@ -55,6 +57,7 @@ const Page = () => {
 export default Page
 
 function renderServiceCards() {
+    const router = useRouter();
     const services = [
         { title: "Oil Change", description: "Regular oil changes to keep your engine running smoothly.", category: "maintenance" },
         { title: "Brake Service", description: "Comprehensive brake inspections and repairs for your safety.", category: "Repair" },
@@ -73,13 +76,15 @@ function renderServiceCards() {
                 <CardTitle>{service.title}</CardTitle>
             </CardHeader>
             <CardContent>
+                <Badge className='mb-2'>{service.category}</Badge>
                 <CardDescription>{service.description}</CardDescription>
-                <CardDescription>$9.9</CardDescription>
+                <p className='font-bold mt-2'>$9.99</p>
             </CardContent>
             <CardFooter className='flex items-center'>
                 <div className='flex flex-col gap-4 justify-center items-start'>
-                    <Badge>{service.category}</Badge>
-                    <Button size="sm">Book Service</Button>
+                    <Button size="sm"
+                        onClick={() => router.push('/appointment')}
+                    >Book Service</Button>
                 </div>
             </CardFooter>
         </Card>

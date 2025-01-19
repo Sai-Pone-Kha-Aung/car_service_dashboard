@@ -15,7 +15,7 @@ export const EditCar = ({ carData }: { carData: CarData }) => {
         { id: 'year', label: 'Year', placeholder: 'Enter year', defaultValue: carData.year || 0, type: 'input' as 'input' },
     ]
 
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
 
@@ -36,9 +36,10 @@ export const EditInventory = ({ stockData }: { stockData: Stock }) => {
         { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', defaultValue: stockData.quantity || 0, type: 'input' as 'input' },
         { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', defaultValue: stockData.reorder || 0, type: 'input' as 'input' },
         { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: stockData.price || 0, type: 'input' as 'input' },
+        { id: 'image', label: 'Image', defaultValue: stockData.image || '', type: 'file' as 'file' }
     ]
 
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
 
@@ -59,7 +60,7 @@ export const EditService = ({ serviceData }: { serviceData: ServiceData }) => {
         { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: serviceData.price || 0, type: 'input' as 'input' },
     ]
 
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
 
@@ -83,7 +84,7 @@ export const EditAppointment = ({ appointmentData }: { appointmentData: Appointm
         { id: 'status', label: 'Status', placeholder: 'Enter status', defaultValue: appointmentData.status || '', type: 'select' as 'select', options: statusOptions },
     ]
 
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
 
@@ -105,7 +106,7 @@ export const EditCustomer = ({ customerData }: { customerData: CustomerData }) =
         { id: 'phone', label: 'Phone', placeholder: 'Enter phone', defaultValue: customerData.phone || '', type: 'input' as 'input' },
         { id: 'address', label: 'Address', placeholder: 'Enter address', defaultValue: customerData.address || '', type: 'input' as 'input' },
     ]
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
     return (
@@ -127,7 +128,7 @@ export const EditStaff = ({ staffData }: { staffData: StaffData }) => {
         { id: 'email', label: 'Email', placeholder: 'Enter email', defaultValue: staffData.email || '', type: 'input' as 'input' },
     ]
 
-    const handleSave = (data: { [key: string]: string | number }) => {
+    const handleSave = (data: { [key: string]: string | number | File }) => {
         console.log('Saved data:', data)
     }
 
@@ -135,6 +136,29 @@ export const EditStaff = ({ staffData }: { staffData: StaffData }) => {
         <EditForm
             title="Edit Staff Info"
             description="Edit a staff. Click save when you're done."
+            fields={fields}
+            onSave={handleSave}
+            variant='ghost'
+        />
+    )
+}
+
+export const EditOrder = ({ orderData }: { orderData: OrderData }) => {
+    const fields = [
+        { id: 'product', label: 'Product', placeholder: 'Enter product', defaultValue: orderData.product || '', type: 'input' as 'input' },
+        { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', defaultValue: orderData.quantity || 0, type: 'input' as 'input' },
+        { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: orderData.price || 0, type: 'input' as 'input' },
+        { id: 'status', label: 'Status', placeholder: 'Enter status', defaultValue: orderData.status || '', type: 'select' as 'select', options: statusOptions },
+    ]
+
+    const handleSave = (data: { [key: string]: string | number | File }) => {
+        console.log('Saved data:', data)
+    }
+
+    return (
+        <EditForm
+            title="Edit Order Info"
+            description="Edit a order. Click save when you're done."
             fields={fields}
             onSave={handleSave}
             variant='ghost'

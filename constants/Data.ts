@@ -5,6 +5,8 @@ export const customerData: CustomerData[] = [
     email: "alice@example.com",
     phone: "(555) 123-4567",
     address: "123 Main St, Anytown, USA 12345",
+    password: "password",
+    avatar: "/pic.png",
     cars: [
       {
         id: 1,
@@ -21,6 +23,26 @@ export const customerData: CustomerData[] = [
         year: 2018,
       },
     ],
+    orders: [
+      {
+        id: 1,
+        product: "Engine Oil",
+        quantity: 6,
+        price: 10,
+        total: 60,
+        date: "2023-06-15",
+        status: "Completed",
+      },
+      {
+        id: 2,
+        product: "Brake Pads",
+        quantity: 3,
+        price: 15,
+        total: 45,
+        date: "2023-06-15",
+        status: "On The Way",
+      },
+    ],
   },
   {
     id: 2,
@@ -28,6 +50,8 @@ export const customerData: CustomerData[] = [
     email: "bob@example.com",
     phone: "(555) 123-4567",
     address: "123 Main St, Anytown, USA 12345",
+    avatar: "/placeholder.jpg",
+    password: "password",
     cars: [
       {
         id: 1,
@@ -42,6 +66,26 @@ export const customerData: CustomerData[] = [
         make: "Honda",
         model: "Civic",
         year: 2018,
+      },
+    ],
+    orders: [
+      {
+        id: 1,
+        product: "Engine Oil",
+        quantity: 6,
+        price: 10,
+        total: 60,
+        date: "2023-06-15",
+        status: "Cancelled",
+      },
+      {
+        id: 2,
+        product: "Brake Pads",
+        quantity: 3,
+        price: 15,
+        total: 45,
+        date: "2023-06-15",
+        status: "Completed",
       },
     ],
   },
@@ -173,6 +217,7 @@ export const stockData: Stock[] = [
     reorder: 10,
     price: 10,
     serviceId: 1,
+    image: "/placeholder.jpg",
   },
   {
     id: 2,
@@ -181,6 +226,7 @@ export const stockData: Stock[] = [
     reorder: 12,
     price: 15,
     serviceId: 3,
+    image: "/pic.png",
   },
   {
     id: 3,
@@ -189,6 +235,7 @@ export const stockData: Stock[] = [
     reorder: 20,
     price: 8,
     serviceId: 6,
+    image: "/placeholder.jpg",
   },
   {
     id: 4,
@@ -197,6 +244,7 @@ export const stockData: Stock[] = [
     reorder: 15,
     price: 12,
     serviceId: 7,
+    image: "/placeholder.jpg",
   },
   {
     id: 5,
@@ -205,6 +253,7 @@ export const stockData: Stock[] = [
     reorder: 25,
     price: 18,
     serviceId: 8,
+    image: "/placeholder.jpg",
   },
   {
     id: 6,
@@ -213,6 +262,7 @@ export const stockData: Stock[] = [
     reorder: 10,
     price: 25,
     serviceId: 9,
+    image: "/placeholder.jpg",
   },
 ];
 
@@ -290,6 +340,11 @@ export const statusOptions: StatusOption[] = [
     value: "Walk-In",
     label: "Walk-In",
   },
+  {
+    id: 6,
+    value: "On The Way",
+    label: "On The Way",
+  },
 ];
 
 export const staffData: StaffData[] = [
@@ -298,29 +353,55 @@ export const staffData: StaffData[] = [
     name: "John Doe",
     role: "Manager",
     email: "john.doe@example.com",
+    avatar: "/placeholder.jpg",
   },
   {
     id: 2,
     name: "Jane Smith",
     role: "Technician",
     email: "jane.smith@example.com",
+    avatar: "/placeholder.jpg",
   },
   {
     id: 3,
     name: "Emily Johnson",
     role: "Receptionist",
     email: "emily.johnson@example.com",
+    avatar: "/placeholder.jpg",
   },
   {
     id: 4,
     name: "Michael Brown",
     role: "Technician",
     email: "michael.brown@example.com",
+    avatar: "/placeholder.jpg",
   },
   {
     id: 5,
     name: "Sarah Davis",
     role: "Accountant",
     email: "sarah.davis@example.com",
+    avatar: "/placeholder.jpg",
+  },
+];
+
+export const blogData: BlogData[] = [
+  {
+    id: 1,
+    title: "The Complete Guid to Electric Vehicle Maintenace",
+    tags: "Maintenance",
+    category: "Electric Vehicles",
+    content:
+      "Electric vehicles (EVs) are becoming increasingly popular due to their environmental benefits and lower operating costs. However, many new EV owners are unsure about the maintenance requirements of their vehicles. This guide will walk you through everything you need to know about keeping your electric vehicle in top condition.",
+    createdAt: "2023-06-15",
+  },
+  {
+    id: 2,
+    title: "How to Choose the Right Tires for Your Vehicle",
+    tags: "Tires",
+    category: "Car Maintenance",
+    content:
+      "Choosing the right tires for your vehicle is essential for safety and performance. With so many options available, it can be overwhelming to find the best tires for your needs. This guide will help you understand the different types of tires and how to choose the right ones for your vehicle.",
+    createdAt: "2023-07-20",
   },
 ];

@@ -3,21 +3,26 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const { isAuthenticated } = useAuth();
+const ProtectedRoute = ({ children, adminEmail }: { children: React.ReactNode, adminEmail: string }) => {
+    const { isAuthenticated, userEmail } = useAuth();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
         const storedAuthState = localStorage.getItem("isAuthenticated");
-        if (storedAuthState === 'true') {
-            setLoading(false);
+        const storedUserEmail = localStorage.getItem("userEmail");
+        if (storedAuthState === 'true' && storedUserEmail) {
+            if (storedUserEmail !== adminEmail) {
+                router.push('/');
+            } else {
+                setLoading(false);
+            }
         } else {
-            router.push('/singin');
+            router.push('/sign-in');
         }
-    }, [isAuthenticated, router]);
+    }, [router, adminEmail]);
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || userEmail !== adminEmail) {
         return null;
     }
 

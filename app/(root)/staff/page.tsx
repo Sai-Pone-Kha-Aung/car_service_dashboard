@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge'
 const page = () => {
     return (
         <div className='min-h-screen bg-white mx-auto'>
-
             <div className='bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20'>
                 <div className='mx-auto text-center'>
                     <h1 className='text-4xl font-bold mb-4'>
@@ -32,7 +31,7 @@ const page = () => {
                 </div>
 
                 <Tabs defaultValue="all" className="w-full mb-12">
-                    <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="all">All Staff</TabsTrigger>
                         <TabsTrigger value="management">Management</TabsTrigger>
                         <TabsTrigger value="technicians">Technicians</TabsTrigger>
@@ -60,7 +59,6 @@ const page = () => {
                     </TabsContent>
                 </Tabs>
 
-                {/* Team Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                     {[
                         { title: "Years of Experience", value: "250+" },
@@ -82,7 +80,6 @@ const page = () => {
     )
 
 }
-
 export default page
 
 function renderStaffCards() {

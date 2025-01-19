@@ -3,11 +3,13 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomerDetailTable from '@/components/ui/dashboard/table/customer-detail-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Car, Mail, MapPin, Phone } from 'lucide-react'
+import { Car, Mail, MapPin, Phone, Upload } from 'lucide-react'
 import { customerData } from '@/constants/Data'
 import { useParams } from 'next/navigation'
 import { AddCustomerCar } from '@/utils/add-form'
 import { EditCustomer } from '@/utils/edit-form'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 const Page = () => {
     // const customerID = customerData ? customerData.find(customer => customer.id === params.id) : null;
@@ -29,6 +31,20 @@ const Page = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
+                        <div className="mb-4">
+                            <div className="flex flex-col justify-start items-start gap-4">
+                                <Image
+                                    src="/placeholder.jpg"
+                                    alt="Featured"
+                                    width={160}
+                                    height={160}
+                                    className="object-cover rounded"
+                                />
+                                <Button type="button" variant="outline">
+                                    <Upload className="mr-2 h-4 w-4" /> Upload New Image
+                                </Button>
+                            </div>
+                        </div>
                         {filteredCustomerData.map((customer) => (
                             <div className='space-y-4' key={customer.id}>
                                 <div>

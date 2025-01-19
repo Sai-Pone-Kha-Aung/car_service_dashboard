@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
@@ -5,8 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 const Page = () => {
+    const router = useRouter();
+
     return (
         <div className='min-h-screen bg-white mx-auto'>
 
@@ -44,19 +49,26 @@ const Page = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {[1, 2, 3, 4, 5, 6].map((product) => (
                                     <Card key={product}>
-                                        <CardHeader>
-                                            <img src={`/placeholder.svg?height=200&width=300`} alt={`Product ${product}`} className="w-full h-48 object-cover rounded-t-lg" />
+                                        <CardHeader className='items-center'>
+                                            <Image src='/placeholder.jpg' alt={`Product ${product}`}
+                                                width={300} height={200}
+                                                className="object-cover rounded-t-lg" />
                                         </CardHeader>
                                         <CardContent>
-                                            <Badge className="mb-2">{category !== 'all' ? category : 'Featured'}</Badge>
+                                            <Badge className="mb-2">{category !== 'all' ? category : 'featured'}</Badge>
                                             <CardTitle className="mb-2">Product {product}</CardTitle>
                                             <CardDescription>
                                                 High-quality {category !== 'all' ? category : 'automotive'} product for optimal vehicle performance.
                                             </CardDescription>
                                             <p className="mt-4 font-bold">$49.99</p>
                                         </CardContent>
-                                        <CardFooter>
-                                            <Button className="w-full">Add to Cart</Button>
+                                        <CardFooter className='gap-4'>
+                                            <Button className="w-full"
+                                                onClick={() => router.push(`/products/${product}`)}
+                                            >View</Button>
+                                            <Button className="w-full"
+                                                onClick={() => alert('Added to cart')}
+                                            >Add to Cart</Button>
                                         </CardFooter>
                                     </Card>
                                 ))}
@@ -64,9 +76,8 @@ const Page = () => {
                         </TabsContent>
                     ))}
                 </Tabs>
-
             </div>
-        </div>
+        </div >
     )
 }
 
