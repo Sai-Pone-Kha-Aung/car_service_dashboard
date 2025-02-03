@@ -10,12 +10,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ShoppingCart, Star, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from "next/image"
+import { useCart } from "@/context/CartContext"
+import { product } from "@/constants/Data"
+import { useParams } from "next/navigation"
 
 export default function SingleProductPage() {
+    const { id } = useParams()
     const [quantity, setQuantity] = React.useState(1)
-
+    const { addToCart } = useCart()
     const incrementQuantity = () => setQuantity(prev => prev + 1)
     const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1))
+    const productData = product.find((product) => product.id === Number(id))
+    if (!productData) {
+        return <div>Product not found</div>
+    }
 
     return (
         <>
@@ -30,36 +38,22 @@ export default function SingleProductPage() {
                     {/* Product Images */}
                     <div className="space-y-4">
                         <Image
-                            src="/placeholder.jpg"
+                            src={productData?.image || "/placeholder.png"}
                             alt="Premium Motor Oil"
                             width={800}
                             height={500}
                             className="w-full rounded-lg shadow-lg"
                         />
-                        <div className="grid grid-cols-4 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <Image
-                                    key={i}
-                                    src={'/placeholder.jpg'}
-                                    alt={`Product thumbnail ${i}`}
-                                    width={200}
-                                    height={200}
-                                    className="w-full rounded-lg shadow cursor-pointer"
-                                />
-                            ))}
-                        </div>
                     </div>
 
                     {/* Product Details */}
                     <div className="space-y-6">
                         <div>
-                            <h1 className="text-3xl font-bold mb-2">Premium Motor Oil</h1>
-                            <p className="text-2xl font-bold text-blue-600">$29.99</p>
+                            <h1 className="text-3xl font-bold mb-2">{productData?.name}</h1>
+                            <p className="text-2xl font-bold text-blue-600">${productData?.price}</p>
                         </div>
                         <p className="text-gray-700">
-                            Our Premium Motor Oil is designed to provide superior engine protection and performance.
-                            Suitable for a wide range of vehicles, this high-quality oil helps improve fuel efficiency
-                            and extends engine life.
+                            {productData?.desc}
                         </p>
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center border rounded-md">
@@ -71,11 +65,11 @@ export default function SingleProductPage() {
                                     <Plus className="h-4 w-4" />
                                 </Button>
                             </div>
-                            <Button className="flex-1">
+                            <Button className="flex-1" onClick={() => addToCart({ ...productData, quantity, id: productData?.id, product_id: productData?.id })}>
                                 <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
                             </Button>
                         </div>
-                        <div className="border-t pt-4">
+                        {/* <div className="border-t pt-4">
                             <h3 className="font-semibold mb-2">Product Specifications:</h3>
                             <ul className="list-disc list-inside space-y-1 text-gray-700">
                                 <li>Viscosity: 5W-30</li>
@@ -83,15 +77,15 @@ export default function SingleProductPage() {
                                 <li>Type: Full Synthetic</li>
                                 <li>Suitable for: Gasoline and Diesel engines</li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
+
 
                 {/* Product Tabs */}
                 <Tabs defaultValue="description" className="mb-12">
                     <TabsList>
                         <TabsTrigger value="description">Description</TabsTrigger>
-                        <TabsTrigger value="specifications">Specifications</TabsTrigger>
                     </TabsList>
                     <TabsContent value="description" className="mt-4">
                         <Card>
@@ -117,7 +111,7 @@ export default function SingleProductPage() {
                             </CardContent>
                         </Card>
                     </TabsContent>
-                    <TabsContent value="specifications" className="mt-4">
+                    {/* <TabsContent value="specifications" className="mt-4">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Product Specifications</CardTitle>
@@ -143,7 +137,7 @@ export default function SingleProductPage() {
                                 </div>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    </TabsContent> */}
 
                 </Tabs>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from "react"
+import React, { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,10 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronLeft, Save, Trash2, Upload } from 'lucide-react'
 import { blogData } from "@/constants/Data"
 import Image from "next/image"
+import ImageUpload from "@/components/share_components/image_upload"
 
 export default function AdminBlogEditPage() {
     const router = useRouter()
-    const [date, setDate] = React.useState<Date>()
+    const [date, setDate] = useState<Date>()
+    const [uploadImage, setUploadImage] = useState({ image: "/placeholder.jpg" })
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
@@ -29,6 +31,13 @@ export default function AdminBlogEditPage() {
         console.log("Blog post deleted")
         router.push("/admin/blog")
     }
+
+    const handleChange = (fieldId: string, value: string) => {
+        if (fieldId === 'featured-image') {
+            setUploadImage({ image: value });
+        }
+    };
+
 
     return (
         <div className="bg-gray-100">
@@ -68,14 +77,21 @@ export default function AdminBlogEditPage() {
                                 <div className="space-y-2">
                                     <Label htmlFor="featured-image">Featured Image</Label>
                                     <div className="flex items-center space-x-4">
+                                        {ImageUpload({
+                                            fieldId: 'featured-image',
+                                            onChange: handleChange,
+                                        })}
                                         <Image
-                                            src="/placeholder.jpg"
+                                            src={uploadImage.image}
                                             alt="Featured"
-                                            width={96}
-                                            height={96}
+                                            width={400}
+                                            height={400}
                                             className="object-cover rounded"
+                                            key={uploadImage.image}
                                         />
-                                        <Button type="button" variant="outline">
+                                        <Button type="button" variant="outline"
+                                            onClick={() => document.getElementById(`file-input-featured-image`)?.click()}
+                                        >
                                             <Upload className="mr-2 h-4 w-4" /> Upload New Image
                                         </Button>
                                     </div>

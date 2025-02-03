@@ -7,11 +7,13 @@ import { Badge } from '../badge'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import { useCart } from '@/context/CartContext'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const { cart } = useCart();
     const router = useRouter();
 
     const { logout, isAuthenticated, userEmail } = useAuth()
@@ -20,6 +22,8 @@ const Navbar = () => {
         logout()
         router.push('/sign-in')
     }
+
+    const totalItems = Array.isArray(cart) ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0
 
     return (
         <header>
@@ -44,7 +48,8 @@ const Navbar = () => {
                             <div className='ml-4 flex items-center md:ml-6 gap-6'>
                                 <Button variant="ghost" size="icon" className='relative' onClick={() => router.push("/cart")}>
                                     <ShoppingCart className='h-5 w-5' />
-                                    <Badge className='absolute -top-2 -right-2' variant="destructive">3</Badge>
+                                    <Badge className='absolute -top-2 -right-2' variant="destructive">{totalItems}</Badge>
+
                                 </Button>
                                 {isLoggedIn ? (
                                     <div className='relative'>

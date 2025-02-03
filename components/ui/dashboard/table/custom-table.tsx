@@ -54,7 +54,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
             case isServicesPath:
                 return <EditService serviceData={row as ServiceData} />
             case isInventoryPath:
-                return <EditInventory stockData={row as Stock} />
+                return <EditInventory product={row as Stock} />
             case isCarPath:
                 return <EditCar carData={row as CarData} />
             case isStaffPath:
@@ -97,6 +97,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                 );
             case 'price':
                 return `$${(row as Stock)[column.accessor]}`;
+
             case 'avatar':
                 const avatarUrl = (row as CustomerData)[column.accessor] as string;
                 return (
@@ -105,6 +106,24 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 )
+
+            case 'paymentStatus':
+                const paymentStatus = (row as PaymentData)[column.accessor];
+                const paymentStatusClass = (() => {
+                    switch (paymentStatus) {
+                        case 'Paid':
+                            return 'bg-green-100 text-green-800';
+                        case 'Pending':
+                            return 'bg-yellow-100 text-yellow-800';
+                        default:
+                            return '';
+                    }
+                })();
+                return (
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${paymentStatusClass}`}>
+                        {paymentStatus}
+                    </span>
+                );
             default:
                 return (row as CustomerData)[column.accessor];
         }

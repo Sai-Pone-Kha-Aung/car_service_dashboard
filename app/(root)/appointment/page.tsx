@@ -120,7 +120,7 @@ export default function AppointmentManager() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <Button className="w-full">Book Appointment</Button>
+                                <Button className="w-full" onClick={() => alert("Booked")}>Book Appointment</Button>
                             </div>
                         </CardContent>
                     </Card>

@@ -1,9 +1,12 @@
+'use client'
 import React from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../card'
 import { Button } from '../button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../tabs'
+import { useRouter } from 'next/navigation'
 
 const ProductSection = () => {
+    const router = useRouter()
     return (
         <section id='products' className='py-16'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -33,8 +36,8 @@ const ProductSection = () => {
                                             <p>High-quality product description goes here.</p>
                                         </CardContent>
                                         <CardFooter>
-                                            <Button>
-                                                Add to Cart
+                                            <Button onClick={() => router.push('/products/1')}>
+                                                View
                                             </Button>
                                         </CardFooter>
                                     </Card>

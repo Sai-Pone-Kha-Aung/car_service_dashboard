@@ -1,10 +1,10 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { stockData } from '@/constants/Data'
+import { product } from '@/constants/Data'
 
 const LowStock = () => {
-    const lowStockItems = stockData
+    const lowStockItems = product
         .filter(item => item.quantity <= item.reorder)
         .slice(0, 4);
 

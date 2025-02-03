@@ -1,72 +1,54 @@
-type CustomerData = {
+interface CustomerData {
   id: number;
   name: string;
   email: string;
   phone: string;
   address: string;
-  cars: CarData[];
+  cars: Car[];
   orders: OrderData[];
   avatar: string;
   password: string;
-};
+  appointments: AppointmentData[];
+  cart: CartItem[];
+  payments: PaymentData[];
+  createdAt: string;
+  updatedAt: string;
+}
 
-type CarData = {
-  id: number;
-  name: string;
-  make: string;
-  model: string;
-  year: number;
-  problems?: string;
-};
-
-type AppointmentData = {
+interface AppointmentData {
   id: number;
   name: string;
   car: string;
-  service: string;
+  service: ServiceData[];
   date: string;
   status: string;
-};
+  mechanics: StaffData[];
+}
 
-type Stock = {
+interface Stock {
   id: number;
   name: string;
   price: number;
   quantity: number;
+  category: string;
   reorder: number;
   serviceId: number;
   image: string;
-};
+  desc: string;
+}
 
-type ServiceData = {
+interface ServiceData {
   id: number;
   name: string;
   price: number;
-};
-
-type StatusOption = {
-  id: number;
-  value: string;
-  label: string;
-};
+}
 
 interface Car {
   id: number;
   customer_id: number;
-  name: string;
   make: string;
   model: string;
-  year: string;
-  problem: string;
-}
-
-interface Appointment {
-  id: number;
-  customer_id: number;
-  car: string;
-  service: string;
-  date: string;
-  status: string;
+  year: number;
 }
 
 interface StaffData {
@@ -92,6 +74,38 @@ interface BlogData {
   title: string;
   category: string;
   tags: string;
+  image: string;
   content: string;
   createdAt: string;
 }
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  product_id: number;
+}
+
+interface PaymentData {
+  paymentID: number;
+  orderID: number;
+  amount: number;
+  paymentStatus: string;
+  paymentDate: string;
+}
+
+type CarData = {
+  id: number;
+  name: string;
+  make: string;
+  model: string;
+  year: number;
+  problems?: string;
+};
+
+type StatusOption = {
+  id: number;
+  value: string;
+  label: string;
+};

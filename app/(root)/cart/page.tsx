@@ -9,27 +9,28 @@ import { Separator } from "@/components/ui/separator"
 import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { useCart } from "@/context/CartContext"
 
 export default function AddToCartPage() {
-    const [cartItems, setCartItems] = React.useState([
-        { id: 1, name: "Premium Motor Oil", price: 29.99, quantity: 2 },
-        { id: 2, name: "Oil Filter", price: 9.99, quantity: 1 },
-        { id: 3, name: "Air Filter", price: 14.99, quantity: 1 },
-    ])
+    // const [cartItems, setCartItems] = React.useState([
+    //     { id: 1, name: "Premium Motor Oil", price: 29.99, quantity: 2 },
+    //     { id: 2, name: "Oil Filter", price: 9.99, quantity: 1 },
+    //     { id: 3, name: "Air Filter", price: 14.99, quantity: 1 },
+    // ])
 
+    const { cart, addToCart, setCart } = useCart();
     const updateQuantity = (id: number, change: number) => {
-        setCartItems(cartItems.map(item =>
+        setCart(cart.map(item =>
             item.id === id ? { ...item, quantity: Math.max(0, item.quantity + change) } : item
         ).filter(item => item.quantity > 0))
     }
 
     const removeItem = (id: number) => {
-        setCartItems(cartItems.filter(item => item.id !== id))
+        setCart(cart.filter(item => item.id !== id))
     }
 
-    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    const tax = subtotal * 0.08 // Assuming 8% tax
-    const total = subtotal + tax
+    const subtotal = Array.isArray(cart) ? cart.reduce((sum, item) => sum + item.price * item.quantity, 0) : 0
+
     const router = useRouter()
 
     return (
@@ -41,7 +42,7 @@ export default function AddToCartPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Cart Items */}
                     <div className="md:col-span-2 space-y-4">
-                        {cartItems.map((item) => (
+                        {Array.isArray(cart) && cart.map((item) => (
                             <Card key={item.id}>
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -106,14 +107,10 @@ export default function AddToCartPage() {
                                     <span>Subtotal</span>
                                     <span>${subtotal.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span>Tax</span>
-                                    <span>${tax.toFixed(2)}</span>
-                                </div>
                                 <Separator />
                                 <div className="flex justify-between font-bold">
                                     <span>Total</span>
-                                    <span>${total.toFixed(2)}</span>
+                                    <span>${subtotal.toFixed(2)}</span>
                                 </div>
                             </CardContent>
                             <CardFooter>

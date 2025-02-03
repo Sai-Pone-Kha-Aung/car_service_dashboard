@@ -1,8 +1,11 @@
+'use client'
 import React from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../card'
 import { Button } from '../button'
+import { useRouter } from 'next/navigation'
 
 const ServiceSection = () => {
+    const router = useRouter()
     return (
         <section className='py-16 bg-gray-50'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -19,7 +22,11 @@ const ServiceSection = () => {
                                 <p>Professional {service.toLowerCase()} servicee to keep ypur car running smoothly.</p>
                             </CardContent>
                             <CardFooter>
-                                <Button>
+                                <Button
+                                    onClick={() => {
+                                        router.push('/appointment')
+                                    }}
+                                >
                                     Book Now
                                 </Button>
                             </CardFooter>

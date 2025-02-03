@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -8,9 +8,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useCart } from '@/context/CartContext'
+import { product } from '@/constants/Data'
 
 const Page = () => {
+    const data = product;
     const router = useRouter();
+    const { addToCart } = useCart();
+    const [activeTab, setActiveTab] = useState('all')
+    const filteredData = activeTab === 'all' ? data : data.filter(item => item.category === activeTab)
 
     return (
         <div className='min-h-screen bg-white mx-auto'>
@@ -36,45 +42,43 @@ const Page = () => {
                     </div>
                 </div>
 
-                <Tabs defaultValue='all' className='w-fulll mb-12'>
+                <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className='w-fulll mb-12'>
                     <TabsList className='grid w-full grid-cols-5'>
                         <TabsTrigger value="all">All Products</TabsTrigger>
-                        <TabsTrigger value="oils">Oils</TabsTrigger>
-                        <TabsTrigger value="filters">Filters</TabsTrigger>
-                        <TabsTrigger value="brakes">Brakes</TabsTrigger>
-                        <TabsTrigger value="accessories">Accessories</TabsTrigger>
+                        <TabsTrigger value="Oil">Oil</TabsTrigger>
+                        <TabsTrigger value="Filters">Filters</TabsTrigger>
+                        <TabsTrigger value="Brakes">Brakes</TabsTrigger>
+                        <TabsTrigger value="Electrical">Electrical</TabsTrigger>
                     </TabsList>
-                    {['all', 'oils', 'filters', 'brakes', 'accessories'].map((category) => (
-                        <TabsContent key={category} value={category}>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[1, 2, 3, 4, 5, 6].map((product) => (
-                                    <Card key={product}>
-                                        <CardHeader className='items-center'>
-                                            <Image src='/placeholder.jpg' alt={`Product ${product}`}
-                                                width={300} height={200}
-                                                className="object-cover rounded-t-lg" />
-                                        </CardHeader>
-                                        <CardContent>
-                                            <Badge className="mb-2">{category !== 'all' ? category : 'featured'}</Badge>
-                                            <CardTitle className="mb-2">Product {product}</CardTitle>
-                                            <CardDescription>
-                                                High-quality {category !== 'all' ? category : 'automotive'} product for optimal vehicle performance.
-                                            </CardDescription>
-                                            <p className="mt-4 font-bold">$49.99</p>
-                                        </CardContent>
-                                        <CardFooter className='gap-4'>
-                                            <Button className="w-full"
-                                                onClick={() => router.push(`/products/${product}`)}
-                                            >View</Button>
-                                            <Button className="w-full"
-                                                onClick={() => alert('Added to cart')}
-                                            >Add to Cart</Button>
-                                        </CardFooter>
-                                    </Card>
-                                ))}
-                            </div>
-                        </TabsContent>
-                    ))}
+                    <TabsContent value={activeTab} >
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {filteredData.map((item) => (
+                                <Card key={item.id}>
+                                    <CardHeader className='items-center'>
+                                        <Image src='/placeholder.jpg' alt={`${item.name}`}
+                                            width={300} height={200}
+                                            className="object-cover rounded-t-lg" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Badge className="mb-2">{item.category !== 'all' ? item.category : 'featured'}</Badge>
+                                        <CardTitle className="mb-2">{item.name}</CardTitle>
+                                        <CardDescription>
+                                            High-quality {item.category !== 'all' ? item.category : 'automotive'} product for optimal vehicle performance.
+                                        </CardDescription>
+                                        <p className="mt-4 font-bold">${item.price}</p>
+                                    </CardContent>
+                                    <CardFooter className='gap-4'>
+                                        <Button className="w-full"
+                                            onClick={() => router.push(`/products/${item.id}`)}
+                                        >View</Button>
+                                        <Button className="w-full"
+                                            onClick={() => addToCart({ id: item.id, name: item.name, price: item.price, quantity: 1, product_id: item.id })}
+                                        >Add to Cart</Button>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    </TabsContent>
                 </Tabs>
             </div>
         </div >

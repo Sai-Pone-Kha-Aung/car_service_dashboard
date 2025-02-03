@@ -9,9 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CalendarPlus, Plus, Upload } from 'lucide-react'
 import SearchModal from '@/components/ui/dashboard/search/searchModal'
-import { servicesData } from '@/constants/Data'
+import { servicesData, staffData } from '@/constants/Data'
 import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
+import ImageUpload from '@/components/share_components/image_upload'
 
 interface FormField {
     id: string;
@@ -104,48 +105,68 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                                         <Label htmlFor={field.id} className='text-left'>
                                             {field.label}
                                         </Label>
-                                        {field.id === 'service' ? (
+                                        {field.id === 'mechanic' ? (
                                             <Select>
                                                 <SelectTrigger className='col-span-3'>
-                                                    <SelectValue placeholder='Select service type' />
+                                                    <SelectValue placeholder='Select mechanic' />
                                                     <SelectContent>
-                                                        {servicesData.map((service) => (
-                                                            <SelectItem key={service.id} value={service.name}>{service.name}</SelectItem>
+                                                        {staffData.map((staff) => (
+                                                            <div key={staff.id}>
+                                                                {
+                                                                    staff.role === 'Technician' && (
+                                                                        <SelectItem key={staff.id} value={staff.name}>{staff.name}</SelectItem>
+                                                                    )
+                                                                }
+                                                            </div>
                                                         ))}
                                                     </SelectContent>
                                                 </SelectTrigger>
                                             </Select>
-                                        ) : field.id === 'date' ? (
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant='outline'
-                                                        className={`col-span-3 justify-start text-left font-normal ${!date && 'text-muted-foreground'}`}
-                                                    >
-                                                        <CalendarPlus className='mr-2 h-4 w-4' />
-                                                        {date ? date.toDateString() : 'Pick a date'}
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className='w-auto p-0'>
-                                                    <Calendar
-                                                        mode='single'
-                                                        selected={date}
-                                                        onSelect={setDate}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                        ) : (
+                                        ) :
 
-                                            <Input
-                                                id={field.id}
-                                                placeholder={field.placeholder}
-                                                className='col-span-3'
-                                                type={field.type || 'text'}
-                                                onChange={handleChange}
-                                                defaultValue={field.id === 'customer' ? selectedCustomer : ''}
-                                            />
-                                        )}
+
+                                            field.id === 'service' ? (
+                                                <Select>
+                                                    <SelectTrigger className='col-span-3'>
+                                                        <SelectValue placeholder='Select service type' />
+                                                        <SelectContent>
+                                                            {servicesData.map((service) => (
+                                                                <SelectItem key={service.id} value={service.name}>{service.name}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </SelectTrigger>
+                                                </Select>
+                                            ) : field.id === 'date' ? (
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant='outline'
+                                                            className={`col-span-3 justify-start text-left font-normal ${!date && 'text-muted-foreground'}`}
+                                                        >
+                                                            <CalendarPlus className='mr-2 h-4 w-4' />
+                                                            {date ? date.toDateString() : 'Pick a date'}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className='w-auto p-0'>
+                                                        <Calendar
+                                                            mode='single'
+                                                            selected={date}
+                                                            onSelect={setDate}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            ) : (
+
+                                                <Input
+                                                    id={field.id}
+                                                    placeholder={field.placeholder}
+                                                    className='col-span-3'
+                                                    type={field.type || 'text'}
+                                                    onChange={handleChange}
+                                                    defaultValue={field.id === 'customer' ? selectedCustomer : ''}
+                                                />
+                                            )}
                                     </div>
                                 ))}
                             </div>
@@ -163,13 +184,16 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                                             <div className="mb-4">
                                                 <div className="flex flex-col justify-start items-start gap-4">
                                                     <Image
-                                                        src={uploadImage ? URL.createObjectURL(uploadImage) : '/placeholder.jpg'}
+                                                        src={String(uploadImage) || '/placeholder.jpg'}
                                                         alt="placeholder"
                                                         width={160}
                                                         height={160}
                                                         className="object-cover rounded"
                                                     />
-                                                    <Button type="button" variant="outline">
+                                                    {ImageUpload({ fieldId: field.id, onChange: (fieldId: string, value: string) => setUploadImage(value as unknown as File) })}
+                                                    <Button type="button" variant="outline"
+                                                        onClick={() => document.getElementById(`file-input-${field.id}`)?.click()}
+                                                    >
                                                         <Upload className="mr-2 h-4 w-4" /> Upload New Image
                                                     </Button>
                                                 </div>
@@ -192,12 +216,12 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                         <Button variant='outline' onClick={handleCancel}>
                             Cancel
                         </Button>
-                        {!customerFound ? (
+                        {!customerFound && isAppointmentsPath ? (
                             <Button type='submit' onClick={handleNewCustomer}>
                                 Add Customer
                             </Button>) : (
                             <Button type='submit' onClick={handleSubmit}>
-                                Add
+                                Save
                             </Button>
                         )}
                     </DialogFooter>

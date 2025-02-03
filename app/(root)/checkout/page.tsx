@@ -8,22 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle } from 'lucide-react'
+import { useCart } from "@/context/CartContext"
 
 export default function CheckoutPage() {
     const [step, setStep] = React.useState(1)
     const [orderComplete, setOrderComplete] = React.useState(false)
 
-    const cartItems = [
-        { id: 1, name: "Premium Motor Oil", price: 29.99, quantity: 2 },
-        { id: 2, name: "Oil Filter", price: 9.99, quantity: 1 },
-        { id: 3, name: "Air Filter", price: 14.99, quantity: 1 },
-    ]
+    const { cart } = useCart()
 
-    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    const tax = subtotal * 0.08
-    const shipping = 5.99
-    const total = subtotal + tax + shipping
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
+    const total = subtotal
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (step < 3) {
@@ -177,7 +172,7 @@ export default function CheckoutPage() {
                                             </div>
                                             <div>
                                                 <h3 className="font-semibold mb-2">Order Items</h3>
-                                                {cartItems.map((item) => (
+                                                {cart.map((item) => (
                                                     <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-b-0">
                                                         <span>{item.name} x {item.quantity}</span>
                                                         <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -200,7 +195,7 @@ export default function CheckoutPage() {
                                     <CardTitle>Order Summary</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {cartItems.map((item) => (
+                                    {cart.map((item) => (
                                         <div key={item.id} className="flex justify-between">
                                             <span>{item.name} x {item.quantity}</span>
                                             <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -210,14 +205,6 @@ export default function CheckoutPage() {
                                     <div className="flex justify-between">
                                         <span>Subtotal</span>
                                         <span>${subtotal.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Tax</span>
-                                        <span>${tax.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Shipping</span>
-                                        <span>${shipping.toFixed(2)}</span>
                                     </div>
                                     <Separator />
                                     <div className="flex justify-between font-bold">

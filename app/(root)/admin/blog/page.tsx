@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 const Page = () => {
     const router = useRouter();
     const columns = Object.keys(blogData[0])
-        .filter(key => key !== 'id' && key !== 'content')
+        .filter(key => key !== 'id' && key !== 'content' && key !== 'image')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key

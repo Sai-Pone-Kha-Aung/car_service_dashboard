@@ -34,10 +34,10 @@ const Sidebar = () => {
                     <Users className="mr-3 h-5 w-5" />
                     Customers
                 </Link>
-                <Link href="/admin/cars" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-600 rounded-lg font-semibold gap-1">
+                {/* <Link href="/admin/cars" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-600 rounded-lg font-semibold gap-1">
                     <Truck className="mr-3 h-5 w-5" />
                     Cars
-                </Link>
+                </Link> */}
                 <Link href="/admin/services" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-600 rounded-lg font-semibold gap-1">
                     <Settings className="mr-3 h-5 w-5" />
                     Services

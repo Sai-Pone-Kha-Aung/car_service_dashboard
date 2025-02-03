@@ -30,13 +30,14 @@ export const EditCar = ({ carData }: { carData: CarData }) => {
     )
 }
 
-export const EditInventory = ({ stockData }: { stockData: Stock }) => {
+export const EditInventory = ({ product }: { product: Stock }) => {
     const fields = [
-        { id: 'name', label: 'Name', placeholder: 'Enter name', defaultValue: stockData.name || '', type: 'input' as 'input' },
-        { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', defaultValue: stockData.quantity || 0, type: 'input' as 'input' },
-        { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', defaultValue: stockData.reorder || 0, type: 'input' as 'input' },
-        { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: stockData.price || 0, type: 'input' as 'input' },
-        { id: 'image', label: 'Image', defaultValue: stockData.image || '', type: 'file' as 'file' }
+        { id: 'name', label: 'Name', placeholder: 'Enter name', defaultValue: product.name || '', type: 'input' as 'input' },
+        { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', defaultValue: product.quantity || 0, type: 'input' as 'input' },
+        { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', defaultValue: product.reorder || 0, type: 'input' as 'input' },
+        { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: product.price || 0, type: 'input' as 'input' },
+        { id: 'description', label: 'Description', placeholder: 'Enter description', defaultValue: product.desc || '', type: 'textarea' as 'textarea' },
+        { id: 'image', label: 'Image', defaultValue: product.image || '', type: 'file' as 'file' }
     ]
 
     const handleSave = (data: { [key: string]: string | number | File }) => {
@@ -79,7 +80,7 @@ export const EditAppointment = ({ appointmentData }: { appointmentData: Appointm
     const fields = [
         { id: 'name', label: 'Name', placeholder: 'Enter name', defaultValue: appointmentData.name || '', type: 'input' as 'input' },
         { id: 'car', label: 'Car', placeholder: 'Enter car', defaultValue: appointmentData.car || '', type: 'input' as 'input' },
-        { id: 'service', label: 'Service', placeholder: 'Enter service', defaultValue: appointmentData.service || '', type: 'select' as 'select', options: servicesData },
+        { id: 'service', label: 'Service', placeholder: 'Enter service', defaultValue: appointmentData.service[0].id || '', type: 'select' as 'select', options: servicesData },
         { id: 'date', label: 'Date', placeholder: 'Enter date', defaultValue: appointmentData.date || '', type: 'input' as 'input' },
         { id: 'status', label: 'Status', placeholder: 'Enter status', defaultValue: appointmentData.status || '', type: 'select' as 'select', options: statusOptions },
     ]
@@ -126,6 +127,7 @@ export const EditStaff = ({ staffData }: { staffData: StaffData }) => {
         { id: 'name', label: 'Name', placeholder: 'Enter name', defaultValue: staffData.name || '', type: 'input' as 'input' },
         { id: 'role', label: 'Role', placeholder: 'Enter role', defaultValue: staffData.role || '', type: 'input' as 'input' },
         { id: 'email', label: 'Email', placeholder: 'Enter email', defaultValue: staffData.email || '', type: 'input' as 'input' },
+        { id: 'avatar', label: 'Image', defaultValue: staffData.avatar || '', type: 'file' as 'file' },
     ]
 
     const handleSave = (data: { [key: string]: string | number | File }) => {

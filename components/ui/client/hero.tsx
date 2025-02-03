@@ -1,7 +1,10 @@
+'use client'
 import React from 'react'
 import { Button } from '../button'
+import { useRouter } from 'next/navigation'
 
 const HeroSection = () => {
+    const router = useRouter()
     return (
         <section className='bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -13,7 +16,10 @@ const HeroSection = () => {
                         Experience top-notch car care with our expert technicians and state-of-the-art facilities.
                     </p>
                     <div className='flex justify-center mt-10'>
-                        <Button className='mr-4' size="lg">
+                        <Button className='mr-4' size="lg"
+                            onClick={() => {
+                                router.push('/appointment')
+                            }}>
                             Book Now
                         </Button>
                         <Button size="lg" variant="outline" className='text-black'>

@@ -143,7 +143,11 @@ const Page = () => {
                     <Input placeholder='Search appointments' className='pl-8 w-[300px] bg-white' onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
             </div>
-            <CustomTable columns={columns} data={currentItems} />
+            <CustomTable columns={columns} data={currentItems.map(item => ({
+                ...item,
+                service: item.service.map(service => service.name).join(', '),
+                mechanics: item.mechanics.map(mechanic => mechanic.name).join(', ')
+            }))} />
 
             <div className='flex justify-between items-center space-x-2 py-4'>
                 <div className='flex-1 text-sm text-muted-foreground'>

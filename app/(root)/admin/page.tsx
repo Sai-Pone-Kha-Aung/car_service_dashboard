@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomTable from '@/components/ui/dashboard/table/custom-table';
 import LowStock from '@/components/ui/dashboard/table/lowstock';
 import RecentAppointments from '@/components/ui/dashboard/table/recent-appointments';
-import { appointments, servicesData, stockData } from '@/constants/Data';
+import { appointments, servicesData, product } from '@/constants/Data';
 import { Calendar, DollarSign, Package, Truck } from 'lucide-react'
 import React from 'react'
 
@@ -35,7 +35,7 @@ const calculateAppointmentsData = () => {
 }
 
 const calculateLowStockData = () => {
-  const lowStockItems = stockData.filter(item => item.quantity <= item.reorder).length;
+  const lowStockItems = product.filter(item => item.quantity <= item.reorder).length;
   return {
     value: `${lowStockItems}`,
     description: 'Reorder needed',
@@ -54,8 +54,8 @@ const calculateTotalRevenue = () => {
   let totalRevenue = 0;
   appointments.forEach(appointment => {
     if (appointment.status !== 'Completed') return;
-    const service = servicesData.find(service => service.name === appointment.service);
-    const stock = stockData.find(stock => stock.serviceId === service?.id);
+    const service = servicesData.find(service => service.id === appointment.service[0].id);
+    const stock = product.find(stock => stock.serviceId === service?.id);
     if (service && stock) {
       totalRevenue += service.price + stock.price;
     }
@@ -80,7 +80,7 @@ const page = () => {
   const status = 'Walk-In';
   const data = appointments.filter(appointment => status.includes(appointment.status));
   const columns = Object.keys(appointments[0])
-    .filter(key => key !== 'id')
+    .filter(key => key !== 'id' && key !== 'mechanics')
     .map((key) => ({
       header: key.charAt(0).toUpperCase() + key.slice(1),
       accessor: key
@@ -112,6 +112,7 @@ const page = () => {
       description: lowStockData.description,
     },
   ];
+
   return (
     <div className='flex-1 overflow-y-auto bg-gray-100 h-full p-6'>
       <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
@@ -139,7 +140,10 @@ const page = () => {
         <LowStock />
       </div>
       <div className='mt-6'>
-        <CustomTable columns={columns} data={data} />
+        <CustomTable columns={columns} data={data.map(item => ({
+          ...item,
+          service: item.service.map(service => service.name).join(', '),
+        }))} />
       </div>
     </div>
   )

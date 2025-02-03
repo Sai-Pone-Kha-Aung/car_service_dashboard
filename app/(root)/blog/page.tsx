@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { blogData } from '@/constants/Data'
 import { Search } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -53,6 +54,7 @@ const posts = [
     }
 ]
 const Page = () => {
+    const data = blogData;
     const router = useRouter();
     return (
         <div className='min-h-screen bg-white mx-auto'>
@@ -98,7 +100,7 @@ const Page = () => {
                             </div>
                             <div className='md:w-1/2 p-8'>
                                 <Badge className='mb-2'>Featured</Badge>
-                                <h2>The Complete Guid to Electric Vehicle Maintenance</h2>
+                                <h2>{data[0].title}</h2>
                                 <p className="text-gray-600 mb-4">
                                     Learn everything you need to know about maintaining your electric vehicle, from battery care to optimal charging practices.
                                 </p>
@@ -111,7 +113,7 @@ const Page = () => {
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-                    {posts.map((post, index) => (
+                    {data.map((post, index) => (
                         <Card key={index} className='flex flex-col'>
                             <Image
                                 src="/placeholder.jpg"
@@ -124,7 +126,7 @@ const Page = () => {
                                 <Badge className='mb-2'>{post.category}</Badge>
                                 <h3 className='text-xl font-bold mb-2'>{post.title}</h3>
                                 <p className='text-gray-600 mb-4'>
-                                    {post.excerpt}
+
                                 </p>
                                 <div className="flex items-center justify-between mt-auto">
                                     <Button onClick={() => router.push("/blog/1")} size="sm">Read More</Button>

@@ -11,27 +11,28 @@ import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
 const Page = () => {
-    const [data, setData] = useState<CustomerData[]>([]);
-    const [error, setError] = useState<string>('');
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch('/api/customer');
-                if (!res.ok) {
-                    throw new Error(`Error: ${res.status} ${res.statusText}`);
-                }
-                const data = await res.json();
-                console.log("fetchData", data);
-                setData(data);
-            } catch (error) {
-                setError("Failed to fetch");
-            }
-        };
-        fetchData();
-    }, []);
+    const data = customerData;
+    // const [data, setData] = useState<CustomerData[]>([]);
+    // const [error, setError] = useState<string>('');
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const res = await fetch('/api/customer');
+    //             if (!res.ok) {
+    //                 throw new Error(`Error: ${res.status} ${res.statusText}`);
+    //             }
+    //             const data = await res.json();
+    //             console.log("fetchData", data);
+    //             setData(data);
+    //         } catch (error) {
+    //             setError("Failed to fetch");
+    //         }
+    //     };
+    //     fetchData();
+    // }, []);
 
     const columns = data.length > 0 ? ['avatar', ...Object.keys(customerData[0])
-        .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar')]
+        .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar' && key !== 'appointments' && key !== 'cart' && key !== 'updatedAt' && key !== 'payments')]
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key

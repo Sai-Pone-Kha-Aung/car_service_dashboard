@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table'
-import { customerData, stockData } from '@/constants/Data';
+import { customerData } from '@/constants/Data';
 import { AddInventory, AddOrder } from '@/utils/add-form';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -10,11 +10,15 @@ import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
 const page = () => {
+    const orderKeys = Object.keys(customerData[0].orders[0] || {});
+    const paymentKeys = Object.keys(customerData[0].payments[0] || {});
+    const combinedKeys = Array.from(new Set([...orderKeys, ...paymentKeys]));
+
     const columns = [
         { header: 'Name', accessor: 'name' },
-        ...Object.keys(customerData[0].orders[0])
-            .filter(key => key !== 'id')
-            .map((key) => ({
+        ...combinedKeys
+            .filter(key => key !== 'id' && key !== 'orderID' && key !== 'paymentID' && key !== 'amount' && key !== 'paymentDate')
+            .map(key => ({
                 header: key.charAt(0).toUpperCase() + key.slice(1),
                 accessor: key
             }))
@@ -22,10 +26,17 @@ const page = () => {
 
     const data = customerData
         .flatMap(customer => customer
-            .orders.map(order => ({
-                ...order,
-                name: customer.name
-            })))
+            .orders.map(order => {
+                const payment = customer.payments.find(payment => payment.orderID === order.id);
+                return {
+                    ...order,
+                    name: customer.name,
+                    paymentStatus: payment ? payment.paymentStatus : 'Pending'
+                }
+            }
+            ));
+
+    console.log(data);
     // const { setSearchQuery, searchResults } = useSearch(data, 'product');
     // const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'product');
 

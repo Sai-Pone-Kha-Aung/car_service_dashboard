@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,15 +9,25 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera, Plus, Trash2 } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { customerData } from "@/constants/Data"
+import ImageUpload from "@/components/share_components/image_upload"
 
 export default function ProfilePage() {
-    const [cars, setCars] = React.useState([
-        { make: "Toyota", model: "Camry", year: "2019" },
-        { make: "Honda", model: "Civic", year: "2020" }
-    ])
+    const { id } = useParams();
+    const customerId = parseInt(id as string);
+    const data = customerData.filter((customer) => customer.id === customerId);
+    const [image, setImage] = useState<{ [key: string]: string | number | File }>({});
+
+    const [cars, setCars] = useState<Car[]>(data[0].cars);
+
+    const handleChange = (id: string, value: string | number | File) => {
+        setImage(prev => ({ ...prev, [id]: value }))
+    }
 
     const handleAddCar = () => {
-        setCars([...cars, { make: "", model: "", year: "" }])
+        const carID = cars.length > 0 ? cars[cars.length - 1].id + 1 : 1;
+        setCars([...cars, { id: carID, customer_id: customerId, make: "", model: "", year: 0 }])
     }
 
     const handleRemoveCar = (index: number) => {
@@ -28,6 +38,20 @@ export default function ProfilePage() {
         const newCars = [...cars]
         newCars[index] = { ...newCars[index], [field]: value }
         setCars(newCars)
+    }
+
+    const lastService = () => {
+        const services = data[0].appointments.filter((service) => service.id === data[0].appointments[0].id)
+        const completedService = services.filter((service) => service.status === "Completed")
+        if (completedService.length === 0) {
+            return (
+                <p>No services found</p>
+            )
+        }
+        const recentService = completedService.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+        return (
+            <p>{recentService.service[0].name} - {recentService.date}</p>
+        )
     }
 
     return (
@@ -45,31 +69,60 @@ export default function ProfilePage() {
                         <CardContent className="space-y-4">
                             <div className="flex items-center space-x-4">
                                 <Avatar className="w-24 h-24">
-                                    <AvatarImage src="/placeholder.jpg?height=96&width=96" alt="Profile picture" />
+                                    <AvatarImage
+                                        src={String(image.avatar || data[0].avatar)}
+                                        height={96}
+                                        width={96}
+                                        alt="Profile picture" />
                                     <AvatarFallback>JD</AvatarFallback>
                                 </Avatar>
+
+                                {ImageUpload({ fieldId: 'avatar', onChange: (fieldId, value) => handleChange(fieldId, value) })}
                                 <div>
-                                    <Button variant="outline" size="sm">
+                                    <Button variant="outline" size="sm"
+                                        onClick={() => document.getElementById(`file-input-avatar`)?.click()}>
                                         <Camera className="mr-2 h-4 w-4" /> Change Photo
                                     </Button>
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input id="name" placeholder="John" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="john.doe@example.com" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">Phone Number</Label>
-                                <Input id="phone" type="tel" placeholder="(123) 456-7890" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="address">Address</Label>
-                                <Textarea id="address" placeholder="123 Main St, City, State, ZIP" />
-                            </div>
+                            {data.map((user) => (
+                                <div key={user.id}>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="name">{user.name}</Label>
+                                        <Input
+                                            id="name"
+                                            placeholder="John"
+                                            defaultValue={user.name} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email" type="email"
+                                            placeholder="john.doe@example.com"
+                                            defaultValue={user.email}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="phone">Phone Number</Label>
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            placeholder="(123) 456-7890"
+                                            defaultValue={user.phone}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="address">Address</Label>
+                                        <Textarea
+                                            id="address"
+                                            placeholder="123 Main St, City, State, ZIP"
+                                            defaultValue={user.address}
+                                        />
+                                    </div>
+                                </div>
+
+                            ))}
+
                         </CardContent>
                         <CardFooter>
                             <Button>Save Changes</Button>
@@ -83,15 +136,13 @@ export default function ProfilePage() {
                         <CardContent className="space-y-4">
                             <div>
                                 <p className="text-sm font-medium">Member Since</p>
-                                <p>January 1, 2020</p>
+                                <p>{data[0].createdAt}</p>
                             </div>
                             <div>
                                 <p className="text-sm font-medium">Last Service</p>
-                                <p>Oil Change - March 15, 2024</p>
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium">Loyalty Points</p>
-                                <p>2,500 points</p>
+                                <ul>
+                                    <li>{lastService()}</li>
+                                </ul>
                             </div>
                         </CardContent>
                     </Card>

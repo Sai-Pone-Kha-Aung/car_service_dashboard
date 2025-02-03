@@ -7,17 +7,19 @@ export const customerData: CustomerData[] = [
     address: "123 Main St, Anytown, USA 12345",
     password: "password",
     avatar: "/pic.png",
+    createdAt: "2023-06-15",
+    updatedAt: "2023-06-15",
     cars: [
       {
         id: 1,
-        name: "Toyota Camry",
+        customer_id: 1,
         make: "Toyota",
         model: "Camry",
         year: 2020,
       },
       {
         id: 2,
-        name: "Honda Civic",
+        customer_id: 1,
         make: "Honda",
         model: "Civic",
         year: 2018,
@@ -43,6 +45,86 @@ export const customerData: CustomerData[] = [
         status: "On The Way",
       },
     ],
+    appointments: [
+      {
+        id: 1,
+        name: "Alice Johnson",
+        car: "2019 Toyota Camry",
+        date: "2023-06-15",
+        service: [
+          {
+            id: 1,
+            name: "Oil Change",
+            price: 50,
+          },
+        ],
+        status: "Completed",
+        mechanics: [
+          {
+            id: 1,
+            name: "John Doe",
+            role: "Manager",
+            email: "johndoe@gmail.com",
+            avatar: "/placeholder.jpg",
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "Alice Johnson",
+        car: "2019 Toyota Camry",
+        service: [
+          {
+            id: 1,
+            name: "Oil Change",
+            price: 50,
+          },
+        ],
+        date: "2023-06-19",
+        status: "Completed",
+        mechanics: [
+          {
+            id: 1,
+            name: "John Doe",
+            role: "Manager",
+            email: "johndoe@gmail.com",
+            avatar: "/placeholder.jpg",
+          },
+        ],
+      },
+    ],
+    cart: [
+      {
+        id: 1,
+        name: "Engine Oil",
+        price: 10,
+        quantity: 2,
+        product_id: 1,
+      },
+      {
+        id: 2,
+        name: "Brake Pads",
+        price: 15,
+        quantity: 1,
+        product_id: 2,
+      },
+    ],
+    payments: [
+      {
+        paymentID: 1,
+        orderID: 1,
+        amount: 60,
+        paymentDate: "2023-06-15",
+        paymentStatus: "Paid",
+      },
+      {
+        paymentID: 2,
+        orderID: 2,
+        amount: 45,
+        paymentDate: "2023-06-15",
+        paymentStatus: "Paid",
+      },
+    ],
   },
   {
     id: 2,
@@ -52,17 +134,19 @@ export const customerData: CustomerData[] = [
     address: "123 Main St, Anytown, USA 12345",
     avatar: "/placeholder.jpg",
     password: "password",
+    createdAt: "2023-06-15",
+    updatedAt: "2023-06-15",
     cars: [
       {
-        id: 1,
-        name: "Toyota Land Cruiser",
+        id: 3,
+        customer_id: 2,
         make: "Toyota",
         model: "Land Cruiser",
         year: 2020,
       },
       {
-        id: 2,
-        name: "Honda Civic",
+        id: 4,
+        customer_id: 2,
         make: "Honda",
         model: "Civic",
         year: 2018,
@@ -88,6 +172,9 @@ export const customerData: CustomerData[] = [
         status: "Completed",
       },
     ],
+    appointments: [],
+    cart: [],
+    payments: [],
   },
 ];
 
@@ -123,146 +210,323 @@ export const appointments: AppointmentData[] = [
     id: 1,
     name: "Alice Johnson",
     car: "2019 Toyota Camry",
-    service: "Oil Change",
+    service: [
+      {
+        id: 1,
+        name: "Oil Change",
+        price: 50,
+      },
+    ],
     date: "2023-06-15",
     status: "Completed",
+    mechanics: [
+      {
+        id: 1,
+        name: "Jane Smith",
+        role: "Technician",
+        email: "jane.smith@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 2,
     name: "Bob Smith",
     car: "2020 Honda Accord",
-    service: "Tire Rotation",
+    service: [
+      {
+        id: 2,
+        name: "Tire Rotation",
+        price: 30,
+      },
+    ],
     date: "2023-07-20",
     status: "In Service",
+    mechanics: [
+      {
+        id: 2,
+        name: "Michael Brown",
+        role: "Technician",
+        email: "michael.brown@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 3,
     name: "Charlie Brown",
     car: "2018 Ford Focus",
-    service: "Brake Inspection",
+    service: [
+      {
+        id: 3,
+        name: "Brake Inspection",
+        price: 40,
+      },
+    ],
     date: "2023-08-10",
     status: "Scheduled",
+    mechanics: [
+      {
+        id: 3,
+        name: "Emily Johnson",
+        role: "Receptionist",
+        email: "emily.johnson@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 4,
     name: "Diana Prince",
     car: "2021 Tesla Model 3",
-    service: "Battery Check",
+    service: [
+      {
+        id: 4,
+        name: "Battery Check",
+        price: 20,
+      },
+    ],
     date: "2023-09-05",
     status: "Completed",
+    mechanics: [
+      {
+        id: 4,
+        name: "Sarah Davis",
+        role: "Accountant",
+        email: "sarah.davis@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 5,
     name: "Ethan Hunt",
     car: "2017 Chevrolet Malibu",
-    service: "Transmission Repair",
+    service: [
+      {
+        id: 5,
+        name: "Transmission Repair",
+        price: 100,
+      },
+    ],
     date: "2024-11-01",
     status: "In Service",
+    mechanics: [
+      {
+        id: 5,
+        name: "John Doe",
+        role: "Manager",
+        email: "john.doe@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 6,
     name: "Fred Jones",
     car: "2016 Toyota Camry",
-    service: "Tire Rotation",
+    service: [
+      {
+        id: 2,
+        name: "Tire Rotation",
+        price: 30,
+      },
+    ],
     date: "2024-10-05",
     status: "Cancelled",
+    mechanics: [
+      {
+        id: 1,
+        name: "Jane Smith",
+        role: "Technician",
+        email: "jane.smith@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 7,
     name: "Grace Lee",
     car: "2015 Honda Civic",
-    service: "Brake Inspection",
+    service: [
+      {
+        id: 3,
+        name: "Brake Inspection",
+        price: 40,
+      },
+    ],
     date: "2024-11-10",
     status: "Scheduled",
+    mechanics: [
+      {
+        id: 2,
+        name: "Michael Brown",
+        role: "Technician",
+        email: "michael.brown@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 8,
     name: "Henry Walker",
     car: "2020 Ford Mustang",
-    service: "Oil Change",
-    date: new Date().toISOString().split("T")[0], // Today's date
+    service: [
+      {
+        id: 1,
+        name: "Oil Change",
+        price: 50,
+      },
+    ],
+    date: new Date().toISOString().split("T")[0],
     status: "Walk-In",
+    mechanics: [
+      {
+        id: 3,
+        name: "Emily Johnson",
+        role: "Receptionist",
+        email: "emily.johnson@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 9,
     name: "Isabella Green",
     car: "2019 Chevrolet Impala",
-    service: "General Inspection",
-    date: new Date().toISOString().split("T")[0], // Today's date
+    service: [
+      {
+        id: 10,
+        name: "General Inspection",
+        price: 0,
+      },
+    ],
+    date: new Date().toISOString().split("T")[0],
     status: "Walk-In",
+    mechanics: [
+      {
+        id: 4,
+        name: "Sarah Davis",
+        role: "Accountant",
+        email: "sarah.davis@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 10,
     name: "Jack White",
     car: "2018 Nissan Altima",
-    service: "Battery Replacement",
-    date: new Date().toISOString().split("T")[0], // Today's date
+    service: [
+      {
+        id: 9,
+        name: "Battery Replacement",
+        price: 70,
+      },
+    ],
+    date: new Date().toISOString().split("T")[0],
     status: "Walk-In",
+    mechanics: [
+      {
+        id: 5,
+        name: "John Doe",
+        role: "Manager",
+        email: "john.doe@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
   {
     id: 11,
     name: "Karen Davis",
     car: "2017 Hyundai Sonata",
-    service: "Tire Rotation",
-    date: new Date().toISOString().split("T")[0], // Today's date
+    service: [
+      {
+        id: 2,
+        name: "Tire Rotation",
+        price: 30,
+      },
+    ],
+    date: new Date().toISOString().split("T")[0],
     status: "Walk-In",
+    mechanics: [
+      {
+        id: 1,
+        name: "Jane Smith",
+        role: "Technician",
+        email: "jane.smith@example.com",
+        avatar: "/placeholder.jpg",
+      },
+    ],
   },
 ];
 
-export const stockData: Stock[] = [
+export const product: Stock[] = [
   {
     id: 1,
     name: "Engine Oil",
     quantity: 6,
     reorder: 10,
+    category: "Oil",
     price: 10,
     serviceId: 1,
     image: "/placeholder.jpg",
+    desc: "High-quality engine oil for optimal vehicle performance.",
   },
   {
     id: 2,
     name: "Brake Pads",
     quantity: 3,
     reorder: 12,
+    category: "Brakes",
     price: 15,
     serviceId: 3,
     image: "/pic.png",
+    desc: "Durable brake pads for safe and reliable braking.",
   },
   {
     id: 3,
     name: "Spark Plugs",
     quantity: 6,
     reorder: 20,
+    category: "Ignition",
     price: 8,
     serviceId: 6,
     image: "/placeholder.jpg",
+    desc: "Premium spark plugs for improved engine performance.",
   },
   {
     id: 4,
     name: "Air Filter",
     quantity: 4,
     reorder: 15,
+    category: "Filters",
     price: 12,
     serviceId: 7,
     image: "/placeholder.jpg",
+    desc: "High-quality air filter for improved fuel efficiency.",
   },
   {
     id: 5,
     name: "Windshield Wiper Blades",
     quantity: 6,
     reorder: 25,
+    category: "Accessories",
     price: 18,
     serviceId: 8,
     image: "/placeholder.jpg",
+    desc: "Durable wiper blades for clear visibility in all conditions.",
   },
   {
     id: 6,
     name: "Battery",
     quantity: 2,
     reorder: 10,
+    category: "Electrical",
     price: 25,
     serviceId: 9,
     image: "/placeholder.jpg",
+    desc: "Long-lasting battery for reliable vehicle starting.",
   },
 ];
 
@@ -391,6 +655,7 @@ export const blogData: BlogData[] = [
     title: "The Complete Guid to Electric Vehicle Maintenace",
     tags: "Maintenance",
     category: "Electric Vehicles",
+    image: "/pic.png",
     content:
       "Electric vehicles (EVs) are becoming increasingly popular due to their environmental benefits and lower operating costs. However, many new EV owners are unsure about the maintenance requirements of their vehicles. This guide will walk you through everything you need to know about keeping your electric vehicle in top condition.",
     createdAt: "2023-06-15",
@@ -400,6 +665,7 @@ export const blogData: BlogData[] = [
     title: "How to Choose the Right Tires for Your Vehicle",
     tags: "Tires",
     category: "Car Maintenance",
+    image: "/placeholder.jpg",
     content:
       "Choosing the right tires for your vehicle is essential for safety and performance. With so many options available, it can be overwhelming to find the best tires for your needs. This guide will help you understand the different types of tires and how to choose the right ones for your vehicle.",
     createdAt: "2023-07-20",

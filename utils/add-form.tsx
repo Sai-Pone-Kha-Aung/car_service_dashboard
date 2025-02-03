@@ -31,6 +31,7 @@ export const AddInventory = () => {
         { id: 'quantity', label: 'Quantity', placeholder: 'Enter quantity', type: 'number' },
         { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', type: 'number' },
         { id: 'price', label: 'Price', placeholder: 'Enter price', type: 'number' },
+        { id: 'description', label: 'Description', placeholder: 'Enter description' },
         { id: 'image', label: 'Image', type: 'file' }
     ]
 
@@ -44,7 +45,7 @@ export const AddInventory = () => {
             description="Create a new inventory. Click save when you're done."
             fields={field}
             onSubmit={handleAddInventory}
-            triggerLabel="New Inventory"
+            triggerLabel="New Product"
         />
     )
 }
@@ -76,7 +77,8 @@ export const AddAppointment = () => {
         { id: 'customer', label: 'Customer', placeholder: 'Enter customer name' },
         { id: 'car', label: 'Car', placeholder: 'Enter car' },
         { id: 'service', label: 'Service Type', placeholder: 'Enter service type' },
-        { id: 'date', label: 'Date', placeholder: 'Enter date', type: 'date' }
+        { id: 'date', label: 'Date', placeholder: 'Enter date', type: 'date' },
+        { id: 'mechanic', label: 'Technician', placeholder: 'Enter mechanic' }
     ]
 
     const handleAddAppointment = (data: { [key: string]: string | File }) => {
@@ -124,6 +126,7 @@ export const AddStaff = () => {
         { id: 'name', label: 'Name', placeholder: 'Enter name' },
         { id: 'role', label: 'Role', placeholder: 'Enter role' },
         { id: 'email', label: 'Email', placeholder: 'Enter email' },
+        { id: 'avatar', label: 'Image', type: 'file' }
     ]
 
     const handleAddEmployee = (data: { [key: string]: string | File }) => {

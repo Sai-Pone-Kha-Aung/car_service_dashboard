@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Edit } from 'lucide-react'
-const EditInventoryForm = ({ stockData }: { stockData: Stock }) => {
+const EditInventoryForm = ({ product }: { product: Stock }) => {
     const [open, setOpen] = useState(false)
 
     const handleCancel = () => {
@@ -35,25 +35,25 @@ const EditInventoryForm = ({ stockData }: { stockData: Stock }) => {
                                 <Label htmlFor='name' className='text-left'>
                                     Name
                                 </Label>
-                                <Input id='name' placeholder='Enter name' className='col-span-3' defaultValue={stockData.name} />
+                                <Input id='name' placeholder='Enter name' className='col-span-3' defaultValue={product.name} />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='quantity' className='text-left'>
                                     Quantity
                                 </Label>
-                                <Input id='quantity' placeholder='Enter quantity' className='col-span-3' defaultValue={stockData.quantity} />
+                                <Input id='quantity' placeholder='Enter quantity' className='col-span-3' defaultValue={product.quantity} />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='reorder' className='text-left'>
                                     Reorder
                                 </Label>
-                                <Input id='reorder' placeholder='Enter reorder level' className='col-span-3' defaultValue={stockData.reorder} />
+                                <Input id='reorder' placeholder='Enter reorder level' className='col-span-3' defaultValue={product.reorder} />
                             </div>
                             <div className='grid gap-4'>
                                 <Label htmlFor='price' className='text-left'>
                                     Price
                                 </Label>
-                                <Input id='price' className='col-span-3' placeholder='Enter price' defaultValue={stockData.price} />
+                                <Input id='price' className='col-span-3' placeholder='Enter price' defaultValue={product.price} />
                             </div>
                         </div>
                     </form>

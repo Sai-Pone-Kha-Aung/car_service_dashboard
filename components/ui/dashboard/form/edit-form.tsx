@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectItem, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select'
 import { Edit, Upload } from 'lucide-react'
 import Image from 'next/image'
+import ImageUpload from '@/components/share_components/image_upload'
+import { Textarea } from '../../textarea'
 
 interface FormField {
     id: string
@@ -41,6 +43,34 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
 
     const handleCancel = () => {
         setOpen(false)
+    }
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>,
+        fieldId: string
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // try {
+        //     const res = await fetch('/api/upload', {
+        //         method: 'POST',
+        //         body: formData,
+        //     });
+        //     const data = await res.json();
+        //     if(data.url) {
+        //         handleChange('image', data.url);
+        //     }else {
+        //         console.log('Upload failed:', data);
+        //      }
+        // } catch (error) {
+        //     console.log('Error uploading file:', error);
+        // }
+
+        const localUrl = URL.createObjectURL(file);
+        handleChange(fieldId, localUrl);
     }
 
     const btnClassName = className || 'flex items-center p-0 h-auto'
@@ -94,19 +124,32 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                                         <div className="mb-4">
                                             <div className="flex flex-col justify-start items-start gap-4">
                                                 <Image
-                                                    src={String(field.defaultValue)}
+                                                    src={String(formData[field.id] || field.defaultValue)}
                                                     alt="Featured"
                                                     width={160}
                                                     height={160}
                                                     className="object-cover rounded"
                                                     onClick={() => window.open(String(field.defaultValue), '_blank')}
                                                 />
-                                                <Button type="button" variant="outline">
-                                                    <Upload className="mr-2 h-4 w-4" /> Upload New Image
-                                                </Button>
+                                                <label htmlFor={`file-input-${field.id}`} className="cursor-pointer">
+                                                    {ImageUpload({ fieldId: field.id, onChange: handleChange })}
+                                                    <Button type="button" variant="outline"
+                                                        onClick={() => document.getElementById(`file-input-${field.id}`)?.click()}
+                                                    >
+                                                        <Upload className="mr-2 h-4 w-4" /> Upload New Image
+                                                    </Button>
+                                                </label>
                                             </div>
                                         </div>
 
+                                    ) : field.type === 'textarea' ? (
+                                        <Textarea
+                                            id={field.id}
+                                            placeholder={field.placeholder}
+                                            className='col-span-3 h-24'
+                                            defaultValue={String(field.defaultValue)}
+                                            onChange={e => handleChange(field.id, e.target.value)}
+                                        />
                                     ) : null}
                                 </div>
                             ))}

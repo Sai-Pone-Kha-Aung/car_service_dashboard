@@ -1,7 +1,7 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table'
-import { stockData } from '@/constants/Data';
+import { product } from '@/constants/Data';
 import { AddInventory } from '@/utils/add-form';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,14 @@ import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
 const page = () => {
-    const columns = Object.keys(stockData[0])
+    const columns = Object.keys(product[0])
         .filter(key => key !== 'id' && key !== 'serviceId' && key !== 'image')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
         }))
 
-    const data = stockData
+    const data = product
     const { setSearchQuery, searchResults } = useSearch(data, 'name');
     const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'name')
     return (
