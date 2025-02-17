@@ -32,6 +32,7 @@ export const AddInventory = () => {
         { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', type: 'number' },
         { id: 'price', label: 'Price', placeholder: 'Enter price', type: 'number' },
         { id: 'description', label: 'Description', placeholder: 'Enter description' },
+        { id: 'serviceID', label: 'Service ID', placeholder: 'Enter service ID' },
         { id: 'image', label: 'Image', type: 'file' }
     ]
 

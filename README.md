@@ -1,3 +1,11 @@
+Sign-In as Admin
+email - admin@carservicepro.com
+passwod - admin
+
+Sign-In as User
+email - user@carservicepro.com
+password - user
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

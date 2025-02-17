@@ -30,6 +30,7 @@ const Page = () => {
     //     };
     //     fetchData();
     // }, []);
+    console.log('User Data:', data)
 
     const columns = data.length > 0 ? ['avatar', ...Object.keys(customerData[0])
         .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar' && key !== 'appointments' && key !== 'cart' && key !== 'updatedAt' && key !== 'payments')]

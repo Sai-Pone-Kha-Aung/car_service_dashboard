@@ -1,5 +1,5 @@
 import EditForm from '@/components/ui/dashboard/form/edit-form'
-import { servicesData, statusOptions as rawStatusOptions } from '@/constants/Data'
+import { servicesData, statusOptions as rawStatusOptions, staffData } from '@/constants/Data'
 
 const statusOptions = rawStatusOptions.map(option => ({
     id: option.id,
@@ -37,7 +37,8 @@ export const EditInventory = ({ product }: { product: Stock }) => {
         { id: 'reorder', label: 'Reorder', placeholder: 'Enter reorder level', defaultValue: product.reorder || 0, type: 'input' as 'input' },
         { id: 'price', label: 'Price', placeholder: 'Enter price', defaultValue: product.price || 0, type: 'input' as 'input' },
         { id: 'description', label: 'Description', placeholder: 'Enter description', defaultValue: product.desc || '', type: 'textarea' as 'textarea' },
-        { id: 'image', label: 'Image', defaultValue: product.image || '', type: 'file' as 'file' }
+        { id: 'serviceID', label: 'Service ID', placeholder: 'Enter service ID', defaultValue: product.serviceId || '', type: 'input' as 'input' },
+        { id: 'image', label: 'Image', defaultValue: product.image || '', type: 'file' as 'file' },
     ]
 
     const handleSave = (data: { [key: string]: string | number | File }) => {
@@ -83,6 +84,7 @@ export const EditAppointment = ({ appointmentData }: { appointmentData: Appointm
         { id: 'service', label: 'Service', placeholder: 'Enter service', defaultValue: appointmentData.service[0].id || '', type: 'select' as 'select', options: servicesData },
         { id: 'date', label: 'Date', placeholder: 'Enter date', defaultValue: appointmentData.date || '', type: 'input' as 'input' },
         { id: 'status', label: 'Status', placeholder: 'Enter status', defaultValue: appointmentData.status || '', type: 'select' as 'select', options: statusOptions },
+        { id: 'staff', label: 'Staff', placeholder: 'Enter staff', defaultValue: appointmentData.mechanics[0].id || '', type: 'select' as 'select', options: staffData.filter(staff => staff.role === 'Technician').map(staff => ({ id: staff.id, name: staff.name })) },
     ]
 
     const handleSave = (data: { [key: string]: string | number | File }) => {

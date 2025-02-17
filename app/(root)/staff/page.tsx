@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { staffData } from '@/constants/Data'
 
 const page = () => {
     return (
@@ -83,6 +84,7 @@ const page = () => {
 export default page
 
 function renderStaffCards() {
+    const data = staffData
     const staff = [
         { name: "John Doe", role: "Founder & CEO", department: "Management", bio: "25+ years of automotive industry experience" },
         { name: "Jane Smith", role: "Head Technician", department: "Technicians", bio: "ASE Master Certified with 15 years of experience" },
@@ -95,21 +97,19 @@ function renderStaffCards() {
         { name: "Alex Taylor", role: "Apprentice Technician", department: "Technicians", bio: "Eager to learn and assist with your vehicle needs" }
     ]
 
-    return staff.map((member, index) => (
+    return data.map((member, index) => (
         <Card key={index}>
             <CardHeader>
                 <Avatar className="w-24 h-24 mx-auto mb-4">
-                    <AvatarImage src={`/placeholder.svg?height=96&width=96`} alt={member.name} />
+                    <AvatarImage src={`/placeholder.jpg`
+                    } alt={member.name} />
                     <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <CardTitle>{member.name}</CardTitle>
                 <CardDescription>{member.role}</CardDescription>
             </CardHeader>
-            <CardContent>
-                <p className="text-center">{member.bio}</p>
-            </CardContent>
             <CardFooter className="justify-center">
-                <Badge>{member.department}</Badge>
+                <Badge>{member.role}</Badge>
             </CardFooter>
         </Card>
     ))

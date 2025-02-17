@@ -5,13 +5,15 @@ import Link from 'next/link'
 import { Button } from '../button'
 import { Badge } from '../badge'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useCart } from '@/context/CartContext'
+import { customerData } from '@/constants/Data'
 
 const Navbar = () => {
+    const { id } = useParams()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { cart } = useCart();
     const router = useRouter();
@@ -25,6 +27,7 @@ const Navbar = () => {
 
     const totalItems = Array.isArray(cart) ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0
 
+    const data = customerData[0]
     return (
         <header>
             <nav className='bg-white shadow-sm'>
@@ -51,29 +54,51 @@ const Navbar = () => {
                                     <Badge className='absolute -top-2 -right-2' variant="destructive">{totalItems}</Badge>
 
                                 </Button>
-                                {isLoggedIn ? (
+                                {!isLoggedIn && isAuthenticated === true ? (
                                     <div className='relative'>
-                                        <Avatar onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                            <AvatarFallback>CN</AvatarFallback>
-                                        </Avatar>
+                                        {userEmail === 'admin@carservicepro.com' ? (
+                                            <Avatar onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                        ) : userEmail === 'user@carservicepro.com' ? (
+                                            <Avatar onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                                                <AvatarImage src={data.avatar} alt={data.name} />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                        ) : (
+                                            <Avatar onClick={() => setIsDropdownOpen(isDropdownOpen)}>
+                                                <AvatarImage src='/placeholder.jpg' alt="placeholder" />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                        )}
+
                                         {isDropdownOpen && (
                                             <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1'>
-                                                {isAuthenticated === true && userEmail === 'admin@carservicepro.com' ? (<Link href='/admin' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Admin Page</Link>) : (
-                                                    <Link href='/profile/2' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Profile</Link>
+                                                {isAuthenticated === true && userEmail === 'admin@carservicepro.com' ? (
+                                                    <Link href='/admin' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>
+                                                        Admin Page
+                                                    </Link>
+                                                ) : (
+                                                    <>
+                                                        <Link href={`/profile/1`} className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Profile</Link>
+                                                        <Link href='/appointment' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Appointment</Link>
+                                                        <Link href='/order' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Order</Link>
+                                                    </>
                                                 )}
-                                                <Link href='/appointment' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Appointment</Link>
-                                                <Link href='/order' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Order</Link>
                                                 <button className='block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100' onClick={handleLogout}>Logout</button>
                                             </div>
                                         )}
                                     </div>
                                 ) : (
                                     <>
-                                        <Button variant="outline" className='ml-3'>
+                                        <Button variant="outline" className='ml-3'
+                                            onClick={() => router.push('/sign-in')}>
                                             Sign in
                                         </Button>
-                                        <Button className='ml-3'>
+                                        <Button className='ml-3'
+                                            onClick={() => router.push('/sign-up')}
+                                        >
                                             Sign up
                                         </Button>
                                     </>

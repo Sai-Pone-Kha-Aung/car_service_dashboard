@@ -1,100 +1,126 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-export async function GET(request: NextRequest) {
-  try {
-    const [rows] = await pool.query("SELECT * FROM Services");
+async function getAllServices() {
+  const client = await pool.connect();
+  const result = await client.query("SELECT * FROM services");
+  client.release();
 
-    if (!Array.isArray(rows) || rows.length === 0) {
-      return NextResponse.json(
-        { message: "No services found" },
-        { status: 404 }
-      );
-    }
-    return NextResponse.json(rows, { status: 200 });
+  try {
+    console.log("Fetched services:", result.rows);
+    return NextResponse.json(result.rows);
   } catch (error) {
+    console.error("Error fetching services:", error);
+    return NextResponse.error();
+  }
+}
+// id INT PRIMARY KEY,
+// name VARCHAR(255),
+// price DECIMAL(10, 2)
+
+async function createService(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { name, price } = body;
+
+  try {
+    const result = await client.query(
+      "INSERT INTO services (name, price) VALUES ($1, $2) RETURNING *",
+      [name, price]
+    );
+    client.release();
+    console.log("Created service:", result.rows[0]);
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error creating service:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Error creating service" },
       { status: 500 }
     );
   }
+}
+
+async function deleteService(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { id } = body;
+
+  try {
+    const q = "DELETE FROM services WHERE id = $1";
+    const result = await client.query(q, [id]);
+    client.release();
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: "Service not found" }, { status: 404 });
+    }
+
+    console.log("Deleted service with ID:", id);
+    return NextResponse.json({ message: "Service deleted successfully", id });
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    client.release();
+    return NextResponse.json(
+      { error: "Error deleting service" },
+      { status: 500 }
+    );
+  }
+}
+
+async function updateService(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { id, name, price } = body;
+
+  try {
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    if (name) {
+      fields.push(`name = $${index++}`);
+      values.push(name);
+    }
+    if (price) {
+      fields.push(`price = $${index++}`);
+      values.push(price);
+    }
+    values.push(id);
+
+    const query = `UPDATE services SET ${fields.join(
+      ", "
+    )} WHERE id = $${index} RETURNING *`;
+
+    const result = await client.query(query, values);
+    client.release();
+
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: "Service not found" }, { status: 404 });
+    }
+
+    console.log("Updated service:", result.rows[0]);
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating service:", error);
+    client.release();
+    return NextResponse.json(
+      { error: "Error updating service" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  return getAllServices();
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const q = "INSERT INTO Services ( name, price) VALUES ( ?, ?)";
-    const body = await request.json();
-    console.log("Request body:", body);
-
-    const service: ServiceData = {
-      id: body[0].id,
-      name: body[0].name,
-      price: body[0].price,
-    };
-
-    if (!service.name || !service.price) {
-      return NextResponse.json(
-        { error: "Please provide name and price" },
-        { status: 400 }
-      );
-    }
-
-    await pool.query(q, [service.name, service.price]);
-    return NextResponse.json({ message: "Service added" }, { status: 201 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(request: NextRequest) {
-  try {
-    const q = "UPDATE Services SET name = ?, price = ? WHERE id = ?";
-    const body = await request.json();
-    console.log("Request body:", body);
-
-    const service: ServiceData = {
-      id: body[0].id,
-      name: body[0].name,
-      price: body[0].price,
-    };
-    console.log("Parsed values:", service.id, service.name, service.price);
-    if (!service.id || !service.name || !service.price) {
-      return NextResponse.json(
-        { error: "Please provide name and price" },
-        { status: 400 }
-      );
-    }
-    await pool.query(q, [service.name, service.price, service.id]);
-    return NextResponse.json({ message: "Service updated" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  return createService(request);
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
-    const q = "DELETE FROM Inventory WHERE id = ?";
-    const body = await request.json();
+  return deleteService(request);
+}
 
-    if (!body[0].id) {
-      return NextResponse.json(
-        { error: "Please provide InventoryID" },
-        { status: 400 }
-      );
-    }
-    console.log("Request body:", body);
-    await pool.query(q, [body[0].id]);
-    return NextResponse.json({ message: "Inventory deleted" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+export async function PUT(request: NextRequest) {
+  return updateService(request);
 }

@@ -5,7 +5,7 @@ import { TabsContent } from '../../tabs'
 import { appointments } from '@/constants/Data'
 
 const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
-    const appointmentData = appointments.filter((appointment) => appointment.name === data.name);
+    const appointmentData = appointments.filter((appointment) => appointment.id === appointments[0].service[0].id);
 
     return (
         <div className='my-4'>
@@ -27,7 +27,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                 <TableBody key={appointment.id}>
                                     <TableRow>
                                         <TableHead>{appointment.date}</TableHead>
-                                        <TableHead>{appointment.service}</TableHead>
+                                        <TableHead>{appointment.service[0].name}</TableHead>
                                         <TableHead>{appointment.car}</TableHead>
                                     </TableRow>
                                 </TableBody>
@@ -55,7 +55,7 @@ const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
                                     <TableBody key={appointment.id}>
                                         <TableRow>
                                             <TableHead>{appointment.date}</TableHead>
-                                            <TableHead>{appointment.service}</TableHead>
+                                            <TableHead>{appointment.service[0].name}</TableHead>
                                             <TableHead>{appointment.car}</TableHead>
                                         </TableRow>
                                     </TableBody>

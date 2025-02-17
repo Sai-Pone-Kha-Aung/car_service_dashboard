@@ -11,7 +11,7 @@ import useSort from '@/hooks/useSort';
 
 const page = () => {
     const columns = Object.keys(product[0])
-        .filter(key => key !== 'id' && key !== 'serviceId' && key !== 'image')
+        .filter(key => key !== 'id' && key !== 'image')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key

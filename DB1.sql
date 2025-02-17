@@ -1,9 +1,9 @@
-create table Users (
-	id INT PRIMARY KEY,
-	name VARCHAR(225),
-	email VARCHAR(225),
-	phone VARCHAR(20),
-	address VARCHAR(255),
+CREATE TABLE Users (
+    id INT PRIMARY KEY,
+    name VARCHAR(225),
+    email VARCHAR(225),
+    phone VARCHAR(20),
+    address VARCHAR(255),
     password VARCHAR(255),
     avatar VARCHAR(255),
     createdAt DATE,
@@ -21,14 +21,14 @@ CREATE TABLE Cars (
 
 CREATE TABLE Orders (
     id INT PRIMARY KEY,
-    customer_id INT,
+    user_id INT,
     product_id INT, -- Reference to the Products table
     quantity INT,
     price DECIMAL(10, 2),
     total DECIMAL(10, 2),
     date DATE,
     status VARCHAR(50),
-    FOREIGN KEY (customer_id) REFERENCES Customers(id),
+    FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (product_id) REFERENCES Products(id)
 );
 
@@ -60,11 +60,11 @@ CREATE TABLE Services (
 CREATE TABLE AppointmentServices (
     appointment_id INT,
     service_id INT,
-	mechanic_id INT,
+    mechanic_id INT,
     PRIMARY KEY (appointment_id, service_id, mechanic_id),
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id),
     FOREIGN KEY (service_id) REFERENCES Services(id),
-	FOREIGN KEY (mechanic_id) REFERENCES Staff(id)
+    FOREIGN KEY (mechanic_id) REFERENCES Staff(id)
 );
 
 CREATE TABLE Cart (
@@ -74,8 +74,8 @@ CREATE TABLE Cart (
     price DECIMAL(10, 2),
     quantity INT,
     product_id INT,
-    FOREIGN KEY (user_id) REFERENCES Users(id)
-	
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (product_id) REFERENCES Products(id)
 );
 
 -- Create Payments Table
@@ -98,6 +98,7 @@ CREATE TABLE Products (
     serviceId INT,
     image VARCHAR(255),
     description TEXT
+    FOREIGN KEY (serviceId) REFERENCES Services(id)
 );
 
 CREATE TABLE Blogs (
@@ -110,7 +111,6 @@ CREATE TABLE Blogs (
     createdAt DATE
 );
 
-ALTER TABLE orders
+ALTER TABLE Orders
 ADD CONSTRAINT product_id_fkey
 FOREIGN KEY (product_id) REFERENCES Products(id);
-

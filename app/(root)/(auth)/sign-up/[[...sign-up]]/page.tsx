@@ -43,7 +43,7 @@ const Page = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex flex-col items-center justify-center p-4">
             <Card className="w-full max-w-md bg-white/10 backdrop-blur-lg border-none text-white">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">Log-In To Your Account</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center">Sign - Up To Your Account</CardTitle>
                     <CardDescription className="text-center text-blue-100">
                         Enter your credentials to access your account
                     </CardDescription>

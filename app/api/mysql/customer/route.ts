@@ -8,7 +8,7 @@ interface Customer {
   email: string;
   address: string;
   cars: Car[];
-  appointment: Appointment[];
+  appointment: AppointmentData[];
 }
 
 async function getCustomerById(customer: Customer) {
@@ -43,7 +43,7 @@ async function getCustomerById(customer: Customer) {
   );
 
   customerData.cars = carRows as Car[];
-  customerData.appointment = appointmentRows as Appointment[];
+  customerData.appointment = appointmentRows as AppointmentData[];
 
   return NextResponse.json(rows, { status: 200 });
 }

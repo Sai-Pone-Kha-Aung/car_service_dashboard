@@ -12,7 +12,6 @@ import useSort from '@/hooks/useSort';
 
 const page = () => {
     const columns = Object.keys(servicesData[0])
-        .filter(key => key !== 'id')
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key

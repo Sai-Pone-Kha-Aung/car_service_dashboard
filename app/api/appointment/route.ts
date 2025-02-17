@@ -1,137 +1,160 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-export async function GET(request: NextRequest) {
-  try {
-    const [rows] = await pool.query("SELECT * FROM Appointments");
+// CREATE TABLE Appointments (
+//     id INT PRIMARY KEY,
+//     user_id INT,
+//     name VARCHAR(255),
+//     car VARCHAR(255),
+//     service VARCHAR(255),
+//     date DATE,
+//     status VARCHAR(50),
+//     FOREIGN KEY (user_id) REFERENCES Users(id)
+// );
 
-    if (!Array.isArray(rows) || rows.length === 0) {
+async function getAllAppointments() {
+  const client = await pool.connect();
+  const result = await client.query("SELECT * FROM Appointments");
+  client.release();
+
+  try {
+    console.log("Fetched appointments:", result.rows);
+    return NextResponse.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return NextResponse.error();
+  }
+}
+
+async function createAppointment(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { user_id, name, car, service, date, status } = body;
+
+  try {
+    const result = await client.query(
+      "INSERT INTO Appointments (user_id, name, car, service, date, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [user_id, name, car, service, date, status]
+    );
+    client.release();
+    console.log("Created appointment:", result.rows[0]);
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    return NextResponse.json(
+      { error: "Error creating appointment" },
+      { status: 500 }
+    );
+  }
+}
+
+async function deleteAppointment(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { id } = body;
+
+  try {
+    const q = "DELETE FROM Appointments WHERE id = $1";
+    const result = await client.query(q, [id]);
+    client.release();
+
+    if (result.rowCount === 0) {
       return NextResponse.json(
-        { message: "No appointments found" },
+        { error: "Appointment not found" },
         { status: 404 }
       );
     }
-    return NextResponse.json(rows, { status: 200 });
+
+    console.log("Deleted appointment with ID:", id);
+    return NextResponse.json({
+      message: "Appointment deleted successfully",
+      id,
+    });
   } catch (error) {
+    console.error("Error deleting appointment:", error);
+    client.release();
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Error deleting appointment" },
       { status: 500 }
     );
   }
+}
+
+async function updateAppointment(request: NextRequest) {
+  const client = await pool.connect();
+  const body = await request.json();
+  const { id, user_id, name, car, service, date, status } = body;
+
+  try {
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    if (user_id) {
+      fields.push(`user_id = $${index++}`);
+      values.push(user_id);
+    }
+    if (name) {
+      fields.push(`name = $${index++}`);
+      values.push(name);
+    }
+    if (car) {
+      fields.push(`car = $${index++}`);
+      values.push(car);
+    }
+    if (service) {
+      fields.push(`service = $${index++}`);
+      values.push(service);
+    }
+    if (date) {
+      fields.push(`date = $${index++}`);
+      values.push(date);
+    }
+    if (status) {
+      fields.push(`status = $${index++}`);
+      values.push(status);
+    }
+
+    values.push(id);
+
+    const query = `UPDATE Appointments SET ${fields.join(
+      ", "
+    )} WHERE id = $${index} RETURNING *`;
+
+    const result = await client.query(query, values);
+    client.release();
+
+    if (result.rows.length === 0) {
+      return NextResponse.json(
+        { error: "Appointment not found" },
+        { status: 404 }
+      );
+    }
+
+    console.log("Updated appointment:", result.rows[0]);
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    client.release();
+    return NextResponse.json(
+      { error: "Error updating appointment" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  return getAllAppointments();
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const q =
-      "INSERT INTO Appointments (customer_id, car, service, date ,status) VALUES ( ?, ?, ?, ?, ?, ?)";
-    const body = await request.json();
-    console.log("Request body:", body);
-
-    const appointment: Appointment = {
-      id: body[0].id,
-      customer_id: body[0].customer_id,
-      car: body[0].car,
-      service: body[0].service,
-      date: body[0].date,
-      status: body[0].status,
-    };
-
-    console.log(
-      "Parsed values:",
-      appointment.id,
-      appointment.customer_id,
-      appointment.car,
-      appointment.service,
-      appointment.date,
-      appointment.status
-    );
-
-    await pool.query(q, [
-      appointment.customer_id,
-      appointment.car,
-      appointment.service,
-      appointment.date,
-      appointment.status,
-    ]);
-    return NextResponse.json({ message: "Appointment added" }, { status: 201 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(request: NextRequest) {
-  try {
-    const q =
-      "UPDATE Appointments SET customer_id = ?, car = ?, service = ?, date = ?, status = ? WHERE id = ?";
-    const body = await request.json();
-    console.log("Request body:", body);
-
-    const appointment: Appointment = {
-      id: body[0].id,
-      customer_id: body[0].customer_id,
-      car: body[0].car,
-      service: body[0].service,
-      date: new Date(body[0].date).toISOString().split("T")[0],
-      status: body[0].status,
-    };
-
-    console.log("Parsed values:", appointment.id);
-    if (!appointment.id) {
-      return NextResponse.json({ error: "Please provide id" }, { status: 400 });
-    }
-    await pool.query(q, [
-      appointment.customer_id,
-      appointment.car,
-      appointment.service,
-      appointment.date,
-      appointment.status,
-      appointment.id,
-    ]);
-    return NextResponse.json(
-      { message: "Appointment updated" },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log("Put", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  return createAppointment(request);
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
-    const q = "DELETE FROM Appointments WHERE id = ?";
+  return deleteAppointment(request);
+}
 
-    const body = await request.json();
-    console.log("Request body:", body);
-
-    const appointment: Appointment = {
-      id: body[0].id,
-      customer_id: body[0].customer_id,
-      car: body[0].car,
-      service: body[0].service,
-      date: body[0].date,
-      status: body[0].status,
-    };
-    console.log("Parsed values:", appointment.id);
-    if (!appointment.id) {
-      console.log("Missing appointmentId");
-      return NextResponse.json({ error: "Please provide id" }, { status: 400 });
-    }
-    await pool.query(q, [appointment.id]);
-    return NextResponse.json(
-      { message: "Appointment deleted" },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+export async function PUT(request: NextRequest) {
+  return updateAppointment(request);
 }

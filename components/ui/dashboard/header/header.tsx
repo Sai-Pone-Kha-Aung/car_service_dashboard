@@ -15,6 +15,7 @@ const Header = () => {
         '/admin/orders': 'Orders',
         '/admin/blog': 'Blog',
         '/admin/blog/add-blog': 'Add New Blog',
+
     }
 
     let currentRoute = routeTitles[pathname] || 'Dashboard';
@@ -23,7 +24,7 @@ const Header = () => {
     }
 
     if (/^\/admin\/blog\/\d+$/.test(pathname)) {
-        currentRoute = 'Edit New Blog';
+        currentRoute = 'Edit Blog';
     }
 
 

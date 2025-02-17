@@ -15,6 +15,8 @@ import ImageUpload from '@/components/share_components/image_upload'
 
 const Page = () => {
     // const customerID = customerData ? customerData.find(customer => customer.id === params.id) : null;
+
+
     const { id } = useParams();
     const [image, setImage] = useState<{ [key: string]: string | number | File }>({});
     const customerId = parseInt(id as string);
