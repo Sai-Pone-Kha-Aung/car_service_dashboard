@@ -25,6 +25,11 @@ async function createCar(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
   const { user_id, make, model, year } = body;
+
+  if (!user_id) {
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  }
+
   try {
     const result = await client.query(
       "INSERT INTO cars (user_id, make, model, year) VALUES ($1, $2, $3, $4) RETURNING *",
@@ -85,8 +90,6 @@ async function updateCar(request: NextRequest) {
       values.push(year);
     }
 
-    fields.push(`updatedat = $${index++}`);
-    values.push(new Date());
     values.push(id);
 
     const query = `UPDATE cars SET ${fields.join(

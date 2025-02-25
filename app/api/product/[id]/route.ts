@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-async function getServiceById(request: NextRequest) {
+async function getProductbyId(request: NextRequest) {
   try {
     const client = await pool.connect();
     const url = new URL(request.url);
@@ -14,6 +14,17 @@ async function getServiceById(request: NextRequest) {
         [productId]
       );
       client.release();
+
+      if (result.rows.length > 0) {
+        const product = result.rows[0];
+        if (product.image) {
+          // Convert Buffer to base64
+          product.image = `data:image/jpeg;base64,${product.image.toString(
+            "base64"
+          )}`;
+        }
+        return NextResponse.json(product);
+      }
 
       if (result.rows.length > 0) {
         return NextResponse.json(result.rows[0]);
@@ -38,5 +49,5 @@ async function getServiceById(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  return getServiceById(request);
+  return getProductbyId(request);
 }

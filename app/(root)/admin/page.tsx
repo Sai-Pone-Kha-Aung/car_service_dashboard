@@ -1,27 +1,59 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomTable from '@/components/ui/dashboard/table/custom-table';
 import LowStock from '@/components/ui/dashboard/table/lowstock';
 import RecentAppointments from '@/components/ui/dashboard/table/recent-appointments';
-import { appointments, servicesData, product } from '@/constants/Data';
 import { Calendar, DollarSign, Package, Truck } from 'lucide-react'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
+interface AppointmentData {
+  appointment_id: number;
+  service_id: number;
+  mechanic_id: number;
+  appointment_name: string;
+  appointment_car: string;
+  appointment_date: string;
+  appointment_status: string;
+  service_name: string;
+  service_price: string;
+  mechanic_name: string;
+  mechanic_role: string;
+  mechanic_email: string;
+  user_name: string;
+}
 
 const calculateAppointmentsData = () => {
   const currentMonth = new Date().getMonth() + 1;
   const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear === 1 ? currentYear - 1 : currentYear;
+  const [data, setData] = useState<AppointmentData[]>([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/appointmentServices');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setData(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
 
-  const currentMonthAppointments = appointments.filter(
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const currentMonthAppointments = data.filter(
     (appointment) => {
-      const appointmentDate = new Date(appointment.date);
+      const appointmentDate = new Date(appointment.appointment_date);
       return appointmentDate.getMonth() + 1 === currentMonth && appointmentDate.getFullYear() === currentYear;
     }
   ).length;
 
-  const previousMonthAppointments = appointments.filter(
+  const previousMonthAppointments = data.filter(
     (appointment) => {
-      const appointmentDate = new Date(appointment.date);
+      const appointmentDate = new Date(appointment.appointment_date);
       return appointmentDate.getMonth() + 1 === previousMonth && appointmentDate.getFullYear() === previousYear;
     }
   ).length;
@@ -35,6 +67,24 @@ const calculateAppointmentsData = () => {
 }
 
 const calculateLowStockData = () => {
+  const [product, setProduct] = useState<Product[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/product');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setProduct(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
   const lowStockItems = product.filter(item => item.quantity <= item.reorder).length;
   return {
     value: `${lowStockItems}`,
@@ -43,7 +93,25 @@ const calculateLowStockData = () => {
 }
 
 const calculateInProgressAppointments = () => {
-  const inProgressAppointments = appointments.filter(appointment => appointment.status === 'In Service' && new Date(appointment.date).toDateString() === new Date().toDateString()).length;
+  const [data, setData] = useState<AppointmentData[]>([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/appointmentServices');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setData(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const inProgressAppointments = data.filter(appointment => appointment.appointment_status === 'In Service' && new Date(appointment.appointment_date).toDateString() === new Date().toDateString()).length;
   return {
     value: inProgressAppointments,
     description: `${inProgressAppointments} cars in service`,
@@ -51,10 +119,58 @@ const calculateInProgressAppointments = () => {
 }
 
 const calculateTotalRevenue = () => {
+  const [appointments, setAppointments] = useState<AppointmentData[]>([]);
+  const [product, setProduct] = useState<Product[]>([]);
+  const [servicesData, setServicesData] = useState<any[]>([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/appointmentServices');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setAppointments(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  const fetchProductData = async () => {
+    try {
+      const res = await fetch('/api/product');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setProduct(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  const fetchServicesData = async () => {
+    try {
+      const res = await fetch('/api/service');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setServicesData(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+    fetchProductData();
+    fetchServicesData();
+  }, []);
+
   let totalRevenue = 0;
   appointments.forEach(appointment => {
-    if (appointment.status !== 'Completed') return;
-    const service = servicesData.find(service => service.id === appointment.service[0].id);
+    if (appointment.appointment_status !== 'Completed') return;
+    const service = servicesData.find(service => service.id === appointment.service_id);
     const stock = product.find(stock => stock.serviceId === service?.id);
     if (service && stock) {
       totalRevenue += service.price + stock.price;
@@ -77,14 +193,48 @@ const page = () => {
   const inProgressAppointments = calculateInProgressAppointments();
   const totalRevenue = calculateTotalRevenue();
 
+  const [appointments, setAppointments] = useState<AppointmentData[]>([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/appointmentServices');
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      }
+      const response = await res.json();
+      setAppointments(response);
+    } catch (error) {
+      console.error("Failed to fetch");
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
   const status = 'Walk-In';
-  const data = appointments.filter(appointment => status.includes(appointment.status));
-  const columns = Object.keys(appointments[0])
-    .filter(key => key !== 'id' && key !== 'mechanics')
-    .map((key) => ({
-      header: key.charAt(0).toUpperCase() + key.slice(1),
-      accessor: key
-    }));
+  const data = appointments.filter(appointment => appointment.appointment_status === status);
+  const columns = [
+    {
+      header: 'Name',
+      accessor: 'user_name'
+    },
+    {
+      header: 'Car',
+      accessor: 'appointment_car'
+    },
+    {
+      header: 'Service',
+      accessor: 'service_name'
+    },
+    {
+      header: 'Date',
+      accessor: 'appointment_date'
+    },
+    {
+      header: 'Status',
+      accessor: 'appointment_status'
+    },
+  ];
 
   const cardData = [
     {
@@ -140,13 +290,28 @@ const page = () => {
         <LowStock />
       </div>
       <div className='mt-6'>
-        <CustomTable columns={columns} data={data.map(item => ({
-          ...item,
-          service: item.service.map(service => service.name).join(', '),
-        }))} />
+        {data.length === 0 ? (
+          <Card>
+            <CardContent className="flex items-center justify-center h-32">
+              <p className="text-muted-foreground">No Walk-In Customers</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <CustomTable columns={columns} data={data.map(item => ({
+            ...item,
+            name: item.user_name,
+            car: item.appointment_car,
+            date: item.appointment_date,
+            status: item.appointment_status.charAt(0).toUpperCase() + item.appointment_status.slice(1),
+            service: item.service_name,
+            mechanics: item.mechanic_name
+          }))} />
+        )}
       </div>
     </div>
   )
 }
 
 export default page
+
+//NAME CAR SERVICE DATE STATUS

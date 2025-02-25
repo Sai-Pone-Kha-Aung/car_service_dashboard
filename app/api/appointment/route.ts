@@ -18,24 +18,71 @@ async function getAllAppointments() {
   client.release();
 
   try {
-    console.log("Fetched appointments:", result.rows);
-    return NextResponse.json(result.rows);
+    const appointments = result.rows.map((appointment) => {
+      try {
+        return {
+          ...appointment,
+          service: appointment.service ? JSON.parse(appointment.service) : [],
+        };
+      } catch (jsonError) {
+        console.error("Error parsing service JSON:", jsonError);
+        return {
+          ...appointment,
+          service: [],
+        };
+      }
+    });
+
+    console.log("Fetched appointments:", appointments);
+    return NextResponse.json(appointments);
   } catch (error) {
     console.error("Error fetching appointments:", error);
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: "Error fetching appointments" },
+      { status: 500 }
+    );
   }
 }
 
 async function createAppointment(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
-  const { user_id, name, car, service, date, status } = body;
+  const { user_id, name, car, date, service, status, time, mechanics } = body;
 
   try {
     const result = await client.query(
-      "INSERT INTO Appointments (user_id, name, car, service, date, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [user_id, name, car, service, date, status]
+      "INSERT INTO Appointments (user_id, name, car, service, date, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [user_id, name, car, JSON.stringify(service), date, status, time]
     );
+
+    const appointmentId = result.rows[0].id;
+
+    if (!Array.isArray(mechanics)) {
+      throw new Error("Mechanics must be an array");
+    }
+
+    for (const serviceItem of service) {
+      for (const mechanic of mechanics) {
+        await client.query(
+          `INSERT INTO appointmentservices (appointment_id, service_id, mechanic_id) VALUES ($1, $2, $3)`,
+          [appointmentId, serviceItem.id, mechanic.id] // Corrected mechanic reference
+        );
+      }
+    }
+
+    for (const mechanic of mechanics) {
+      await client.query(
+        `INSERT INTO staff (id, name, role, email, avatar) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING`,
+        [
+          mechanic.id,
+          mechanic.name,
+          mechanic.role,
+          mechanic.email,
+          mechanic.avatar,
+        ]
+      );
+    }
+
     client.release();
     console.log("Created appointment:", result.rows[0]);
     return NextResponse.json(result.rows[0]);

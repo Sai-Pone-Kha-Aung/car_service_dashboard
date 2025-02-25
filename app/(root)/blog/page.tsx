@@ -3,59 +3,50 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { blogData } from '@/constants/Data'
 import { Search } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-const posts = [
-    {
-        title: "5 Tips for Better Fuel Efficiency",
-        excerpt: "Learn how to maximize your vehicle's fuel efficiency with these proven tips and techniques.",
-        category: "Tips & Tricks",
-        author: "Alice Johnson",
-        date: "Nov 22, 2024"
-    },
-    {
-        title: "Understanding Your Car's Warning Lights",
-        excerpt: "A comprehensive guide to interpreting and responding to your vehicle's dashboard warning lights.",
-        category: "Maintenance",
-        author: "Bob Wilson",
-        date: "Nov 21, 2024"
-    },
-    {
-        title: "The Importance of Regular Oil Changes",
-        excerpt: "Why regular oil changes are crucial for your engine's health and longevity.",
-        category: "Maintenance",
-        author: "Carol Davis",
-        date: "Nov 20, 2024"
-    },
-    {
-        title: "Winter Car Care Essentials",
-        excerpt: "Prepare your vehicle for cold weather with these essential maintenance tips.",
-        category: "Seasonal",
-        author: "David Brown",
-        date: "Nov 19, 2024"
-    },
-    {
-        title: "Common Brake Problems and Solutions",
-        excerpt: "Learn to identify and address common brake issues before they become serious.",
-        category: "Repairs",
-        author: "Emma White",
-        date: "Nov 18, 2024"
-    },
-    {
-        title: "Choosing the Right Tires",
-        excerpt: "A guide to selecting the perfect tires for your vehicle and driving conditions.",
-        category: "Tips & Tricks",
-        author: "Frank Miller",
-        date: "Nov 17, 2024"
-    }
-]
+interface BlogData {
+    id: number;
+    title: string;
+    category: string;
+    tags: string;
+    image: string;
+    content: string;
+    createdat: string;
+}
+
 const Page = () => {
-    const data = blogData;
+    const [data, setData] = useState<BlogData[]>([])
     const router = useRouter();
+    useEffect(() => {
+        try {
+            const fetchData = async () => {
+                const res = await fetch('/api/blog')
+                const data = await res.json()
+                console.log(data)
+                setData(data)
+            }
+            fetchData();
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        }
+    }, [])
+
+
+    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const response = await fetch(`/api/blog`);
+        const originalData = await response.json();
+        const filteredData: BlogData[] = searchTerm === '' ? originalData : originalData.filter((member: BlogData): boolean =>
+            member.tags.toLowerCase().includes(searchTerm) ||
+            member.category.toLowerCase().includes(searchTerm)
+        );
+        setData(filteredData);
+    }
+
     return (
         <div className='min-h-screen bg-white mx-auto'>
             <div className='bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20'>
@@ -74,15 +65,46 @@ const Page = () => {
                             type="search"
                             placeholder='Search blog posts...'
                             className='w-full pl-10'
+                            onChange={handleSearch}
                         />
                         <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
                     </div>
                     <div className='flex flex-wrap gap-2 justify-center mt-4'>
-                        <Button variant="outline" className="rounded-full">All Posts</Button>
-                        <Button variant="outline" className="rounded-full">Maintenance</Button>
-                        <Button variant="outline" className="rounded-full">Repairs</Button>
-                        <Button variant="outline" className="rounded-full">Tips & Tricks</Button>
-                        <Button variant="outline" className="rounded-full">News</Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => handleSearch({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
+                        >
+                            All Posts
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => handleSearch({ target: { value: 'maintenance' } } as React.ChangeEvent<HTMLInputElement>)}
+                        >
+                            Maintenance
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => handleSearch({ target: { value: 'repairs' } } as React.ChangeEvent<HTMLInputElement>)}
+                        >
+                            Repairs
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => handleSearch({ target: { value: 'tips' } } as React.ChangeEvent<HTMLInputElement>)}
+                        >
+                            Tips & Tricks
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => handleSearch({ target: { value: 'news' } } as React.ChangeEvent<HTMLInputElement>)}
+                        >
+                            News
+                        </Button>
                     </div>
                 </div>
 
@@ -90,22 +112,24 @@ const Page = () => {
                     <Card className='overflow-hidden'>
                         <div className='md:flex'>
                             <div className='md:w-1/2'>
-                                <Image
-                                    src="/placeholder.jpg"
-                                    width={600}
-                                    height={400}
-                                    alt="Featured post"
-                                    className="w-full h-64 md:h-full object-cover"
-                                />
+                                {data[0]?.image && (
+                                    <Image
+                                        src={data[0]?.image}
+                                        width={600}
+                                        height={400}
+                                        alt="Featured post"
+                                        className="w-full h-64 md:h-full object-cover"
+                                    />
+                                )}
                             </div>
                             <div className='md:w-1/2 p-8'>
                                 <Badge className='mb-2'>Featured</Badge>
-                                <h2>{data[0].title}</h2>
+                                <h2>{data[0]?.title || 'Featured Post'}</h2>
                                 <p className="text-gray-600 mb-4">
                                     Learn everything you need to know about maintaining your electric vehicle, from battery care to optimal charging practices.
                                 </p>
                                 <div className='flex items-center justify-between'>
-                                    <Button onClick={() => router.push("/blog/1")}>Read More</Button>
+                                    <Button onClick={() => router.push(`/blog/${data[0]?.id}`)}>Read More</Button>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +140,7 @@ const Page = () => {
                     {data.map((post, index) => (
                         <Card key={index} className='flex flex-col'>
                             <Image
-                                src="/placeholder.jpg"
+                                src={post.image}
                                 width={400}
                                 height={200}
                                 alt={post.title}
@@ -129,7 +153,7 @@ const Page = () => {
 
                                 </p>
                                 <div className="flex items-center justify-between mt-auto">
-                                    <Button onClick={() => router.push("/blog/1")} size="sm">Read More</Button>
+                                    <Button onClick={() => router.push(`/blog/${post.id}`)} size="sm">Read More</Button>
                                 </div>
                             </CardContent>
                         </Card>

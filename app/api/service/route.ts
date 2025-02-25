@@ -17,16 +17,19 @@ async function getAllServices() {
 // id INT PRIMARY KEY,
 // name VARCHAR(255),
 // price DECIMAL(10, 2)
+// title VARCHAR(255),
+// description TEXT,
+// category VARCHAR(255);
 
 async function createService(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
-  const { name, price } = body;
+  const { name, price, title, description, category } = body;
 
   try {
     const result = await client.query(
-      "INSERT INTO services (name, price) VALUES ($1, $2) RETURNING *",
-      [name, price]
+      "INSERT INTO services (name, price, title, description, category ) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [name, price, title, description, category]
     );
     client.release();
     console.log("Created service:", result.rows[0]);
@@ -69,7 +72,7 @@ async function deleteService(request: NextRequest) {
 async function updateService(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
-  const { id, name, price } = body;
+  const { id, name, price, title, description, category } = body;
 
   try {
     const fields = [];
@@ -83,6 +86,18 @@ async function updateService(request: NextRequest) {
     if (price) {
       fields.push(`price = $${index++}`);
       values.push(price);
+    }
+    if (title) {
+      fields.push(`title = $${index++}`);
+      values.push(title);
+    }
+    if (description) {
+      fields.push(`description = $${index++}`);
+      values.push(description);
+    }
+    if (category) {
+      fields.push(`category = $${index++}`);
+      values.push(category);
     }
     values.push(id);
 

@@ -13,30 +13,95 @@ import { ChevronLeft, Save, Trash2, Upload } from 'lucide-react'
 import { blogData } from "@/constants/Data"
 import Image from "next/image"
 import ImageUpload from "@/components/share_components/image_upload"
+import { set } from "date-fns"
 
-export default function AdminBlogEditPage() {
+export default function AdminBlogAddPage() {
     const router = useRouter()
-    const [date, setDate] = useState<Date>()
-    const [uploadImage, setUploadImage] = useState({ image: "/placeholder.jpg" })
+    const [data, setData] = useState<BlogData[]>([])
+    const [title, setTitle] = useState("")
+    const [tags, setTags] = useState("")
+    const [category, setCategory] = useState("")
+    const [content, setContent] = useState("")
+    const [image, setImage] = useState<{ [key: string]: string | number | File }>({});
+    const [uploadImage, setUploadImage] = useState({ image: `data:image/jpeg;base64,${Buffer.isBuffer(data[0]?.image) ? data[0]?.image?.toString('base64') : ''}` });
+    const [blogId, setBlogId] = useState<string | null>(null)
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault()
-        // Here you would typically save the blog post data
-        console.log("Blog post saved")
-        router.push("/admin/blog")
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("tags", tags);
+        formData.append("category", category);
+        formData.append("content", content);
+        if (image.image) {
+            formData.append("image", image.image as File);
+        }
+
+        try {
+            const response = await fetch("/api/blog", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                const newBlog = await response.json();
+                console.log("Blog post created successfully:", newBlog);
+                router.push("/admin/blog"); // Redirect after success
+            } else {
+                const errorData = await response.json();
+                console.error("Failed to create blog post:", errorData.error);
+            }
+        } catch (error) {
+            console.error("Error creating blog post:", error);
+        }
+    };
+
+    const handleImageUpload = async (id: string) => {
+        try {
+            const formData = new FormData();
+            formData.append('image', image.image as File);
+
+            const response = await fetch(`/api/blog/${id}`, {
+                method: 'PATCH',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const updatedBlog = await response.json();
+                setUploadImage({ image: updatedBlog.image });
+                console.log("Image uploaded successfully");
+            } else {
+                console.error("Failed to upload image");
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        }
     }
+
+    // const handleChange = async (id: string, value: string | number | File) => {
+    //     setImage(prev => ({ ...prev, [id]: value }))
+    //     if (typeof File !== 'undefined' && value instanceof File) {
+    //         if (blogId) {
+    //             await handleImageUpload(blogId);
+    //         }
+    //     }
+    // }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImage({ image: file });
+            setPreviewImage(URL.createObjectURL(file)); // Local preview before upload
+        }
+    };
 
     const handleDelete = () => {
         // Here you would typically delete the blog post
         console.log("Blog post deleted")
         router.push("/admin/blog")
     }
-
-    const handleChange = (fieldId: string, value: string) => {
-        if (fieldId === 'featured-image') {
-            setUploadImage({ image: value });
-        }
-    };
 
 
     return (
@@ -57,38 +122,29 @@ export default function AdminBlogEditPage() {
                             <CardContent className="space-y-6">
                                 <div className="space-y-2">
                                     <Label htmlFor="title">Title</Label>
-                                    <Input id="title" placeholder="Enter blog post title" />
+                                    <Input id="title" placeholder="Enter blog post title" value={title} onChange={(e) => setTitle(e.target.value)} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="category">Category</Label>
-                                    <Select>
-                                        <SelectTrigger id="category">
-                                            <SelectValue placeholder="Select category" />
-                                        </SelectTrigger>
-                                        <SelectContent >
-                                            <SelectItem value="car-maintenance">Car Maintenance</SelectItem>
-                                            <SelectItem value="auto-repair">Auto Repair</SelectItem>
-                                            <SelectItem value="car-tips">Car Tips</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Input id="category" placeholder="Enter blog category" value={category} onChange={(e) => setCategory(e.target.value)} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="featured-image">Featured Image</Label>
                                     <div className="flex items-center space-x-4">
-                                        {ImageUpload({
+                                        {/* {ImageUpload({
                                             fieldId: 'featured-image',
                                             onChange: handleChange,
-                                        })}
-                                        <Image
-                                            src={uploadImage.image}
+                                        })} */}
+                                        <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+                                        {previewImage && (<Image
+                                            src={previewImage}
                                             alt="Featured"
                                             width={400}
                                             height={400}
                                             className="object-cover rounded"
-                                            key={uploadImage.image}
-                                        />
+                                        />)}
                                         <Button type="button" variant="outline"
                                             onClick={() => document.getElementById(`file-input-featured-image`)?.click()}
                                         >
@@ -109,23 +165,25 @@ export default function AdminBlogEditPage() {
                                             placeholder="Write your blog post content here..."
                                             className="min-h-[300px]"
                                             required
+                                            value={content}
+                                            onChange={(e) => setContent(e.target.value)}
                                         />
                                     </TabsContent>
                                     <TabsContent value="preview">
                                         <div className="prose max-w-none">
-                                            <h1>Blog Post Title</h1>
-                                            <p>This is a preview of your blog post content. It will be rendered here as you type in the Write tab.</p>
+                                            <h1>{title}</h1>
+                                            <p>{content}</p>
                                         </div>
                                     </TabsContent>
                                 </Tabs>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="tags">Tags</Label>
-                                    <Input id="tags" placeholder="Enter tags separated by commas" />
+                                    <Input id="tags" placeholder="Enter tags separated by commas" value={tags} onChange={(e) => setTags(e.target.value)} />
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end">
-                                <Button type="submit">
+                                <Button type="submit" onClick={handleSubmit}>
                                     <Save className="mr-2 h-4 w-4" /> Publish Post
                                 </Button>
                             </CardFooter>

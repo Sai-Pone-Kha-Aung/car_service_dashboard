@@ -15,12 +15,46 @@ import pool from "@/lib/db";
 
 async function getAllOrders() {
   const client = await pool.connect();
-  const result = await client.query("SELECT * FROM orders");
-  client.release();
-
   try {
+    const result = await client.query("SELECT * FROM orders");
+
+    const productIds = result.rows.map((order) => order.product_id);
+    const userIds = result.rows.map((order) => order.user_id);
+
+    const products = await client.query(
+      `SELECT * FROM products WHERE id = ANY($1)`,
+      [productIds]
+    );
+
+    const payments = await client.query(
+      `SELECT * FROM payments WHERE orderid = ANY($1)`,
+      [result.rows.map((order) => order.id)]
+    );
+
+    const users = await client.query(`SELECT * FROM users WHERE id = ANY($1)`, [
+      userIds,
+    ]);
+
+    console.log("Payments data:", payments.rows);
     console.log("Fetched orders:", result.rows);
-    return NextResponse.json(result.rows);
+
+    const serializedData = result.rows.map((order) => {
+      const product = products.rows.find(
+        (product) => product.id === order.product_id
+      );
+      const user = users.rows.find((user) => user.id === order.user_id);
+      const payment = payments.rows.find(
+        (payment) => payment.orderid === order.id
+      );
+      return {
+        ...order,
+        product_name: product ? product.name : "Unknown",
+        user_name: user ? user.name : "Unknown",
+        paymentstatus: payment ? payment.paymentstatus : "Unknown",
+      };
+    });
+    client.release();
+    return NextResponse.json(serializedData);
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.error();
@@ -29,22 +63,129 @@ async function getAllOrders() {
 
 async function createOrder(request: NextRequest) {
   const client = await pool.connect();
-  const body = await request.json();
-  const { user_id, product_id, quantity, price, total, date, status } = body;
+  // try {
+  //   const body = await request.json();
+  //   const { user_id, product_id, quantity, price, total, date, status } = body;
+
+  //   //Check if product exists
+  //   const productCheck = await client.query(
+  //     "SELECT id FROM products WHERE id = $1",
+  //     [product_id]
+  //   );
+
+  //   if (productCheck.rows.length === 0) {
+  //     return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  //   }
+
+  //   const userCheck = await client.query("SELECT id FROM users WHERE id = $1", [
+  //     user_id,
+  //   ]);
+  //   if (userCheck.rows.length === 0) {
+  //     return NextResponse.json({ error: "User not found" }, { status: 404 });
+  //   }
+
+  //   // Check stock availability
+  //   const stockCheck = await client.query(
+  //     "SELECT quantity FROM products WHERE id = $1",
+  //     [product_id]
+  //   );
+
+  //   if (stockCheck.rows[0].quantity < quantity) {
+  //     return NextResponse.json(
+  //       { error: "Insufficient stock available" },
+  //       { status: 400 }
+  //     );
+  //   }
+
+  //   // Update product stock
+  //   await client.query(
+  //     "UPDATE products SET quantity = quantity - $1 WHERE id = $2",
+  //     [quantity, product_id]
+  //   );
+
+  //   const result = await client.query(
+  //     "INSERT INTO orders (user_id, product_id, quantity, price, total, date, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+  //     [user_id, product_id, quantity, price, total, date, status]
+  //   );
+  //   console.log("Created order:", result.rows[0]);
+  //   return NextResponse.json(result.rows[0]);
+  // } catch (error) {
+  //   console.error("Error creating order:", error);
+  //   return NextResponse.json(
+  //     { error: "Error creating order" },
+  //     { status: 500 }
+  //   );
+  // } finally {
+  //   client.release();
+  // }
   try {
-    const result = await client.query(
-      "INSERT INTO orders (user_id, product_id, quantity, price, total, date, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [user_id, product_id, quantity, price, total, date, status]
-    );
-    client.release();
-    console.log("Created order:", result.rows[0]);
-    return NextResponse.json(result.rows[0]);
+    const body = await request.json();
+    const { user_id, items, total, date, status } = body;
+
+    // Check if user exists
+    const userCheck = await client.query("SELECT id FROM users WHERE id = $1", [
+      user_id,
+    ]);
+    if (userCheck.rows.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Start a transaction
+    await client.query("BEGIN");
+
+    // Check and create orders for each item
+    const orderIds = [];
+    for (const item of items) {
+      const { product_id, quantity, price, total: itemTotal } = item;
+
+      // Check if product exists
+      const productCheck = await client.query(
+        "SELECT id, quantity FROM products WHERE id = $1",
+        [product_id]
+      );
+      if (productCheck.rows.length === 0) {
+        await client.query("ROLLBACK");
+        return NextResponse.json(
+          { error: `Product not found: ${product_id}` },
+          { status: 404 }
+        );
+      }
+
+      // Check stock availability
+      if (productCheck.rows[0].quantity < quantity) {
+        await client.query("ROLLBACK");
+        return NextResponse.json(
+          { error: `Insufficient stock for product ${product_id}` },
+          { status: 400 }
+        );
+      }
+
+      // Update product stock
+      await client.query(
+        "UPDATE products SET quantity = quantity - $1 WHERE id = $2",
+        [quantity, product_id]
+      );
+
+      // Insert order (once per item)
+      const result = await client.query(
+        "INSERT INTO orders (user_id, product_id, quantity, price, total, date, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+        [user_id, product_id, quantity, price, itemTotal, date, status]
+      );
+      orderIds.push(result.rows[0].id);
+    }
+
+    await client.query("COMMIT");
+    await client.query("COMMIT");
+    return NextResponse.json({ message: "Order created", orderIds });
   } catch (error) {
+    await client.query("ROLLBACK");
     console.error("Error creating order:", error);
     return NextResponse.json(
       { error: "Error creating order" },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 }
 

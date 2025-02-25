@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react"
+import React, { useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,19 +10,27 @@ import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { useCart } from "@/context/CartContext"
+import { useAuth } from "@/context/AuthContext"
 
 export default function AddToCartPage() {
-    // const [cartItems, setCartItems] = React.useState([
-    //     { id: 1, name: "Premium Motor Oil", price: 29.99, quantity: 2 },
-    //     { id: 2, name: "Oil Filter", price: 9.99, quantity: 1 },
-    //     { id: 3, name: "Air Filter", price: 14.99, quantity: 1 },
-    // ])
+    const { cart, addToCart, setCart, fetchCartItems, deleteCartItem, updateCartItem } = useCart();
+    const { userData } = useAuth();
 
-    const { cart, addToCart, setCart } = useCart();
-    const updateQuantity = (id: number, change: number) => {
-        setCart(cart.map(item =>
-            item.id === id ? { ...item, quantity: Math.max(0, item.quantity + change) } : item
-        ).filter(item => item.quantity > 0))
+    console.log("User:", userData);
+    useEffect(() => {
+        if (userData) {
+            fetchCartItems();
+        }
+    }, [userData]);
+
+    const updateQuantity = (id: number, quantity: number, change: number) => {
+        const item = cart.find(item => item.id === id);
+        if (item) {
+            updateCartItem({ ...item, quantity: quantity + change });
+            setCart(cart.map(cartItem =>
+                cartItem.id === id ? { ...cartItem, quantity: Math.max(0, cartItem.quantity + change) } : cartItem
+            ).filter(cartItem => cartItem.quantity > 0))
+        }
     }
 
     const removeItem = (id: number) => {
@@ -47,16 +55,20 @@ export default function AddToCartPage() {
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center space-x-4">
-                                            <Image
-                                                src={`/placeholder.jpg`}
-                                                alt={item.name}
-                                                width={80}
-                                                height={80}
-                                                className="rounded-md object-cover"
-                                            />
+                                            {item.image ? (
+                                                <Image
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    width={80}
+                                                    height={80}
+                                                    className="rounded-md object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-[80px] h-[80px] bg-gray-200 rounded-md" />
+                                            )}
                                             <div>
                                                 <h3 className="font-semibold">{item.name}</h3>
-                                                <p className="text-sm text-gray-500">Unit Price: ${item.price.toFixed(2)}</p>
+                                                <p className="text-sm text-gray-500">Unit Price: ${item.price}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center space-x-4">
@@ -64,20 +76,20 @@ export default function AddToCartPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    onClick={() => updateQuantity(item.id, -1)}
+                                                    onClick={() => updateQuantity(item.id, item.quantity, -1)}
                                                 >
                                                     <Minus className="h-4 w-4" />
                                                 </Button>
                                                 <Input
                                                     type="number"
                                                     value={item.quantity}
-                                                    onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) - item.quantity)}
+                                                    onChange={(e) => updateQuantity(item.id, item.quantity, parseInt(e.target.value) - item.quantity)}
                                                     className="w-16 text-center"
                                                 />
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    onClick={() => updateQuantity(item.id, 1)}
+                                                    onClick={() => updateQuantity(item.id, item.quantity, 1)}
                                                 >
                                                     <Plus className="h-4 w-4" />
                                                 </Button>
@@ -85,7 +97,7 @@ export default function AddToCartPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => removeItem(item.id)}
+                                                onClick={() => deleteCartItem(item.id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>

@@ -6,7 +6,7 @@ interface CustomerData {
   address: string;
   cars: Car[];
   orders: OrderData[];
-  avatar: string;
+  avatar?: string;
   password: string;
   appointments: AppointmentData[];
   cart: CartItem[];
@@ -19,33 +19,38 @@ interface AppointmentData {
   id: number;
   name: string;
   car: string;
-  service: ServiceData[];
+  user_id: number;
+  service: Service[];
   date: string;
   status: string;
+  time: string;
   mechanics: StaffData[];
 }
 
-interface Stock {
+interface Product {
   id: number;
   name: string;
   price: number;
   quantity: number;
   category: string;
   reorder: number;
-  serviceId: number;
+  serviceid: number;
   image: string;
-  desc: string;
+  description: string;
 }
 
-interface ServiceData {
+interface Service {
   id: number;
   name: string;
   price: number;
+  title: string;
+  description: string;
+  category: string;
 }
 
 interface Car {
   id: number;
-  customer_id: number;
+  user_id: number;
   make: string;
   model: string;
   year: number;
@@ -76,7 +81,7 @@ interface BlogData {
   tags: string;
   image: string;
   content: string;
-  createdAt: string;
+  createdat: string;
 }
 
 interface CartItem {
@@ -85,13 +90,14 @@ interface CartItem {
   price: number;
   quantity: number;
   product_id: number;
+  image: string;
 }
 
 interface PaymentData {
   paymentID: number;
   orderID: number;
   amount: number;
-  paymentStatus: string;
+  paymentstatus: string;
   paymentDate: string;
 }
 

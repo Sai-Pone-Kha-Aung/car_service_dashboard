@@ -4,6 +4,23 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '../../table'
 import { TabsContent } from '../../tabs'
 import { appointments } from '@/constants/Data'
 
+interface CustomerData {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    cars: Car[];
+    orders: OrderData[];
+    avatar?: string;
+    password: string;
+    appointments: AppointmentData[];
+    cart: CartItem[];
+    payments: PaymentData[];
+    createdat: string;
+    updatedat: string;
+}
+
 const CustomerDetailTable = ({ data }: { data: CustomerData }) => {
     const appointmentData = appointments.filter((appointment) => appointment.id === appointments[0].service[0].id);
 

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -8,7 +8,47 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 
+interface Service {
+    id: number;
+    name: string;
+    price: number;
+    title: string;
+    description: string;
+    category: string;
+}
+
 const Page = () => {
+    const [isMounted, setIsMounted] = useState(false);
+    const [data, setData] = useState<Service[]>([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        try {
+            const fetchData = async () => {
+                const response = await fetch(`/api/service`);
+                const data = await response.json();
+                setData(data);
+            }
+            fetchData();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }, []);
+
+    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const response = await fetch(`/api/service`);
+        const originalData = await response.json();
+        const filteredData: Service[] = searchTerm === '' ? originalData : originalData.filter((member: Service): boolean =>
+            member.name.toLowerCase().includes(searchTerm) ||
+            member.category.toLowerCase().includes(searchTerm)
+        );
+        setData(filteredData);
+    }
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
     return (
         <div className='min-h-screen bg-white mx-auto'>
 
@@ -28,22 +68,43 @@ const Page = () => {
                             type="search"
                             placeholder='Search service...'
                             className='w-full pl-10'
+                            onChange={handleSearch}
                         />
                         <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
                     </div>
                 </div>
 
-                <Tabs defaultValue='all' className='w-fulll mb-12'>
-                    <TabsList className='grid w-full grid-cols-4'>
+                <Tabs defaultValue='all' className='w-full mb-12'>
+
+                    <TabsList className='grid w-full grid-cols-3'>
                         <TabsTrigger value="all">All Services</TabsTrigger>
-                        <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-                        <TabsTrigger value="repair">Repair</TabsTrigger>
-                        <TabsTrigger value="diagnostic">Diagnostic</TabsTrigger>
+                        <TabsTrigger value="Maintenance">Maintenance</TabsTrigger>
+                        <TabsTrigger value="Wash">Wash</TabsTrigger>
                     </TabsList>
-                    {['all', 'maintenance', 'repair', 'diagnostic'].map((category) => (
+                    {['all', 'Maintenance', 'Wash'].map((category) => (
                         <TabsContent key={category} value={category}>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {renderServiceCards()}
+                                {data
+                                    .filter(service => category === 'all' || service.category === category)
+                                    .map((service, index) => (
+                                        <Card key={index}>
+                                            <CardHeader>
+                                                <CardTitle>{service.title}</CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <Badge className='mb-2'>{service.category}</Badge>
+                                                <CardDescription>{service.description}</CardDescription>
+                                                <p className='font-bold mt-2'>${service.price}</p>
+                                            </CardContent>
+                                            <CardFooter className='flex items-center'>
+                                                <div className='flex flex-col gap-4 justify-center items-start'>
+                                                    <Button size="sm"
+                                                        onClick={() => router.push('/appointment')}
+                                                    >Book Service</Button>
+                                                </div>
+                                            </CardFooter>
+                                        </Card>
+                                    ))}
                             </div>
                         </TabsContent>
                     ))}
@@ -55,38 +116,3 @@ const Page = () => {
 }
 
 export default Page
-
-function renderServiceCards() {
-    const router = useRouter();
-    const services = [
-        { title: "Oil Change", description: "Regular oil changes to keep your engine running smoothly.", category: "maintenance" },
-        { title: "Brake Service", description: "Comprehensive brake inspections and repairs for your safety.", category: "Repair" },
-        { title: "Engine Diagnostics", description: "Advanced diagnostics to identify and resolve engine issues.", category: "Diagnostic" },
-        { title: "Tire Rotation", description: "Extend the life of your tires with regular rotations.", category: "maintenance" },
-        { title: "Battery Replacement", description: "Expert battery testing and replacement services.", category: "Repair" },
-        { title: "A/C Service", description: "Keep your car cool with our A/C maintenance and repair.", category: "Repair" },
-        { title: "Transmission Service", description: "Maintain your transmission for smooth gear shifts.", category: "maintenance" },
-        { title: "Wheel Alignment", description: "Ensure proper wheel alignment for better handling and tire longevity.", category: "maintenance" },
-        { title: "Electrical System Check", description: "Comprehensive electrical system diagnostics and repair.", category: "Diagnostic" },
-    ]
-
-    return services.map((service, index) => (
-        <Card key={index}>
-            <CardHeader>
-                <CardTitle>{service.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Badge className='mb-2'>{service.category}</Badge>
-                <CardDescription>{service.description}</CardDescription>
-                <p className='font-bold mt-2'>$9.99</p>
-            </CardContent>
-            <CardFooter className='flex items-center'>
-                <div className='flex flex-col gap-4 justify-center items-start'>
-                    <Button size="sm"
-                        onClick={() => router.push('/appointment')}
-                    >Book Service</Button>
-                </div>
-            </CardFooter>
-        </Card>
-    ))
-}

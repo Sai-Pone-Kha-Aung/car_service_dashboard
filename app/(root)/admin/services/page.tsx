@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table'
 import { servicesData } from '@/constants/Data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,14 +9,40 @@ import { AddService } from '@/utils/add-form';
 import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
+interface Service {
+    id: number;
+    name: string;
+    price: number;
+    title: string;
+    description: string;
+    category: string;
+}
+
 
 const page = () => {
-    const columns = Object.keys(servicesData[0])
+    const [data, setData] = useState<Service[]>([])
+    const fetchData = async () => {
+        const res = await fetch('/api/service')
+        const data = await res.json()
+        console.log(data)
+        setData(data)
+
+        if (res.ok) {
+            console.log("Fetched service")
+        } else {
+            console.log("Fetching Error")
+        }
+    }
+    console.table(data)
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const columns = data.length > 0 ? Object.keys(data[0])
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
-        }))
-    const data = servicesData
+        })) : []
     const { setSearchQuery, searchResults } = useSearch(data, 'name');
     const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'name')
     return (

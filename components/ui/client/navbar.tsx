@@ -1,33 +1,48 @@
 'use client'
-import React, { useState } from 'react'
-import { Car, Menu, ShoppingCart } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { Menu, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '../button'
 import { Badge } from '../badge'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useCart } from '@/context/CartContext'
-import { customerData } from '@/constants/Data'
 
 const Navbar = () => {
-    const { id } = useParams()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [data, setData] = useState<CustomerData>();
     const { cart } = useCart();
     const router = useRouter();
+    const { logout, isAuthenticated, userEmail, userData } = useAuth()
 
-    const { logout, isAuthenticated, userEmail } = useAuth()
+    const fetchData = async () => {
+        const response = await fetch(`/api/user/${userData?.id}`);
+        const data = await response.json();
+        setData(data);
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setIsLoggedIn(false);
+            fetchData();
+        }
+    }, [isAuthenticated, userData]);
 
     const handleLogout = () => {
         logout()
         router.push('/sign-in')
     }
 
-    const totalItems = Array.isArray(cart) ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0
+    let totalItems = Array.isArray(cart) ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0
 
-    const data = customerData[0]
+    if (!isAuthenticated) {
+        totalItems = 0;
+    }
+
+
     return (
         <header>
             <nav className='bg-white shadow-sm'>
@@ -61,9 +76,9 @@ const Navbar = () => {
                                                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
-                                        ) : userEmail === 'user@carservicepro.com' ? (
+                                        ) : userEmail ? (
                                             <Avatar onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                                                <AvatarImage src={data.avatar} alt={data.name} />
+                                                <AvatarImage src={data?.avatar} alt={userData?.name || 'User'} />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
                                         ) : (
@@ -81,7 +96,7 @@ const Navbar = () => {
                                                     </Link>
                                                 ) : (
                                                     <>
-                                                        <Link href={`/profile/1`} className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Profile</Link>
+                                                        <Link href={`/profile/${userData?.id}`} className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Profile</Link>
                                                         <Link href='/appointment' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Appointment</Link>
                                                         <Link href='/order' className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Order</Link>
                                                     </>

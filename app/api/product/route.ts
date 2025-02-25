@@ -2,11 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
 async function getAllProdcuts() {
-  const client = await pool.connect();
-  const result = await client.query("SELECT * FROM products");
-  client.release();
-
   try {
+    const client = await pool.connect();
+    const result = await client.query("SELECT * FROM products");
+    client.release();
+    if (result.rows.length > 0) {
+      const products = result.rows.map((product) => {
+        if (product.image) {
+          product.image = `data:image/jpeg;base64,${product.image.toString(
+            "base64"
+          )}`;
+        }
+        return product;
+      });
+      console.log("Fetched products:", products);
+      return NextResponse.json(products);
+    }
+
     console.log("Fetched products:", result.rows);
     return NextResponse.json(result.rows);
   } catch (error) {
@@ -24,14 +36,37 @@ async function getAllProdcuts() {
 // description TEXT
 
 async function createProduct(request: NextRequest) {
+  const formData = await request.formData();
   const client = await pool.connect();
-  const body = await request.json();
-  const { name, quantity, reorder, price, serviceId, image, description } =
-    body;
+
   try {
+    const name = formData.get("name");
+    const quantity = formData.get("quantity");
+    const reorder = formData.get("reorder");
+    const category = formData.get("category");
+    const price = formData.get("price");
+    const serverid = formData.get("serviceid");
+    const description = formData.get("description");
+    const imageFile = formData.get("image") as File;
+
+    let imageBuffer = null;
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      imageBuffer = Buffer.from(bytes);
+    }
+
     const result = await client.query(
-      "INSERT INTO products (name, quantity, reorder, price, serviceId, image, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [name, quantity, reorder, price, serviceId, image, description]
+      "INSERT INTO products (name, quantity, reorder, category, price, serviceId, image, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      [
+        name,
+        quantity,
+        reorder,
+        category,
+        price,
+        serverid,
+        imageBuffer,
+        description,
+      ]
     );
     client.release();
     console.log("Created product:", result.rows[0]);
@@ -72,12 +107,27 @@ async function deleteProduct(request: NextRequest) {
 }
 
 async function updateProduct(request: NextRequest) {
+  const formData = await request.formData();
   const client = await pool.connect();
-  const body = await request.json();
-  const { id, name, quantity, reorder, price, serviceId, image, description } =
-    body;
 
   try {
+    const id = formData.get("id");
+    const name = formData.get("name");
+    const quantity = formData.get("quantity");
+    const reorder = formData.get("reorder");
+    const price = formData.get("price");
+    const category = formData.get("category");
+    const serviceId = formData.get("serviceid");
+    const imageFile = formData.get("image") as File;
+    const description = formData.get("description");
+
+    let imageBuffer = null;
+    if (imageFile && imageFile.size > 0) {
+      // Check if imageFile is valid
+      const bytes = await imageFile.arrayBuffer();
+      imageBuffer = Buffer.from(bytes);
+    }
+
     const fields = [];
     const values = [];
     let index = 1;
@@ -98,20 +148,34 @@ async function updateProduct(request: NextRequest) {
       fields.push(`price = $${index++}`);
       values.push(price);
     }
+    if (category) {
+      fields.push(`category = $${index++}`);
+      values.push(category);
+    }
     if (serviceId) {
-      fields.push(`serviceId) { = $${index++}`);
+      fields.push(`serviceId = $${index++}`);
       values.push(serviceId);
     }
-    if (image) {
+    if (imageBuffer) {
+      // Use imageBuffer instead of imageFile to ensure buffer exists
       fields.push(`image = $${index++}`);
-      values.push(image);
+      values.push(imageBuffer);
     }
     if (description) {
       fields.push(`description = $${index++}`);
       values.push(description);
     }
-    values.push(id);
 
+    // Check if there are any fields to update
+    if (fields.length === 0) {
+      client.release();
+      return NextResponse.json(
+        { error: "No fields provided for update" },
+        { status: 400 }
+      );
+    }
+
+    values.push(id);
     const query = `UPDATE products SET ${fields.join(
       ", "
     )} WHERE id = $${index} RETURNING *`;
@@ -127,6 +191,7 @@ async function updateProduct(request: NextRequest) {
     return NextResponse.json(result.rows[0]);
   } catch (error) {
     console.error("Error updating product:", error);
+    client.release(); // Ensure client is released on error
     return NextResponse.json(
       { error: "Error updating product" },
       { status: 500 }

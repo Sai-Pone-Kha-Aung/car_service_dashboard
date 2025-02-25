@@ -4,7 +4,34 @@ import pool from "@/lib/db";
 async function getAllAppointmentServices() {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM AppointmentServices");
+    const query = `
+      SELECT 
+        aps.appointment_id, 
+        aps.service_id, 
+        aps.mechanic_id,
+        a.name AS appointment_name,
+        a.car AS appointment_car,
+        a.date AS appointment_date,
+        a.status AS appointment_status,
+        a.time AS appointment_time,
+        s.name AS service_name,
+        s.price AS service_price,
+        st.name AS mechanic_name,
+        st.role AS mechanic_role,
+        st.email AS mechanic_email,
+         u.name AS user_name
+      FROM 
+        AppointmentServices aps
+      JOIN 
+        Appointments a ON aps.appointment_id = a.id
+      JOIN 
+        Services s ON aps.service_id = s.id
+      JOIN 
+        Staff st ON aps.mechanic_id = st.id
+      JOIN
+        Users u ON a.user_id = u.id
+    `;
+    const result = await client.query(query);
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error("Error fetching appointment services:", error);

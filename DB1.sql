@@ -114,3 +114,6 @@ CREATE TABLE Blogs (
 ALTER TABLE Orders
 ADD CONSTRAINT product_id_fkey
 FOREIGN KEY (product_id) REFERENCES Products(id);
+
+ALTER TABLE products
+  ALTER COLUMN image TYPE BYTEA USING image::BYTEA;

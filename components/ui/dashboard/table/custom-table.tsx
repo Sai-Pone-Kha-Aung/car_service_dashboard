@@ -15,15 +15,64 @@ interface IColumn {
     accessor: string
 }
 
+// interface CustomerData {
+//     id: number;
+//     [key: string]: string | number;
+// }
+
+interface AvatarData {
+    data: number[];
+}
+
 interface CustomerData {
     id: number;
-    [key: string]: string | number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    cars: Car[];
+    orders: OrderData[];
+    avatar?: string | AvatarData;
+    password: string;
+    appointments: AppointmentData[];
+    cart: CartItem[];
+    payments: PaymentData[];
+    createdAt: string;
+    updatedAt: string;
+    [key: string]: any;
 }
 
 interface ICustomTable<T> {
     columns: IColumn[];
     data: T[];
 }
+
+interface BlogData {
+    id: number;
+    title: string;
+    category: string;
+    tags: string;
+    image: string;
+    content: string;
+    createdat: string;
+}
+
+interface AppointmentServices {
+    appointment_id: number;
+    service_id: number;
+    mechanic_id: number;
+    appointment_name: string;
+    appointment_car: string;
+    appointment_date: string;
+    appointment_status: string;
+    service_name: string;
+    service_price: string;
+    mechanic_name: string;
+    mechanic_role: string;
+    mechanic_email: string;
+    user_name: string;
+}
+
 
 const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
     const router = useRouter();
@@ -52,9 +101,9 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
             case isAppointmentsPath || isHomePath:
                 return <EditAppointment appointmentData={row as AppointmentData} />
             case isServicesPath:
-                return <EditService serviceData={row as ServiceData} />
+                return <EditService serviceData={row as Service} />
             case isInventoryPath:
-                return <EditInventory product={row as Stock} />
+                return <EditInventory product={row as Product} />
             case isCarPath:
                 return <EditCar carData={row as CarData} />
             case isStaffPath:
@@ -76,7 +125,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                             return 'bg-green-100 text-green-800';
                         case 'In Service':
                             return 'bg-yellow-100 text-yellow-800';
-                        case 'Scheduled':
+                        case 'Upcoming':
                             return 'bg-blue-100 text-blue-800';
                         case 'Cancelled':
                             return 'bg-red-100 text-red-800';
@@ -95,23 +144,55 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                         {status}
                     </span>
                 );
+            case 'appointment_status':
+                const appoint = (row as AppointmentServices)[column.accessor];
+                const appointmentServices_Status = (() => {
+                    switch (appoint) {
+                        case 'Completed':
+                            return 'bg-green-100 text-green-800';
+                        case 'In Service':
+                            return 'bg-yellow-100 text-yellow-800';
+                        case 'Upcoming':
+                            return 'bg-blue-100 text-blue-800';
+                        case 'Cancelled':
+                            return 'bg-red-100 text-red-800';
+                        case 'Walk-In':
+                            return 'bg-purple-100 text-purple-800';
+                        case 'Pending':
+                            return 'bg-orange-100 text-yellow-800';
+                        case 'On The Way':
+                            return 'bg-violet-100 text-blue-800';
+                        default:
+                            return '';
+                    }
+                })();
+                return (
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${appointmentServices_Status}`}>
+                        {appoint}
+                    </span>
+                );
             case 'price':
-                return `$${(row as Stock)[column.accessor]}`;
+                return `$${(row as Product)[column.accessor]}`;
 
             case 'avatar':
-                const avatarUrl = (row as CustomerData)[column.accessor] as string;
+
+                const avatar = (row as CustomerData)[column.accessor];
+
                 return (
                     <Avatar className='mx-2'>
-                        <AvatarImage src={avatarUrl} alt="Customer Avatar" />
+                        <AvatarImage
+                            src={avatar as string}
+                            alt="Customer Avatar"
+                        />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                )
+                );
 
-            case 'paymentStatus':
+            case 'paymentstatus':
                 const paymentStatus = (row as PaymentData)[column.accessor];
                 const paymentStatusClass = (() => {
                     switch (paymentStatus) {
-                        case 'Paid':
+                        case 'Completed':
                             return 'bg-green-100 text-green-800';
                         case 'Pending':
                             return 'bg-yellow-100 text-yellow-800';
@@ -124,6 +205,12 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                         {paymentStatus}
                     </span>
                 );
+            case 'createdat':
+                return new Date((row as BlogData)[column.accessor]).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
             default:
                 return (row as CustomerData)[column.accessor];
         }
@@ -136,7 +223,7 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                 >
                     <div className='flex flex-row items-center justify-between space-y-0 pb-2'>
                         <CardTitle>
-                            <h1 className='text-2xl font-bold'>Daily Customer</h1>
+                            <h1 className='text-2xl font-bold'>Daily Customer - Walk-In</h1>
                         </CardTitle>
                         <AddCustomer />
                     </div>
@@ -176,9 +263,6 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                                                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                                     {switchEditForm(row)}
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <Trash className='mr-2 h-4 w-4' /> Delete
-                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     ) : (
@@ -193,9 +277,6 @@ const CustomTable = <T,>({ columns, data }: ICustomTable<T>) => {
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                 <DropdownMenuItem onClick={() => editById((row as CustomerData).id)}>
                                                     <Edit className='mr-2 h-4 w-4' /> Edit
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <Trash className='mr-2 h-4 w-4' /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>

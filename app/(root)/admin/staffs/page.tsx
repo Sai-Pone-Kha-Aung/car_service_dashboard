@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table'
 import { staffData } from '@/constants/Data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -10,10 +10,33 @@ import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
 
-const Page = () => {
-    const data = staffData;
+interface StaffData {
+    id: number;
+    name: string;
+    role: string;
+    email: string;
+    avatar: string;
+}
 
-    const columns = data.length > 0 ? ['avatar', ...Object.keys(staffData[0])
+const Page = () => {
+    const [data, setData] = useState<StaffData[]>([]);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`/api/staff`);
+            const data = await response.json();
+            setData(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    console.log(data);
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const columns = data.length > 0 ? ['avatar', ...Object.keys(data[0])
         .filter(key => key !== 'id' && key !== 'avatar')]
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),

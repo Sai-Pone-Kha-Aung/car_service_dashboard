@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table'
 import { customerData } from '@/constants/Data';
 import { AddInventory, AddOrder } from '@/utils/add-form';
@@ -9,36 +9,74 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
+interface OrderData {
+    id: number;
+    product: string;
+    quantity: number;
+    price: number;
+    total: number;
+    date: string;
+    status: string;
+    user_id: string;
+    product_id: string;
+    product_name: string;
+    user_name: string;
+}
+
 const page = () => {
     const orderKeys = Object.keys(customerData[0].orders[0] || {});
     const paymentKeys = Object.keys(customerData[0].payments[0] || {});
     const combinedKeys = Array.from(new Set([...orderKeys, ...paymentKeys]));
+    const [data, setData] = useState<OrderData[]>([]);
+    const [userData, setUserData] = useState<CustomerData[]>([]);
+    const [productData, setProductData] = useState<Product[]>([]);
 
-    const columns = [
-        { header: 'Name', accessor: 'name' },
-        ...combinedKeys
-            .filter(key => key !== 'id' && key !== 'orderID' && key !== 'paymentID' && key !== 'amount' && key !== 'paymentDate')
-            .map(key => ({
-                header: key.charAt(0).toUpperCase() + key.slice(1),
-                accessor: key
-            }))
-    ];
+    const fetchOrders = async () => {
+        const res = await fetch('/api/order');
+        const data = await res.json();
+        console.log('Orders:', data);
+        setData(data);
+    }
 
-    const data = customerData
-        .flatMap(customer => customer
-            .orders.map(order => {
-                const payment = customer.payments.find(payment => payment.orderID === order.id);
-                return {
-                    ...order,
-                    name: customer.name,
-                    paymentStatus: payment ? payment.paymentStatus : 'Pending'
-                }
-            }
-            ));
+    useEffect(() => {
+        fetchOrders();
+    }, []);
 
-    console.log(data);
-    // const { setSearchQuery, searchResults } = useSearch(data, 'product');
-    // const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'product');
+    const formattedData = data.map(order => {
+        return {
+            ...order,
+            date: new Date(order.date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            })
+        };
+    })
+
+    const orderColumns = [
+        { header: 'Name', accessor: 'user_name' },
+        { header: 'Quantity', accessor: 'quantity' },
+        { header: 'Product', accessor: 'product_name' },
+        { header: 'Price', accessor: 'price' },
+        { header: 'Total', accessor: 'total' },
+        { header: 'Date', accessor: 'date' },
+        { header: 'Status', accessor: 'status' },
+        { header: 'Payment Status', accessor: 'paymentstatus' }
+    ]
+
+    // const orderData = data.map(order => {
+    //     const user = userData.find(u => u.id === order.user_id);
+    //     const product = productData.find(p => p.id === order.product_id);
+    //     return {
+    //         ...order,
+    //         name: user?.name || 'Unknown',
+    //         product: product?.name || 'Unknown'
+    //     };
+    // });
+    const { setSearchQuery, searchResults } = useSearch(data, 'product');
+    const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'product');
+
+
 
     return (
         <div className='flex-1 overflow-y-auto p-6 bg-gray-100 h-full'>
@@ -50,17 +88,15 @@ const page = () => {
                     <Select defaultValue='A-Z' onValueChange={() => { }}>
                         <SelectTrigger className='w-[180px] bg-white'>
                             <SelectValue placeholder="Filter by A-Z" />
-                            <SelectContent>
-                                <SelectItem value='A-Z'>
-                                    {/* {sortOrder === 'asc' ? 'A-Z' : 'Z-A'} */}
-                                    A-Z
-                                </SelectItem>
-                                <SelectItem value='Z-A'>
-                                    {/* {sortOrder === 'asc' ? 'Z-A' : 'A-Z'} */}
-                                    Z-A
-                                </SelectItem>
-                            </SelectContent>
                         </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='A-Z'>
+                                {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+                            </SelectItem>
+                            <SelectItem value='Z-A'>
+                                {sortOrder === 'asc' ? 'Z-A' : 'A-Z'}
+                            </SelectItem>
+                        </SelectContent>
                     </Select>
                 </div>
                 <div className='relative'>
@@ -70,7 +106,7 @@ const page = () => {
                     />
                 </div>
             </div>
-            <CustomTable columns={columns} data={data} />
+            <CustomTable columns={orderColumns} data={formattedData} />
         </div>
     )
 }

@@ -12,6 +12,7 @@ const Page = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [name, setName] = useState("")
     const { login, isAuthenticated, userEmail } = useAuth()
     const router = useRouter()
 
@@ -25,17 +26,29 @@ const Page = () => {
         }
     }, [isAuthenticated, userEmail, router])
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if ((email === 'admin@carservicepro.com' && password === 'admin') || (email === 'user@carservicepro.com' && password === 'user')) {
-            login(email);
-            if (email === 'admin@carservicepro.com') {
-                router.push('/admin');
+        try {
+            const response = await fetch('/api/sign_up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Signed up successfully:', data);
+                login(email, password);
+                router.push('/');
             } else {
-                router.push('/user-dashboard');
+                const errorData = await response.json();
+                alert(errorData.error || 'Sign up failed');
             }
-        } else {
-            alert('Invalid credentials');
+        } catch (error) {
+            console.error('Error during sign up:', error);
+            alert('Sign up failed');
         }
     };
 
@@ -56,26 +69,26 @@ const Page = () => {
                                 <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300" />
                                 <Input
                                     id="name"
-                                    type="name"
+                                    type="text"
                                     placeholder="Enter your full name"
                                     className="bg-white/20 border-none pl-10 placeholder:text-blue-200 text-white"
-                                    value={email}
-                                    onChange={() => { }}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     required
                                 />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-blue-100">Full Name</Label>
+                            <Label htmlFor="email" className="text-blue-100">Email</Label>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300" />
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="Enter your full name"
+                                    placeholder="Enter your email"
                                     className="bg-white/20 border-none pl-10 placeholder:text-blue-200 text-white"
                                     value={email}
-                                    onChange={() => { }}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
                             </div>

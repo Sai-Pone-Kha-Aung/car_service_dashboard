@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -16,7 +16,40 @@ const NewAppointmentDialog = ({ onClose }: { onClose: () => void }) => {
     const [date, setDate] = useState<Date>();
     const [customerFound, setCustomerFound] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState('');
+    const [servicesData, setServicesData] = useState<Service[]>([]);
+    const [staffData, setStaffData] = useState<StaffData[]>([]);
     const router = useRouter();
+
+    // const fetchServices = async () => {
+    //     try {
+    //         const res = await fetch('/api/service');
+    //         if (!res.ok) {
+    //             throw new Error(`Error: ${res.status} ${res.statusText}`);
+    //         }
+    //         const response = await res.json();
+    //         setServicesData(response);
+    //     } catch (error) {
+    //         console.error("Failed to fetch services");
+    //     }
+    // }
+
+    // const fetchStaff = async () => {
+    //     try {
+    //         const res = await fetch('/api/staff');
+    //         if (!res.ok) {
+    //             throw new Error(`Error: ${res.status} ${res.statusText}`);
+    //         }
+    //         const response = await res.json();
+    //         setStaffData(response);
+    //     } catch (error) {
+    //         console.error("Failed to fetch services");
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     fetchServices();
+    //     fetchStaff();
+    // }, []);
 
     const handleSelectCustomer = (customer: CustomerData) => {
         setCustomerFound(true)

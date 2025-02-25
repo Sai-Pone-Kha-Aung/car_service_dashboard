@@ -2,11 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
 async function getAllCustomers() {
-  const client = await pool.connect();
-  const result = await client.query("SELECT * FROM users");
-  client.release();
-
   try {
+    const client = await pool.connect();
+    const result = await client.query("SELECT * FROM users");
+    client.release();
+    if (result.rows.length > 0) {
+      // Map over all rows to convert image buffers to base64
+      const users = result.rows.map((user) => {
+        if (user.avatar) {
+          user.avatar = `data:image/jpeg;base64,${user.avatar.toString(
+            "base64"
+          )}`;
+        }
+        return user;
+      });
+    }
     console.log("Fetched customers:", result.rows);
     return NextResponse.json(result.rows);
   } catch (error) {

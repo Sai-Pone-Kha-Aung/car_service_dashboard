@@ -12,14 +12,14 @@ export const customerData: CustomerData[] = [
     cars: [
       {
         id: 1,
-        customer_id: 1,
+        user_id: 1,
         make: "Toyota",
         model: "Camry",
         year: 2020,
       },
       {
         id: 2,
-        customer_id: 1,
+        user_id: 1,
         make: "Honda",
         model: "Civic",
         year: 2018,
@@ -139,14 +139,14 @@ export const customerData: CustomerData[] = [
     cars: [
       {
         id: 3,
-        customer_id: 2,
+        user_id: 2,
         make: "Toyota",
         model: "Land Cruiser",
         year: 2020,
       },
       {
         id: 4,
-        customer_id: 2,
+        user_id: 2,
         make: "Honda",
         model: "Civic",
         year: 2018,
@@ -461,7 +461,7 @@ export const appointments: AppointmentData[] = [
   },
 ];
 
-export const product: Stock[] = [
+export const product: Product[] = [
   {
     id: 1,
     name: "Engine Oil",
@@ -530,7 +530,7 @@ export const product: Stock[] = [
   },
 ];
 
-export const servicesData: ServiceData[] = [
+export const servicesData: Service[] = [
   {
     id: 1,
     name: "Oil Change",
@@ -596,8 +596,8 @@ export const statusOptions: StatusOption[] = [
   },
   {
     id: 4,
-    value: "Scheduled",
-    label: "Scheduled",
+    value: "Upcoming",
+    label: "Upcoming",
   },
   {
     id: 5,

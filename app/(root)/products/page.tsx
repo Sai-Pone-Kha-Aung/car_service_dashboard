@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -12,12 +12,39 @@ import { useCart } from '@/context/CartContext'
 import { product } from '@/constants/Data'
 
 const Page = () => {
-    const data = product;
+    const [data, setData] = useState<Product[]>([])
     const router = useRouter();
     const { addToCart } = useCart();
-    const [activeTab, setActiveTab] = useState('all')
-    const filteredData = activeTab === 'all' ? data : data.filter(item => item.category === activeTab)
+    const [activeTab, setActiveTab] = useState('all');
+    const filteredData = activeTab === 'all' ? data : data.filter(item => item.category === activeTab);
 
+
+
+
+    useEffect(() => {
+        try {
+            const fetchData = async () => {
+                const response = await fetch(`/api/product`);
+                const data = await response.json();
+                console.log(data);
+                setData(data);
+            }
+            fetchData();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }, []);
+
+    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const response = await fetch(`/api/product`);
+        const originalData = await response.json();
+        const filteredData: Product[] = searchTerm === '' ? originalData : originalData.filter((item: Product): boolean =>
+            item.name.toLowerCase().includes(searchTerm) ||
+            item.category.toLowerCase().includes(searchTerm)
+        );
+        setData(filteredData);
+    }
     return (
         <div className='min-h-screen bg-white mx-auto'>
 
@@ -37,6 +64,7 @@ const Page = () => {
                             type="search"
                             placeholder='Search products...'
                             className='w-full pl-10'
+                            onChange={handleSearch}
                         />
                         <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
                     </div>
@@ -46,16 +74,16 @@ const Page = () => {
                     <TabsList className='grid w-full grid-cols-5'>
                         <TabsTrigger value="all">All Products</TabsTrigger>
                         <TabsTrigger value="Oil">Oil</TabsTrigger>
-                        <TabsTrigger value="Filters">Filters</TabsTrigger>
-                        <TabsTrigger value="Brakes">Brakes</TabsTrigger>
-                        <TabsTrigger value="Electrical">Electrical</TabsTrigger>
+                        <TabsTrigger value="Tire">Tire</TabsTrigger>
+                        <TabsTrigger value="Filter">Filter</TabsTrigger>
+                        <TabsTrigger value="Accessories">Accessories</TabsTrigger>
                     </TabsList>
                     <TabsContent value={activeTab} >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {filteredData.map((item) => (
                                 <Card key={item.id}>
                                     <CardHeader className='items-center'>
-                                        <Image src='/placeholder.jpg' alt={`${item.name}`}
+                                        <Image src={item.image} alt={`${item.name}`}
                                             width={300} height={200}
                                             className="object-cover rounded-t-lg" />
                                     </CardHeader>

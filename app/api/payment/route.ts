@@ -20,12 +20,13 @@ async function getAllPayments() {
 async function createPayment(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
-  const { paymentID, orderID, amount, paymentDate, paymentStatus } = body;
+  const { paymentID, orderID, amount, paymentDate, paymentStatus, user_id } =
+    body;
 
   try {
     const result = await client.query(
-      "INSERT INTO Payments (paymentID, orderID, amount, paymentDate, paymentStatus) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [paymentID, orderID, amount, paymentDate, paymentStatus]
+      "INSERT INTO Payments (paymentID, orderID, amount, paymentDate, paymentStatus, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [paymentID, orderID, amount, paymentDate, paymentStatus, user_id]
     );
     return NextResponse.json(result.rows[0]);
   } catch (error) {

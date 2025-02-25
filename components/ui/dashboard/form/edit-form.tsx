@@ -24,16 +24,27 @@ interface EditFormProps {
     description: string
     fields: FormField[]
     onSave: (data: { [key: string]: string | number | File }) => void
+    onDelete?: () => void
+    onChangeImage?: (image: File) => void
+    previewImage?: string
     variant?: 'ghost' | 'outline'
     className?: string
 }
 
-const EditForm = ({ title, description, fields, onSave, variant, className }: EditFormProps) => {
+const EditForm = ({ title, description, fields, onSave, variant, className, onDelete, onChangeImage, previewImage }: EditFormProps) => {
     const [open, setOpen] = useState(false)
     const [formData, setFormData] = useState<{ [key: string]: string | number | File }>({})
 
     const handleChange = (id: string, value: string | number | File) => {
         setFormData(prev => ({ ...prev, [id]: value }))
+    }
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldId: string) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleChange(fieldId, file);
+            onChangeImage?.(file);
+        }
     }
 
     const handleSave = () => {
@@ -45,33 +56,11 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
         setOpen(false)
     }
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>,
-        fieldId: string
-    ) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // try {
-        //     const res = await fetch('/api/upload', {
-        //         method: 'POST',
-        //         body: formData,
-        //     });
-        //     const data = await res.json();
-        //     if(data.url) {
-        //         handleChange('image', data.url);
-        //     }else {
-        //         console.log('Upload failed:', data);
-        //      }
-        // } catch (error) {
-        //     console.log('Error uploading file:', error);
-        // }
-
-        const localUrl = URL.createObjectURL(file);
-        handleChange(fieldId, localUrl);
+    const handleDelete = () => {
+        onDelete?.()
+        setOpen(false)
     }
+
 
     const btnClassName = className || 'flex items-center p-0 h-auto'
     return (
@@ -123,22 +112,22 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                                     ) : field.type === 'file' ? (
                                         <div className="mb-4">
                                             <div className="flex flex-col justify-start items-start gap-4">
-                                                <Image
-                                                    src={String(formData[field.id] || field.defaultValue)}
-                                                    alt="Featured"
-                                                    width={160}
-                                                    height={160}
-                                                    className="object-cover rounded"
-                                                    onClick={() => window.open(String(field.defaultValue), '_blank')}
+                                                {previewImage && (
+                                                    <Image
+                                                        src={previewImage}
+                                                        alt="Featured"
+                                                        width={160}
+                                                        height={160}
+                                                        className="object-cover rounded"
+                                                    />
+                                                )}
+                                                <Input
+                                                    id={field.id}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => handleImageUpload(e, field.id)}
+                                                    className="col-span-3"
                                                 />
-                                                <label htmlFor={`file-input-${field.id}`} className="cursor-pointer">
-                                                    {ImageUpload({ fieldId: field.id, onChange: handleChange })}
-                                                    <Button type="button" variant="outline"
-                                                        onClick={() => document.getElementById(`file-input-${field.id}`)?.click()}
-                                                    >
-                                                        <Upload className="mr-2 h-4 w-4" /> Upload New Image
-                                                    </Button>
-                                                </label>
                                             </div>
                                         </div>
 
@@ -156,16 +145,27 @@ const EditForm = ({ title, description, fields, onSave, variant, className }: Ed
                         </div>
                     </form>
                     <DialogFooter>
-                        <Button
-                            type='button'
-                            variant="outline"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type='button' onClick={handleSave}>
-                            Save
-                        </Button>
+                        <div className="w-full flex justify-between">
+                            <Button
+                                type='button'
+                                variant="destructive"
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </Button>
+                            <div className="flex gap-2">
+                                <Button
+                                    type='button'
+                                    variant="outline"
+                                    onClick={handleCancel}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button type='button' onClick={handleSave}>
+                                    Save
+                                </Button>
+                            </div>
+                        </div>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -13,10 +13,20 @@ import pool from "@/lib/db";
 // );
 async function getAllCartItems() {
   const client = await pool.connect();
-  const result = await client.query("SELECT * FROM Cart");
-  client.release();
-
   try {
+    const result = await client.query(`
+      SELECT c.*, p.image 
+      FROM Cart c 
+      LEFT JOIN Products p ON c.product_id = p.id
+    `);
+    result.rows = result.rows.map((row) => ({
+      ...row,
+      image: row.image
+        ? `data:image/jpeg;base64,${Buffer.from(row.image).toString("base64")}`
+        : null,
+    }));
+    client.release();
+
     console.log("Fetched cart items:", result.rows);
     return NextResponse.json(result.rows);
   } catch (error) {
@@ -50,26 +60,37 @@ async function createCartItem(request: NextRequest) {
 async function deleteCartItem(request: NextRequest) {
   const client = await pool.connect();
   const body = await request.json();
-  const { id } = body;
+  const { id, user_id } = body;
 
   try {
-    const q = "DELETE FROM Cart WHERE id = $1";
-    const result = await client.query(q, [id]);
+    let result;
+    if (id) {
+      const q = "DELETE FROM Cart WHERE id = $1";
+      result = await client.query(q, [id]);
+    } else if (user_id) {
+      const q = "DELETE FROM Cart WHERE user_id = $1";
+      result = await client.query(q, [user_id]);
+    }
     client.release();
-    if (result.rowCount === 0) {
+
+    if (!result || result.rowCount === 0) {
       return NextResponse.json(
-        { error: "Cart item not found" },
+        { error: "Cart item(s) not found" },
         { status: 404 }
       );
     }
 
-    console.log("Deleted cart item with ID:", id);
-    return NextResponse.json({ message: "Cart item deleted successfully", id });
+    console.log("Deleted cart item(s) for user ID:", user_id || id);
+    return NextResponse.json({
+      message: "Cart item(s) deleted successfully",
+      id,
+      user_id,
+    });
   } catch (error) {
-    console.error("Error deleting cart item:", error);
+    console.error("Error deleting cart item(s):", error);
     client.release();
     return NextResponse.json(
-      { error: "Error deleting cart item" },
+      { error: "Error deleting cart item(s)" },
       { status: 500 }
     );
   }

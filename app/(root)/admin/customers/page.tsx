@@ -10,36 +10,55 @@ import { AddCustomer } from '@/utils/add-form';
 import useSearch from '@/hooks/useSearch';
 import useSort from '@/hooks/useSort';
 
-const Page = () => {
-    const data = customerData;
-    // const [data, setData] = useState<CustomerData[]>([]);
-    // const [error, setError] = useState<string>('');
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const res = await fetch('/api/customer');
-    //             if (!res.ok) {
-    //                 throw new Error(`Error: ${res.status} ${res.statusText}`);
-    //             }
-    //             const data = await res.json();
-    //             console.log("fetchData", data);
-    //             setData(data);
-    //         } catch (error) {
-    //             setError("Failed to fetch");
-    //         }
-    //     };
-    //     fetchData();
-    // }, []);
-    console.log('User Data:', data)
+interface CustomerData {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    cars: Car[];
+    orders: OrderData[];
+    avatar?: string;
+    password: string;
+    appointments: AppointmentData[];
+    cart: CartItem[];
+    payments: PaymentData[];
+    createdAt: string;
+    updatedAt: string;
 
-    const columns = data.length > 0 ? ['avatar', ...Object.keys(customerData[0])
-        .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar' && key !== 'appointments' && key !== 'cart' && key !== 'updatedAt' && key !== 'payments')]
+}
+const Page = () => {
+    const [data, setData] = useState<CustomerData[]>([]);
+    const [error, setError] = useState<string>('');
+
+    const fetchData = async () => {
+        try {
+            const res = await fetch('/api/user');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            console.log("fetchData", response);
+            setData(response);
+        } catch (error) {
+            setError("Failed to fetch");
+        }
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    console.table(data)
+    const columns = data.length > 0 ? ['avatar', ...Object.keys(data[0])
+        .filter(key => key !== 'id' && key !== 'cars' && key !== 'orders' && key !== 'password' && key !== 'avatar' && key !== 'appointments' && key !== 'cart' && key !== 'updatedat' && key !== 'payments')]
         .map((key) => ({
             header: key.charAt(0).toUpperCase() + key.slice(1),
             accessor: key
         })) : []
 
-    const { setSearchQuery, searchResults } = useSearch(customerData, 'name')
+
+
+    const { setSearchQuery, searchResults } = useSearch(data, 'name')
     const { sortedData, sortOrder, handleSort } = useSort(searchResults, 'name')
 
     return (

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CalendarPlus, Plus, Upload } from 'lucide-react'
 import SearchModal from '@/components/ui/dashboard/search/searchModal'
-import { servicesData, staffData } from '@/constants/Data'
+import { product, servicesData, staffData } from '@/constants/Data'
 import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import ImageUpload from '@/components/share_components/image_upload'
@@ -19,6 +19,7 @@ interface FormField {
     label: string;
     placeholder?: string;
     type?: string;
+    options?: { id: string | number, name: string }[]
 }
 
 interface AddFormProps {
@@ -28,22 +29,88 @@ interface AddFormProps {
     onSubmit: (data: { [key: string]: string }) => void;
     triggerLabel: string;
     className?: string;
+    onChangeImage?: (image: File) => void;
+    previewImage?: string;
     variant?: 'ghost' | 'outline';
 }
 
-const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }: AddFormProps) => {
+const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant, onChangeImage, previewImage }: AddFormProps) => {
 
-    const [open, setOpen] = useState(false)
-    const [formData, setFormData] = useState<{ [key: string]: string }>({})
+    const [open, setOpen] = useState(false);
+    const [formData, setFormData] = useState<{ [key: string]: string | File | number }>({});
     const [date, setDate] = useState<Date>();
     const [customerFound, setCustomerFound] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState('');
+    const [servicesData, setServicesData] = useState<Service[]>([]);
+    const [staffData, setStaffData] = useState<StaffData[]>([]);
+    const [userData, setUserData] = useState<CustomerData[]>([]);
+    const [productData, setProductData] = useState<Product[]>([]);
     const [uploadImage, setUploadImage] = useState<File | ''>('');
-
     const pathname = usePathname();
     const router = useRouter();
 
     const isAppointmentsPath = pathname === '/admin/appointments';
+
+    const fetchServices = async () => {
+        try {
+            const res = await fetch('/api/service');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            setServicesData(response);
+        } catch (error) {
+            console.error("Failed to fetch services");
+        }
+    }
+
+    const fetchStaff = async () => {
+        try {
+            const res = await fetch('/api/staff');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            setStaffData(response);
+        } catch (error) {
+            console.error("Failed to fetch services");
+        }
+    }
+
+    const fetchUser = async () => {
+        try {
+            const res = await fetch('/api/user');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            setUserData(response);
+        } catch (error) {
+            console.error("Failed to fetch users");
+        }
+    }
+
+
+    const fetchProduct = async () => {
+        try {
+            const res = await fetch('/api/product');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            setProductData(response);
+        } catch (error) {
+            console.error("Failed to fetch services");
+        }
+    }
+
+
+    useEffect(() => {
+        fetchServices();
+        fetchStaff();
+        fetchUser();
+        fetchProduct();
+    }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -67,12 +134,60 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
     const handleSelectCustomer = (customer: { name: string }) => {
         setCustomerFound(true)
         setSelectedCustomer(customer.name)
+        setFormData({
+            ...formData,
+            customer: customer.name
+        })
+    }
+
+    const handleSelectMechanic = (mechanicName: string) => {
+        setFormData({
+            ...formData,
+            mechanic: mechanicName
+        })
+    }
+
+
+    const handleSelectService = (serviceName: string) => {
+        setFormData({
+            ...formData,
+            service: serviceName
+        })
     }
 
     const handleNewCustomer = () => {
         router.push('/admin/customers')
         setOpen(false)
     }
+
+    const handleSelectedUser = (userName: string) => {
+        setFormData({
+            ...formData,
+            customer: userName
+        })
+    }
+
+    const handleSelectProduct = (productName: string) => {
+        setFormData({
+            ...formData,
+            product: productName
+        })
+    }
+
+
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldId: string) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData(prev => ({
+                ...prev,
+                [fieldId]: file
+            }));
+            onChangeImage?.(file);
+        }
+    }
+
+
 
     return (
         <div>
@@ -102,18 +217,19 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                             <div className='grid gap-4 py-4'>
                                 {fields.map(field => (
                                     <div key={field.id} className='grid gap-4'>
-                                        <Label htmlFor={field.id} className='text-left'>
+                                        <Label htmlFor={field.id} className='text-left' >
                                             {field.label}
                                         </Label>
                                         {field.id === 'mechanic' ? (
-                                            <Select>
+                                            <Select onValueChange={handleSelectMechanic}
+                                            >
                                                 <SelectTrigger className='col-span-3'>
                                                     <SelectValue placeholder='Select mechanic' />
                                                     <SelectContent>
                                                         {staffData.map((staff) => (
                                                             <div key={staff.id}>
                                                                 {
-                                                                    staff.role === 'Technician' && (
+                                                                    staff.role === 'Mechanic' && (
                                                                         <SelectItem key={staff.id} value={staff.name}>{staff.name}</SelectItem>
                                                                     )
                                                                 }
@@ -122,51 +238,48 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                                                     </SelectContent>
                                                 </SelectTrigger>
                                             </Select>
-                                        ) :
+                                        ) : field.id === 'service' ? (
+                                            <Select onValueChange={handleSelectService}>
+                                                <SelectTrigger className='col-span-3'>
+                                                    <SelectValue placeholder='Select service type' />
+                                                    <SelectContent>
+                                                        {servicesData.map((service) => (
+                                                            <SelectItem key={service.id} value={service.name}>{service.name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </SelectTrigger>
+                                            </Select>
+                                        ) : field.id === 'date' ? (
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant='outline'
+                                                        className={`col-span-3 justify-start text-left font-normal ${!date && 'text-muted-foreground'}`}
+                                                    >
+                                                        <CalendarPlus className='mr-2 h-4 w-4' />
+                                                        {date ? date.toDateString() : 'Pick a date'}
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className='w-auto p-0'>
+                                                    <Calendar
+                                                        mode='single'
+                                                        selected={date}
+                                                        onSelect={setDate}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                        ) : (
 
-
-                                            field.id === 'service' ? (
-                                                <Select>
-                                                    <SelectTrigger className='col-span-3'>
-                                                        <SelectValue placeholder='Select service type' />
-                                                        <SelectContent>
-                                                            {servicesData.map((service) => (
-                                                                <SelectItem key={service.id} value={service.name}>{service.name}</SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </SelectTrigger>
-                                                </Select>
-                                            ) : field.id === 'date' ? (
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant='outline'
-                                                            className={`col-span-3 justify-start text-left font-normal ${!date && 'text-muted-foreground'}`}
-                                                        >
-                                                            <CalendarPlus className='mr-2 h-4 w-4' />
-                                                            {date ? date.toDateString() : 'Pick a date'}
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className='w-auto p-0'>
-                                                        <Calendar
-                                                            mode='single'
-                                                            selected={date}
-                                                            onSelect={setDate}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                            ) : (
-
-                                                <Input
-                                                    id={field.id}
-                                                    placeholder={field.placeholder}
-                                                    className='col-span-3'
-                                                    type={field.type || 'text'}
-                                                    onChange={handleChange}
-                                                    defaultValue={field.id === 'customer' ? selectedCustomer : ''}
-                                                />
-                                            )}
+                                            <Input
+                                                id={field.id}
+                                                placeholder={field.placeholder}
+                                                className='col-span-3'
+                                                type={field.type || 'text'}
+                                                onChange={handleChange}
+                                                defaultValue={field.id === 'customer' ? selectedCustomer : ''}
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -180,32 +293,73 @@ const AddForm = ({ title, description, fields, onSubmit, triggerLabel, variant }
                                         <Label htmlFor={field.id} className='text-left'>
                                             {field.label}
                                         </Label>
+
                                         {field.type === 'file' ? (
                                             <div className="mb-4">
                                                 <div className="flex flex-col justify-start items-start gap-4">
-                                                    <Image
-                                                        src={String(uploadImage) || '/placeholder.jpg'}
-                                                        alt="placeholder"
-                                                        width={160}
-                                                        height={160}
-                                                        className="object-cover rounded"
+                                                    {previewImage && (
+                                                        <Image
+                                                            src={previewImage}
+                                                            alt="placeholder"
+                                                            width={160}
+                                                            height={160}
+                                                            className="object-cover rounded"
+                                                        />
+                                                    )}
+                                                    <Input
+                                                        id="image"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={(e) => handleImageUpload(e, field.id)}
                                                     />
-                                                    {ImageUpload({ fieldId: field.id, onChange: (fieldId: string, value: string) => setUploadImage(value as unknown as File) })}
-                                                    <Button type="button" variant="outline"
-                                                        onClick={() => document.getElementById(`file-input-${field.id}`)?.click()}
-                                                    >
-                                                        <Upload className="mr-2 h-4 w-4" /> Upload New Image
-                                                    </Button>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <Input
-                                                id={field.id}
-                                                placeholder={field.placeholder}
-                                                className='col-span-3'
-                                                type={field.type || 'text'}
-                                                onChange={handleChange}
-                                            />
+                                            field.id === 'customer' && field.label === 'Customer' ? (
+                                                <Select onValueChange={handleSelectedUser}
+                                                >
+                                                    <SelectTrigger className='col-span-3'>
+                                                        <SelectValue placeholder='Select customer' />
+                                                        <SelectContent>
+                                                            {userData.map((user) => (
+                                                                <div key={user.id}>
+                                                                    {
+                                                                        <SelectItem key={user.id} value={user.name}>{user.name}</SelectItem>
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </SelectTrigger>
+                                                </Select>
+                                            ) :
+                                                (
+                                                    field.id === 'product' ? (
+                                                        <Select onValueChange={handleSelectProduct}
+                                                        >
+                                                            <SelectTrigger className='col-span-3'>
+                                                                <SelectValue placeholder='Select customer' />
+                                                                <SelectContent>
+                                                                    {productData.map((product) => ( // updated variable name
+                                                                        <div key={product.id}>
+                                                                            {
+                                                                                <SelectItem key={product.id} value={product.name}>{product.name}</SelectItem> // updated variable name
+                                                                            }
+                                                                        </div>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </SelectTrigger>
+                                                        </Select>
+                                                    )
+                                                        : (
+                                                            <Input
+                                                                id={field.id}
+                                                                placeholder={field.placeholder}
+                                                                className='col-span-3'
+                                                                type={field.type || 'text'}
+                                                                onChange={handleChange}
+                                                            />
+                                                        )
+                                                )
                                         )}
                                     </div>
                                 ))}

@@ -25,17 +25,33 @@ const Page = () => {
         }
     }, [isAuthenticated, userEmail, router])
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if ((email === 'admin@carservicepro.com' && password === 'admin') || (email === 'user@carservicepro.com' && password === 'user')) {
-            login(email);
-            if (email === 'admin@carservicepro.com') {
+        try {
+            // Check for admin credentials first
+            if (email === 'admin@carservicepro.com' && password === 'admin') {
+                await login(email, password);
                 router.push('/admin');
-            } else {
-                router.push('/user-dashboard');
+                return;
             }
-        } else {
-            alert('Invalid credentials');
+
+            const response = await fetch("/api/sign_in", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            })
+
+            const data = await response.json()
+
+            if (response.ok) {
+                await login(email, password);
+                router.push('/');
+            } else {
+                alert(data.error || 'Invalid credentials');
+            }
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            alert('An error occurred. Please try again.');
         }
     };
 

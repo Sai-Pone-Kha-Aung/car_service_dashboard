@@ -9,29 +9,136 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle } from 'lucide-react'
 import { useCart } from "@/context/CartContext"
+import { useAuth } from "@/context/AuthContext"
 
 export default function CheckoutPage() {
     const [step, setStep] = React.useState(1)
     const [orderComplete, setOrderComplete] = React.useState(false)
+    const { userData } = useAuth()
+    const [shippingInfo, setShippingInfo] = React.useState({
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: '',
+        zipCode: '',
+        country: '',
+    })
+    const [paymentInfo, setPaymentInfo] = React.useState({
+        cardName: '',
+        cardNumber: '',
+        expDate: '',
+        cvv: '',
+    });
 
-    const { cart } = useCart()
+
+    const { cart, clearCart } = useCart()
 
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     const total = subtotal
+
+    const placeOrder = async () => {
+        const orderItems = cart.map(item => ({
+            product_id: cart.find(cartItem => cartItem.id === item.id)?.product_id,
+            quantity: item.quantity,
+            price: item.price,
+            total: item.price * item.quantity,
+        }));
+        console.log("Cart", cart)
+        console.log("Order Items:", orderItems);
+        const orderData = {
+            user_id: userData?.id, // Replace with actual user ID
+            items: orderItems,
+            total: total,
+            date: new Date().toISOString(),
+            status: 'Pending',
+        };
+
+        try {
+            const orderResponse = await fetch('/api/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+            });
+
+            console.log('Order Response Status:', orderResponse.status); // Log HTTP status
+            const orderResult = await orderResponse.json();
+            console.log('Order Response:', orderResult);
+
+            if (orderResponse.ok) {
+                const orderId = orderResult.orderIds[0];
+
+                if (!orderId) {
+                    console.error('No valid order ID returned from /api/order');
+                    return;
+                }
+
+                const paymentData = {
+                    paymentID: orderId, // Generate a unique payment ID
+                    orderID: orderId,
+                    amount: total,
+                    user_id: userData?.id,
+                    paymentDate: new Date().toISOString(),
+                    paymentStatus: 'Completed',
+                };
+
+                console.log('Payment Data:', paymentData);
+
+                const paymentResponse = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData),
+                });
+
+                if (paymentResponse.ok) {
+                    clearCart();
+                    setOrderComplete(true);
+                } else {
+                    console.error('Failed to process payment');
+                }
+            } else {
+                console.error('Failed to place order');
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+        }
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
+        if (step === 1) {
+            const formData = new FormData(e.target as HTMLFormElement)
+            setShippingInfo({
+                firstName: formData.get('firstName') as string,
+                lastName: formData.get('lastName') as string,
+                address: formData.get('address') as string,
+                city: formData.get('city') as string,
+                zipCode: formData.get('zipCode') as string,
+                country: formData.get('country') as string,
+            })
+        } else if (step === 2) {
+            const formData = new FormData(e.target as HTMLFormElement)
+            setPaymentInfo({
+                cardName: formData.get('cardName') as string,
+                cardNumber: formData.get('cardNumber') as string,
+                expDate: formData.get('expDate') as string,
+                cvv: formData.get('cvv') as string,
+            })
+        }
+
         if (step < 3) {
             setStep(step + 1)
         } else {
-            setOrderComplete(true)
+            placeOrder();
         }
     }
 
     return (
-
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white ">
-
             {/* Checkout Content */}
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold mb-8">Checkout</h1>
@@ -81,25 +188,25 @@ export default function CheckoutPage() {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <Label htmlFor="firstName">First Name</Label>
-                                                    <Input id="firstName" required />
+                                                    <Input id="firstName" name="firstName" required />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="lastName">Last Name</Label>
-                                                    <Input id="lastName" required />
+                                                    <Input id="lastName" name="lastName" required />
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="address">Address</Label>
-                                                <Input id="address" required />
+                                                <Input id="address" name="address" required />
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <Label htmlFor="city">City</Label>
-                                                    <Input id="city" required />
+                                                    <Input id="city" name="city" required />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="zipCode">ZIP Code</Label>
-                                                    <Input id="zipCode" required />
+                                                    <Input id="zipCode" name="zipCode" required />
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
@@ -161,10 +268,10 @@ export default function CheckoutPage() {
                                         <CardContent className="space-y-4">
                                             <div>
                                                 <h3 className="font-semibold mb-2">Shipping Address</h3>
-                                                <p>John Doe</p>
-                                                <p>123 Main St</p>
-                                                <p>Anytown, ST 12345</p>
-                                                <p>United States</p>
+                                                <p>{shippingInfo.firstName} {shippingInfo.lastName}</p>
+                                                <p>{shippingInfo.address}</p>
+                                                <p>{shippingInfo.city}, {shippingInfo.zipCode}</p>
+                                                <p>{shippingInfo.country}</p>
                                             </div>
                                             <div>
                                                 <h3 className="font-semibold mb-2">Payment Method</h3>

@@ -20,6 +20,25 @@ const SearchModal = ({ onSelectCustomer }: SearchModalProps) => {
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<CustomerData[]>([])
 
+    const fetchData = async () => {
+        try {
+            const res = await fetch('/api/user');
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const response = await res.json();
+            setSearchResults(response);
+        } catch (error) {
+            console.error("Failed to fetch");
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+
+
     useEffect(() => {
         if (searchQuery) {
             setLoading(true)
