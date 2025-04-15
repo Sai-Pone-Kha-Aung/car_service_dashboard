@@ -4,7 +4,7 @@ A full-stack car service management system built with Next.js, React, and Postgr
 
 ## About
 
-Car Service Dashboard is a comprehensive management system for automotive service centers. It streamlines the process of customer management, appointment scheduling, inventory tracking, and service management, providing an all-in-one solution for automotive businesses.
+Car ServicePro Dashboard is a comprehensive management system for automotive service centers. It streamlines the process of customer management, appointment scheduling, inventory tracking, and service management, providing an all-in-one solution for automotive businesses.
 
 ## Key Features
 
