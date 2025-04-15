@@ -4,12 +4,10 @@ import NewAppointmentDialog from '@/components/ui/dashboard/appointment/new-appo
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import CustomTable from '@/components/ui/dashboard/table/custom-table';
-import { statusOptions } from '@/constants/Data';
 import { AddAppointment } from '@/utils/add-form';
-import { isToday, isThisWeek, isThisMonth, format } from 'date-fns';
+import { format } from 'date-fns';
 import useSearch from '@/hooks/useSearch';
 
 interface AppointmentData {

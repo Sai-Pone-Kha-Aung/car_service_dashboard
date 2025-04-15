@@ -145,11 +145,6 @@ export default function AdminBlogAddPage() {
                                             height={400}
                                             className="object-cover rounded"
                                         />)}
-                                        <Button type="button" variant="outline"
-                                            onClick={() => document.getElementById(`file-input-featured-image`)?.click()}
-                                        >
-                                            <Upload className="mr-2 h-4 w-4" /> Upload New Image
-                                        </Button>
                                     </div>
                                 </div>
 

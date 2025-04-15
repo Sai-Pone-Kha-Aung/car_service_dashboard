@@ -76,7 +76,7 @@ export default function AppointmentManager() {
             console.error("Error fetching appointments");
         }
     };
-    console.log("data", data)
+
     const fetchStaff = async () => {
         const response = await fetch(`/api/staff`);
         const data = await response.json();
@@ -99,7 +99,7 @@ export default function AppointmentManager() {
     }, [isAuthenticated, userData]);
 
     const fetchAppointments = async () => {
-        const response = await fetch(`/api/appointment/user?id=${id}`);
+        const response = await fetch(`/api/appointment/user?id=${userData?.id}`);
         const data = await response.json();
         console.log("Appointments", data);
         if (Array.isArray(data)) {
@@ -152,7 +152,7 @@ export default function AppointmentManager() {
 
             if (response.ok) {
                 alert("Appointment booked successfully!");
-                fetchAppointments();
+                router.refresh();
             } else {
                 alert("Failed to book appointment.");
             }
