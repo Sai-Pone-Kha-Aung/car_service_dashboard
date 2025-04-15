@@ -1,4 +1,4 @@
-# Car Service Dashboard
+# Car ServicePro Dashboard
 
 A full-stack car service management system built with Next.js, React, and PostgreSQL.
 
